@@ -40,9 +40,9 @@ if st.button("Générer mon script viral 🔥"):
             """
             
             completion = client.chat.completions.create(
-                model="llama-3.1-8b-instant"
-                messages=[{"role": "user", "content": prompt}]
-            )
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": prompt}]
+        )
             
             # Affichage du résultat
             st.success("C'est prêt !")
