@@ -1,459 +1,223 @@
 import streamlit as st
-import requests
-import json
+import stripe
 from supabase import create_client, Client
+from groq import Groq
 
-# 1. Configuration de la page
+# ---------------------------------------------------------
+# 1. INITIALISATION & CONFIGURATION DE LA PAGE
+# ---------------------------------------------------------
 st.set_page_config(
-    page_title="The Empire Studio — Creative Suite",
+    page_title="The Empire Studio - AI Content Suite",
     page_icon="⚡",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    layout="wide"
 )
 
-# 2. Design Clean, Sombre & Minimaliste
-st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+# Initialisation des API via Streamlit Secrets
+stripe.api_key = st.secrets["STRIPE_API_KEY"]
 
-    html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    .stApp {
-        background-color: #09090b;
-        color: #f4f4f5;
-    }
-
-    .editorial-header {
-        text-align: center;
-        padding: 30px 10px 10px 10px;
-    }
-
-    .editorial-tag {
-        font-size: 0.75rem;
-        font-weight: 800;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: #71717a;
-        margin-bottom: 8px;
-        display: inline-block;
-    }
-
-    .editorial-title {
-        font-size: 2.6rem;
-        font-weight: 800;
-        color: #ffffff;
-        letter-spacing: -1px;
-        margin-bottom: 8px;
-    }
-
-    .editorial-subtitle {
-        font-size: 0.95rem;
-        color: #a1a1aa;
-        max-width: 550px;
-        margin: 0 auto 20px auto;
-    }
-
-    .card-wrapper {
-        background: #121216;
-        border: 1px solid #27272a;
-        border-radius: 18px;
-        padding: 28px 22px;
-        text-align: left;
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 200px;
-    }
-
-    .card-wrapper:hover {
-        border-color: #3f3f46;
-        transform: translateY(-4px);
-        background: #18181b;
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
-    }
-
-    .card-number {
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: #52525b;
-        margin-bottom: 10px;
-        font-family: monospace;
-    }
-
-    .card-title {
-        font-size: 1.35rem;
-        font-weight: 700;
-        color: #ffffff;
-        margin-bottom: 8px;
-    }
-
-    .card-desc {
-        font-size: 0.88rem;
-        color: #a1a1aa;
-        line-height: 1.5;
-    }
-
-    .stTextInput input, .stSelectbox div[data-baseweb="select"], .stTextArea textarea {
-        background-color: #121216 !important;
-        border: 1px solid #27272a !important;
-        border-radius: 12px !important;
-        color: #f4f4f5 !important;
-    }
-    
-    .stTextInput input:focus, .stSelectbox div[data-baseweb="select"]:focus-within, .stTextArea textarea:focus {
-        border-color: #ffffff !important;
-        box-shadow: 0 0 0 1px #ffffff !important;
-    }
-
-    .stButton>button {
-        width: 100%;
-        background: #ffffff;
-        color: #09090b;
-        font-weight: 700;
-        font-size: 0.9rem;
-        border-radius: 12px;
-        padding: 12px 18px;
-        border: none;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .stButton>button:hover {
-        background: #e4e4e7;
-        color: #000000;
-        transform: translateY(-1px);
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-GROQ_API_KEY = "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"
-
-# --- CONNEXION À SUPABASE ---
 @st.cache_resource
 def init_supabase() -> Client:
-    url = st.secrets["SUPABASE_URL"]
-    key = st.secrets["SUPABASE_KEY"]
-    return create_client(url, key)
+    return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 
-try:
-    supabase = init_supabase()
-except Exception:
-    supabase = None
+supabase = init_supabase()
 
-# Variable de session pour stocker l'utilisateur connecté
+@st.cache_resource
+def init_groq():
+    return Groq(api_key=st.secrets["GROQ_API_KEY"])
+
+groq_client = init_groq()
+
+# ---------------------------------------------------------
+# 2. GESTION DE LA SESSION UTILISATEUR
+# ---------------------------------------------------------
 if "user" not in st.session_state:
-    st.session_state["user"] = None
+    st.session_state.user = None
 
-# =========================================================
-# ÉCRAN D'AUTHENTIFICATION (SI NON CONNECTÉ)
-# =========================================================
-if st.session_state["user"] is None:
-    st.markdown("""
-        <div class="editorial-header" style="margin-top: 30px;">
-            <span class="editorial-tag">Portail Sécurisé</span>
-            <h1 class="editorial-title">The Empire Studio</h1>
-            <p class="editorial-subtitle">Connectez-vous à votre espace créatif ou créez un compte.</p>
-        </div>
-    """, unsafe_allow_html=True)
+if "credits" not in st.session_state:
+    st.session_state.credits = 0
 
-    col_a, col_b, col_c = st.columns([1, 2, 1])
-    with col_b:
-        tab_login, tab_signup = st.tabs(["🔑 Se Connecter", "✨ Créer un Compte"])
+def refresh_user_credits(user_id):
+    """ Récupère le solde de crédits de l'utilisateur depuis Supabase """
+    try:
+        res = supabase.table("profiles").select("credits").eq("id", user_id).execute()
+        if res.data:
+            st.session_state.credits = res.data[0].get("credits", 0)
+    except Exception as e:
+        st.error(f"Erreur lors de la récupération des crédits : {e}")
 
-        # ONGLET SE CONNECTER
-        with tab_login:
-            st.markdown("<br>", unsafe_allow_html=True)
-            email_login = st.text_input("Adresse E-mail", key="login_email")
-            password_login = st.text_input("Mot de passe", type="password", key="login_pass")
-            
-            if st.button("Se Connecter ↗"):
-                if not email_login or not password_login:
-                    st.warning("⚠️ Veuillez remplir tous les champs.")
-                else:
-                    try:
-                        res = supabase.auth.sign_in_with_password({"email": email_login, "password": password_login})
-                        st.session_state["user"] = res.user
-                        st.success("Connexion réussie !")
-                        st.rerun()
-                    except Exception as e:
-                        st.error("Identifiants incorrects ou compte inexistant.")
+# Vérification du retour de paiement Stripe (Success / Cancel)
+query_params = st.query_params
+if "success" in query_params:
+    st.success("🎉 Paiement réussi ! Vos crédits ou votre abonnement ont été mis à jour.")
+elif "canceled" in query_params:
+    st.warning("⚠️ Le paiement a été annulé.")
 
-        # ONGLET CRÉER UN COMPTE
-        with tab_signup:
-            st.markdown("<br>", unsafe_allow_html=True)
-            email_signup = st.text_input("Votre E-mail", key="signup_email")
-            password_signup = st.text_input("Choisissez un mot de passe", type="password", key="signup_pass")
-            
-            if st.button("Créer mon compte ↗"):
-                if not email_signup or not password_signup:
-                    st.warning("⚠️ Veuillez remplir tous les champs.")
-                elif len(password_signup) < 6:
-                    st.warning("⚠️ Le mot de passe doit contenir au moins 6 caractères.")
-                else:
-                    try:
-                        res = supabase.auth.sign_up({"email": email_signup, "password": password_signup})
-                        st.success("🎉 Compte créé avec succès ! Vous pouvez maintenant vous connecter.")
-                    except Exception as e:
-                        st.error(f"Erreur lors de l'inscription : {e}")
+# ---------------------------------------------------------
+# 3. FONCTIONS D'ACHAT STRIPE CHECKOUT
+# ---------------------------------------------------------
+def recharger_via_stripe(price_id, user_email):
+    """ Redirige vers la page de paiement sécurisée Stripe Checkout """
+    try:
+        is_subscription = (price_id != st.secrets["PRICE_SINGLE"])
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price': price_id,
+                'quantity': 1,
+            }],
+            mode='subscription' if is_subscription else 'payment',
+            customer_email=user_email,
+            success_url='https://the-empire-studio.streamlit.app/?success=true',
+            cancel_url='https://the-empire-studio.streamlit.app/?canceled=true',
+        )
+        st.markdown(f'<meta http-equiv="refresh" content="0;url={session.url}">', unsafe_allow_html=True)
+    except Exception as e:
+        st.error(f"Erreur lors de l'initialisation du paiement Stripe : {e}")
 
-# =========================================================
-# ÉCRAN PRINCIPAL (UNE FOIS CONNECTÉ)
-# =========================================================
-else:
-    # Barre de profil en haut
-    col_p1, col_p2 = st.columns([8, 2])
-    with col_p1:
-        st.caption(f"👤 Connecté : **{st.session_state['user'].email}**")
-    with col_p2:
-        if st.button("Se Déconnecter"):
-            st.session_state["user"] = None
-            st.session_state["module_choisi"] = None
-            st.rerun()
+# ---------------------------------------------------------
+# 4. INTERFACE D'AUTHENTIFICATION (SI NON CONNECTÉ)
+# ---------------------------------------------------------
+if not st.session_state.user:
+    st.title("⚡ The Empire Studio")
+    st.subheader("Plateforme automatisée de création de contenu par IA")
 
-    if "module_choisi" not in st.session_state:
-        st.session_state["module_choisi"] = None
+    tab_login, tab_signup = st.tabs(["Connexion", "Créer un compte"])
 
-    # Barre de retour interne si un module est sélectionné
-    if st.session_state["module_choisi"] is not None:
-        c_space, c_nav = st.columns([8, 2])
-        with c_nav:
-            if st.button("← Accueil"):
-                st.session_state["module_choisi"] = None
+    with tab_login:
+        email = st.text_input("Email", key="login_email")
+        password = st.text_input("Mot de passe", type="password", key="login_pass")
+        if st.button("Se connecter", type="primary"):
+            try:
+                res = supabase.auth.sign_in_with_password({"email": email, "password": password})
+                st.session_state.user = res.user
+                refresh_user_credits(res.user.id)
                 st.rerun()
+            except Exception as e:
+                st.error(f"Erreur d'authentification : {e}")
 
-    # =========================================================
-    # ÉCRAN D'ACCUEIL : LES TROIS CARTES
-    # =========================================================
-    if st.session_state["module_choisi"] is None:
-        st.markdown("""
-            <div class="editorial-header">
-                <span class="editorial-tag">Selected Works & Systems — 2026</span>
-                <h1 class="editorial-title">The Empire Studio</h1>
-                <p class="editorial-subtitle">Sélectionnez le module créatif à déployer pour votre projet.</p>
-            </div>
-        """, unsafe_allow_html=True)
+    with tab_signup:
+        new_email = st.text_input("Email", key="signup_email")
+        new_password = st.text_input("Mot de passe", type="password", key="signup_pass")
+        if st.button("Créer mon compte"):
+            try:
+                res = supabase.auth.sign_up({"email": new_email, "password": new_password})
+                st.success("Compte créé avec succès ! Vous pouvez maintenant vous connecter.")
+            except Exception as e:
+                st.error(f"Erreur d'inscription : {e}")
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        col1, col2, col3 = st.columns(3, gap="large")
+    st.stop()
 
-        with col1:
-            st.markdown("""
-                <div class="card-wrapper">
-                    <div>
-                        <div class="card-number">01 // VIDEO ENGINE</div>
-                        <div class="card-title">AutoClip AI</div>
-                        <div class="card-desc">Scripts vidéo, hooks viraux, titres dynamiques et structures optimisées pour TikTok, Reels et Shorts.</div>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Lancer AutoClip ↗", key="btn_autoclip"):
-                st.session_state["module_choisi"] = "AutoClip"
-                st.rerun()
+# ---------------------------------------------------------
+# 5. APPLICATION PRINCIPALE (UTILISATEUR CONNECTÉ)
+# ---------------------------------------------------------
+# Mise à jour des crédits
+refresh_user_credits(st.session_state.user.id)
 
-        with col2:
-            st.markdown("""
-                <div class="card-wrapper">
-                    <div>
-                        <div class="card-number">02 // BRAND IDENTITY</div>
-                        <div class="card-title">BioCraft AI</div>
-                        <div class="card-desc">Architecture d'identité de marque, bios magnétiques d'élite et positionnement stratégique sur-mesure.</div>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Lancer BioCraft ↗", key="btn_biocraft"):
-                st.session_state["module_choisi"] = "BioCraft"
-                st.rerun()
+# Barre latérale (Sidebar)
+with st.sidebar:
+    st.title("⚡ Empire Studio")
+    st.write(f"👤 **Compte :** {st.session_state.user.email}")
+    st.metric(label="Crédits disponibles", value=st.session_state.credits)
 
-        with col3:
-            st.markdown("""
-                <div class="card-wrapper">
-                    <div>
-                        <div class="card-number">03 // COPYWRITING & SALES</div>
-                        <div class="card-title">CopyCraft AI</div>
-                        <div class="card-desc">Rédaction persuasive, e-mails de prospection B2B, pages de vente et structures de conversion directes.</div>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("Lancer CopyCraft ↗", key="btn_copycraft"):
-                st.session_state["module_choisi"] = "CopyCraft"
-                st.rerun()
+    if st.button("Se déconnecter"):
+        supabase.auth.sign_out()
+        st.session_state.user = None
+        st.session_state.credits = 0
+        st.rerun()
 
-    # =========================================================
-    # MODULE 1 : AUTOCLIP AI
-    # =========================================================
-    elif st.session_state["module_choisi"] == "AutoClip":
-        st.markdown("### ⚡ AutoClip AI — Configuration Vidéo")
-        st.caption("Paramétrez votre contenu pour obtenir un rendu immédiat et structuré.")
-        
-        sujet_clip = st.text_input("🎯 Sujet ou concept de la vidéo", placeholder="ex: 3 astuces pour booster sa productivité au quotidien")
-        
-        c1, c2 = st.columns(2)
-        with c1:
-            plateforme = st.selectbox("📱 Plateforme Cible", ["TikTok", "Instagram Reels", "YouTube Shorts"])
-            style_clip = st.selectbox("🎨 Style de Format", ["Éducatif / Conseil", "Storytelling", "Promotion / Business", "Divertissement"])
-            type_rendu_autoclip = st.selectbox("📌 Type de Résultat", ["Texte final prêt à publier", "Script / Prompt de consignes pour une IA vidéo"])
-        with c2:
-            ton_clip = st.selectbox("🎙️ Ton Souhaité", ["Énergique & Rythmé", "Humoristique & Décalé", "Cash & Direct", "Professionnel & Inspirant"])
-            duree = st.selectbox("⏱️ Durée Estimée", ["15 secondes", "30 secondes", "45 secondes", "1 minute", "1 minute 30 secondes"])
-            
-        methode = st.selectbox("🎬 Méthode de Réalisation", ["Tournage Humain (Visage caméra + B-roll)", "Génération IA (InVideo / CapCut)"])
-        ambiance_musique = st.text_input("🎵 Ambiance Sonore / Style musical (Optionnel)", placeholder="ex: Lo-fi relaxant, beat dynamique...")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Générer le Kit Vidéo ↗"):
-            if not sujet_clip:
-                st.warning("⚠️ Veuillez renseigner un sujet.")
-            else:
-                with st.spinner("Génération en cours..."):
-                    prompt = f"""
-                    Tu es un expert mondial en création de contenu viral sur {plateforme}.
-                    Génère un Kit de Production Complet ({type_rendu_autoclip}) pour une vidéo de {duree} sur : '{sujet_clip}' (Style: {style_clip}, Ton: {ton_clip}).
-                    Méthode : {methode}. Ambiance sonore : {ambiance_musique}.
-                    
-                    Rédige directement un texte extrêmement détaillé et prêt à l'emploi.
-                    Format de sortie :
-                    ### 🎬 Titres & Couverture
-                    ### 🪝 Script de Production ({duree})
-                    ### 📝 Description & Hashtags SEO
-                    """
-                    
-                    headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-                    payload = {"model": "openai/gpt-oss-120b", "messages": [{"role": "user", "content": prompt}]}
-                    
-                    try:
-                        res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
-                        if "choices" in res:
-                            contenu = res["choices"][0]["message"]["content"]
-                            st.toast("Contenu généré !", icon="✨")
-                            st.markdown("### 📋 Votre texte prêt à l'emploi :")
-                            st.code(contenu, language="markdown")
-                        else:
-                            st.error("Erreur de génération.")
-                    except Exception as e:
-                        st.error(f"Erreur : {e}")
+    st.divider()
+    st.markdown("### 💳 Tarifs & Recharges")
 
-    # =========================================================
-    # MODULE 2 : BIOCRAFT AI
-    # =========================================================
-    elif st.session_state["module_choisi"] == "BioCraft":
-        st.markdown("### 💼 BioCraft AI — Architecture d'Identité")
-        st.caption("Définissez votre positionnement de marque.")
-        
-        c1, c2 = st.columns(2)
-        with c1:
-            plateforme_bio = st.selectbox("🌐 Plateforme Principale", ["TikTok / Instagram (Créateur)", "LinkedIn (Professionnel / Corporate)", "Site Web / Portfolio", "Autre"])
-            ton_bio = st.selectbox("🎯 Posture de Marque", ["Autoritaire & Visionnaire", "Mystérieux & Énigmatique", "Accessible & Pédagogue", "Audacieux & Disruptif"])
-            type_rendu_bio = st.selectbox("📌 Type de Résultat", ["Texte final prêt à publier (Bios & CTA)", "Script / Prompt de consignes pour une IA de branding"])
-        with c2:
-            objectif_bio = st.selectbox("📈 Objectif Principal", ["Attirer des opportunités B2B", "Convertir en abonnés fidèles", "Vendre un produit ou service", "Établir une crédibilité instantanée"])
-            longueur_bio = st.selectbox("📏 Format de la Bio", ["Ultra-court & Percutant", "Narratif & Inspirant", "À puces / Preuve sociale"])
-            style_emojis = st.selectbox("✨ Style d'Émojis", ["Minimaliste & Chic", "Dynamique & Thématique", "Aucun"])
+    # Options d'achat
+    if st.button("1 Crédit — 3,49 $", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_SINGLE"], st.session_state.user.email)
 
-        parcours_pro = st.text_area("✍️ Votre parcours, compétences clés ou accomplissements", placeholder="Renseignez votre parcours, vos projets ou vos réalisations ici...", height=120)
-        mots_cles_cles = st.text_input("🔑 Mots-clés incontournables (Optionnel)", placeholder="ex: Innovation, Stratégie, Design...")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Forger l'Identité ↗"):
-            if not parcours_pro:
-                st.warning("⚠️ Veuillez renseigner votre parcours.")
-            else:
-                with st.spinner("Création en cours..."):
-                    prompt = f"""
-                    Tu es un expert mondial en stratégie de marque et personal branding d'élite.
-                    Génère un contenu complet ({type_rendu_bio}) basé sur :
-                    - Plateforme : {plateforme_bio}
-                    - Posture : {ton_bio}
-                    - Objectif : {objectif_bio}
-                    - Format : {longueur_bio}
-                    - Émojis : {style_emojis}
-                    - Parcours : '{parcours_pro}'
-                    - Mots-clés : {mots_cles_cles}
-                    
-                    Rédige directement un texte détaillé et prêt à copier.
-                    Format de sortie :
-                    ### 🎯 Analyse du Positionnement
-                    ### ✍️ Options de Bios Prêtes à Copier
-                    ### 🔗 Formules d'Appel à l'Action (CTA)
-                    """
-                    
-                    headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-                    payload = {"model": "openai/gpt-oss-120b", "messages": [{"role": "user", "content": prompt}]}
-                    
-                    try:
-                        res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
-                        if "choices" in res:
-                            contenu = res["choices"][0]["message"]["content"]
-                            st.toast("Identité forgée !", icon="✨")
-                            st.markdown("### 📋 Votre texte prêt à l'emploi :")
-                            st.code(contenu, language="markdown")
-                        else:
-                            st.error("Erreur de génération.")
-                    except Exception as e:
-                        st.error(f"Erreur : {e}")
+    if st.button("Plan PRO (15 crédits) — 14,99 $/mois", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_PRO"], st.session_state.user.email)
 
-    # =========================================================
-    # MODULE 3 : COPYCRAFT AI
-    # =========================================================
-    elif st.session_state["module_choisi"] == "CopyCraft":
-        st.markdown("### 📝 CopyCraft AI — Copywriting & Émails de Vente")
-        st.caption("Concevez des textes de vente persuasifs et des séquences d'émails haute conversion.")
-        
-        c1, c2 = st.columns(2)
-        with c1:
-            type_copy = st.selectbox("📄 Type de Contenu", ["Émail de Prospection B2B (Cold Email)", "Séquence de Lancement de Produit", "Page de Vente / Landing Page", "Publicité Social Media (Meta / Google)"])
-            framework_copy = st.selectbox("⚙️ Framework de Copywriting", ["AIDA (Attention, Intérêt, Désir, Action)", "PAS (Problème, Agitation, Solution)", "BAB (Before, After, Bridge)", "Direct & Minimaliste"])
-            type_rendu_copy = st.selectbox("📌 Type de Résultat", ["Texte final prêt à être envoyé / publié", "Script / Prompt de consignes pour une IA de rédaction"])
-        with c2:
-            ton_copy = st.selectbox("🎙️ Ton & Style", ["Convaincant & Direct", "Inspirant & Storytelling", "Professionnel & B2B", "Urgent & Offre Limité"])
-            cible_copy = st.text_input("👥 Cible / Prospect (Audience)", placeholder="ex: Fondateurs de startups, Directeurs Marketing, Particuliers...")
+    if st.button("Plan PREMIUM (30 crédits) — 24,99 $/mois", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_PREMIUM"], st.session_state.user.email)
 
-        description_offre = st.text_area("📦 Description du produit, service ou offre", placeholder="Décrivez les bénéfices clés, le problème résolu et la valeur ajoutée...", height=120)
-        cta_souhaite = st.text_input("🎯 Appel à l'Action Principal (CTA)", placeholder="ex: Réserver un appel de 15 min, Télécharger le guide, Acheter maintenant...")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Générer le Texte Copywriting ↗"):
-            if not description_offre:
-                st.warning("⚠️ Veuillez décrire votre offre.")
-            else:
-                with st.spinner("Rédaction en cours..."):
-                    prompt = f"""
-                    Tu es un copywriter d'élite reconnu mondialement.
-                    Rédige un contenu ultra-persuasif ({type_rendu_copy}) basé sur :
-                    - Type de contenu : {type_copy}
-                    - Framework : {framework_copy}
-                    - Ton : {ton_copy}
-                    - Cible : {cible_copy}
-                    - Offre : '{description_offre}'
-                    - CTA : {cta_souhaite}
-                    
-                    Rédige directement un texte extrêmement complet, fluide et immédiatement utilisable sans explication.
-                    Format de sortie :
-                    ### 🎯 Objets & Accroches Striking (3 Variantes)
-                    ### ✉️ Corps du Texte / Émail
-                    ### 🚀 Appel à l'Action & P.S. Persuasif
-                    """
-                    
-                    headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-                    payload = {"model": "openai/gpt-oss-120b", "messages": [{"role": "user", "content": prompt}]}
-                    
-                    try:
-                        res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
-                        if "choices" in res:
-                            contenu = res["choices"][0]["message"]["content"]
-                            st.toast("Texte généré avec succès !", icon="✨")
-                            st.markdown("### 📋 Votre texte prêt à l'emploi :")
-                            st.code(contenu, language="markdown")
-                        else:
-                            st.error("Erreur de génération.")
-                    except Exception as e:
-                        st.error(f"Erreur : {e}")
+    if st.button("Plan INFINITE (Illimité) — 49,99 $/mois", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
-st.markdown("<br><hr style='border-color: #27272a;'><p style='text-align: center; color: #52525b; font-size: 0.8rem;'>The Empire Studio — All Rights Reserved.</p>", unsafe_allow_html=True)
+# ---------------------------------------------------------
+# 6. MODULES IA DU STUDIO
+# ---------------------------------------------------------
+st.title("🚀 Espace de Création")
+
+tab_autoclip, tab_biocraft, tab_copycraft = st.tabs(["🎬 AutoClip AI", "👤 BioCraft AI", "✍️ CopyCraft AI"])
+
+# --- MODULE 1: AutoClip AI ---
+with tab_autoclip:
+    st.header("🎬 AutoClip AI — Générateur de scripts vidéo")
+    topic = st.text_input("Sujet de la vidéo ou du Reels/TikTok :", placeholder="ex: 3 conseils pour réussir en e-commerce")
+    platform = st.selectbox("Plateforme :", ["TikTok / Shorts / Reels", "YouTube Long Format", "LinkedIn Video"])
+
+    if st.button("Générer le script (-1 crédit)", type="primary"):
+        if st.session_state.credits <= 0:
+            st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
+        else:
+            prompt = f"Rédige un script complet et très engagent pour une vidéo {platform} sur le sujet : '{topic}'."
+            with st.spinner("Génération du script en cours..."):
+                response = groq_client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                script = response.choices[0].message.content
+                
+                # Décrémenter 1 crédit dans Supabase
+                new_credits = st.session_state.credits - 1
+                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                st.session_state.credits = new_credits
+
+                st.success("Script généré avec succès !")
+                st.markdown(script)
+
+# --- MODULE 2: BioCraft AI ---
+with tab_biocraft:
+    st.header("👤 BioCraft AI — Optimisation de profil")
+    bio_topic = st.text_input("Quelle est votre activité ou niche ?", placeholder="ex: Producteur de House Music & Créateur TikTok")
+    
+    if st.button("Générer les Bio (-1 crédit)"):
+        if st.session_state.credits <= 0:
+            st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
+        else:
+            prompt = f"Propose 3 descriptions courtes, percutantes et optimisées avec émojis pour un profil Instagram/TikTok dans la niche : '{bio_topic}'."
+            with st.spinner("Optimisation en cours..."):
+                response = groq_client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                bios = response.choices[0].message.content
+
+                new_credits = st.session_state.credits - 1
+                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                st.session_state.credits = new_credits
+
+                st.success("Bio générées !")
+                st.markdown(bios)
+
+# --- MODULE 3: CopyCraft AI ---
+with tab_copycraft:
+    st.header("✍️ CopyCraft AI — Rédaction commerciale")
+    copy_topic = st.text_area("Décrivez votre produit ou service :", placeholder="ex: Une montre Citizen Promaster Dive Eco-Drive 200m")
+    
+    if st.button("Rédiger l'accroche (-1 crédit)"):
+        if st.session_state.credits <= 0:
+            st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
+        else:
+            prompt = f"Rédige une fiche produit persuasive et vendeuse pour : '{copy_topic}'."
+            with st.spinner("Rédaction en cours..."):
+                response = groq_client.chat.completions.create(
+                    model="llama-3.3-70b-versatile",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                copy_text = response.choices[0].message.content
+
+                new_credits = st.session_state.credits - 1
+                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                st.session_state.credits = new_credits
+
+                st.success("Contenu rédigé !")
+                st.markdown(copy_text)
