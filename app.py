@@ -6,11 +6,11 @@ import json
 st.set_page_config(
     page_title="AutoClip AI — Next-Gen Content Studio",
     page_icon="⚡",
-    layout="centered", # Centré pour un meilleur rendu de haut en bas
+    layout="centered",
     initial_sidebar_state="collapsed"
 )
 
-# 2. Design Ultra-Futuriste (Glassmorphism + Neon Glow)
+# 2. Design Ultra-Futuriste & Premium (Glassmorphism)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
@@ -109,11 +109,11 @@ st.markdown("""
     <div class="hero-container">
         <span class="hero-badge">✨ AutoClip Engine v3.0</span>
         <h1 class="hero-title">Créez des Vidéos Virales</h1>
-        <p class="hero-subtitle">Générez des scripts captivants, des titres explosifs et des kits réseaux parfaits de haut en bas.</p>
+        <p class="hero-subtitle">Générez des scripts captivants, des titres explosifs et des kits réseaux professionnels.</p>
     </div>
 """, unsafe_allow_html=True)
 
-# --- TOUT EN HAUT DE BAS (Formulaire vertical) ---
+# Formulaire vertical
 st.markdown("### 🎛️ 1. Configuration du Studio")
 
 sujet = st.text_input("🎯 Quel est le sujet de ta vidéo ?", placeholder="ex: 3 astuces pour composer une Bassline House incroyable")
@@ -144,14 +144,14 @@ btn_generer = st.button("⚡ Générer le Kit Studio Pro")
 
 st.markdown("---")
 
-# --- SECTION RÉSULTAT EN DESSOUS ---
+# Section Résultat
 st.markdown("### 🚀 2. Rendu de Votre Kit Studio")
 
 if btn_generer:
     if not sujet:
         st.warning("⚠️ Merci d'entrer un sujet pour lancer la génération !")
     else:
-        with st.spinner("🌌 L'IA fusionne les algorithmes pour composer votre kit d'exception..."):
+        with st.spinner("🌌 Analyse des algorithmes et génération du kit en cours..."):
             
             GROQ_API_KEY = "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"
             
@@ -204,8 +204,9 @@ if btn_generer:
                 
                 if response.status_code == 200:
                     kit_genere = result["choices"][0]["message"]["content"]
-                    st.balloons()
-                    st.success("🔥 Votre kit d'élite a été créé avec succès !")
+                    
+                    # Notification toast élégante façon SaaS premium (fini les ballons !)
+                    st.toast("✨ Kit de production généré avec succès !", icon="🚀")
                     
                     st.markdown(kit_genere)
                     
