@@ -17,7 +17,7 @@ if st.button("Générer mon script viral 🔥"):
     else:
         with st.spinner("L'IA prépare tes hooks et ton script..."):
             # Connexion à l'API Groq
-            client = Groq(api_key=st.secrets["GROQ_API_KEY"])
+            client = Groq(api_key="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")
             
             prompt = f"""
             Tu es un expert en marketing viral TikTok et Reels.
