@@ -148,25 +148,51 @@ st.title("🚀 Espace de Création")
 
 tab_autoclip, tab_biocraft, tab_copycraft = st.tabs(["🎬 AutoClip AI", "👤 BioCraft AI", "✍️ CopyCraft AI"])
 
-# --- MODULE 1: AutoClip AI ---
+# --- MODULE 1: AutoClip AI (Version Complète) ---
 with tab_autoclip:
     st.header("🎬 AutoClip AI — Générateur de scripts vidéo")
-    topic = st.text_input("Sujet de la vidéo ou du Reels/TikTok :", placeholder="ex: 3 conseils pour réussir en e-commerce")
-    platform = st.selectbox("Plateforme :", ["TikTok / Shorts / Reels", "YouTube Long Format", "LinkedIn Video"])
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        topic = st.text_input("Sujet de la vidéo :", placeholder="ex: 3 conseils pour réussir en e-commerce")
+        platform = st.selectbox("Plateforme :", ["TikTok / Shorts / Reels", "YouTube Long Format", "LinkedIn Video"])
+        duration = st.selectbox("Durée souhaitée :", ["Très court (< 30 sec)", "Format classique (30 - 60 sec)", "Format long (> 1 min)"])
 
-    if st.button("Générer le script (-1 crédit)", type="primary"):
+    with col2:
+        tone = st.selectbox("Ton de la vidéo :", ["Dynamique & Captivant", "Professionnel & Expert", "Humoristique & Décalé", "Inspirant & Émotionnel"])
+        hook_style = st.selectbox("Style d'accroche (Hook) :", ["Question choc", "Statistique / Fait surprenant", "Histoire / Storytelling", "Erreur courante à éviter"])
+        target_audience = st.text_input("Cible / Audience (Optionnel) :", placeholder="ex: Débutants, Étudiants, Entrepreneurs...")
+
+    if st.button("Générer le script complet (-1 crédit)", type="primary", use_container_width=True):
         if st.session_state.credits <= 0:
             st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
         else:
-            prompt = f"Rédige un script complet et très engagent pour une vidéo {platform} sur le sujet : '{topic}'."
-            with st.spinner("Génération du script en cours..."):
+            # Construction d'un prompt ultra-précis grâce aux nouveaux champs
+            prompt = f"""
+            Rédige un script complet et engageant pour une vidéo.
+            - Sujet : {topic}
+            - Plateforme : {platform}
+            - Durée : {duration}
+            - Ton : {tone}
+            - Style d'accroche (Hook) : {hook_style}
+            - Cible : {target_audience if target_audience else 'Grand public'}
+
+            Structure le script avec :
+            1. HOOK (Accroche visuelle et verbale - 3 premières secondes)
+            2. CORPS DU SCRIPT (Détaillé étape par étape)
+            3. CALL TO ACTION (CTA pour l'engagement)
+            4. INDICATIONS VISUELLES / B-ROLL (Entre crochets [ ])
+            """
+            
+            with st.spinner("Génération du script sur-mesure en cours..."):
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
                 )
                 script = response.choices[0].message.content
                 
-                # Décrémenter 1 crédit dans Supabase
+                # Décrémenter le crédit
                 new_credits = st.session_state.credits - 1
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
@@ -174,17 +200,31 @@ with tab_autoclip:
                 st.success("Script généré avec succès !")
                 st.markdown(script)
 
-# --- MODULE 2: BioCraft AI ---
+# --- MODULE 2: BioCraft AI (Version enrichie) ---
 with tab_biocraft:
     st.header("👤 BioCraft AI — Optimisation de profil")
-    bio_topic = st.text_input("Quelle est votre activité ou niche ?", placeholder="ex: Producteur de House Music & Créateur TikTok")
     
-    if st.button("Générer les Bio (-1 crédit)"):
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        bio_topic = st.text_input("Quelle est votre activité ou niche ?", placeholder="ex: Producteur de House Music & Créateur TikTok")
+        platform_bio = st.selectbox("Plateforme cible :", ["Instagram", "TikTok", "LinkedIn", "Twitter / X", "YouTube Bio"])
+    with col_b2:
+        bio_tone = st.selectbox("Style de bio :", ["Minimaliste & Propre", "Accrocheur & Énergique", "Humoristique & Décalé", "Mystérieux & Intriguant"])
+        include_cta = st.selectbox("Appel à l'action (CTA) :", ["Lien vers écoute/musique", "Lien site web / e-commerce", "S'abonner / Follow", "Aucun"])
+
+    if st.button("Générer les bios (-1 crédit)", type="primary", use_container_width=True):
         if st.session_state.credits <= 0:
             st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
         else:
-            prompt = f"Propose 3 descriptions courtes, percutantes et optimisées avec émojis pour un profil Instagram/TikTok dans la niche : '{bio_topic}'."
-            with st.spinner("Optimisation en cours..."):
+            prompt = f"""
+            Génère 3 propositions de bios différentes optimisées pour {platform_bio}.
+            - Activité / Niche : '{bio_topic}'
+            - Style : {bio_tone}
+            - CTA souhaité : {include_cta}
+            
+            Formatte chaque proposition clairement avec des émojis adaptés et respecte la limite de caractères de la plateforme.
+            """
+            with st.spinner("Optimisation des bios en cours..."):
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
@@ -195,20 +235,38 @@ with tab_biocraft:
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("Bio générées !")
+                st.success("Bios générées avec succès !")
                 st.markdown(bios)
 
-# --- MODULE 3: CopyCraft AI ---
+# --- MODULE 3: CopyCraft AI (Version enrichie) ---
 with tab_copycraft:
     st.header("✍️ CopyCraft AI — Rédaction commerciale")
+    
     copy_topic = st.text_area("Décrivez votre produit ou service :", placeholder="ex: Une montre Citizen Promaster Dive Eco-Drive 200m")
     
-    if st.button("Rédiger l'accroche (-1 crédit)"):
+    col_c1, col_c2 = st.columns(2)
+    with col_c1:
+        copy_format = st.selectbox("Format de rédaction :", ["Fiche produit e-commerce", "Post publicitaire réseaux sociaux", "Email de vente / Newsletter", "Page de vente (Landing Page)"])
+        copy_objective = st.selectbox("Objectif marketing :", ["Générer des clics / Trafic", "Pousser à l'achat immédiat", "Mettre en avant les caractéristiques techniques", "Créer de l'émotion / Coup de cœur"])
+    with col_c2:
+        copy_tone = st.selectbox("Ton publicitaire :", ["Vendeur & Persuasif (Hard sell)", "Élégant & Premium", "Urgent & Dynamique", "Éducatif & Rassurant"])
+        target_client = st.text_input("Client idéal (Persona) :", placeholder="ex: Passionnés de montres, plongeurs, aventuriers...")
+
+    if st.button("Rédiger le contenu (-1 crédit)", type="primary", use_container_width=True):
         if st.session_state.credits <= 0:
             st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
         else:
-            prompt = f"Rédige une fiche produit persuasive et vendeuse pour : '{copy_topic}'."
-            with st.spinner("Rédaction en cours..."):
+            prompt = f"""
+            Rédige un texte marketing de haute qualité.
+            - Produit / Service : '{copy_topic}'
+            - Format : {copy_format}
+            - Objectif : {copy_objective}
+            - Ton : {copy_tone}
+            - Client cible : {target_client if target_client else 'Grand public'}
+            
+            Structure ton texte avec un titre fort, des points clés percutants et un appel à l'action irrésistible.
+            """
+            with st.spinner("Rédaction commerciale en cours..."):
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
@@ -219,5 +277,5 @@ with tab_copycraft:
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("Contenu rédigé !")
+                st.success("Contenu rédigé avec succès !")
                 st.markdown(copy_text)
