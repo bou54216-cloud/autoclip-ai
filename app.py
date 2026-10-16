@@ -44,7 +44,7 @@ if st.button("Générer mon script viral 🔥"):
             }
             
             payload = {
-                "model": "llama-3.1-8b-instant",
+                "model": "llama3-8b-8192",
                 "messages": [{"role": "user", "content": prompt}]
             }
             
