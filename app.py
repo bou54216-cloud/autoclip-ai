@@ -44,7 +44,7 @@ if st.button("Générer mon script viral 🔥"):
             }
             
             payload = {
-                "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+                "model": "llama-3.2-3b-preview",
                 "messages": [{"role": "user", "content": prompt}]
             }
             
