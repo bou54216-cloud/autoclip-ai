@@ -2,150 +2,186 @@ import streamlit as st
 import requests
 import json
 
-# 1. Configuration de la page en mode Large
+# 1. Configuration de la page
 st.set_page_config(
-    page_title="AutoClip AI — Studio Créateur Premium",
-    page_icon="✨",
+    page_title="AutoClip AI — Next-Gen Content Studio",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# 2. CSS Personnalisé Haut de Gamme (Design Dark Premium)
+# 2. Design Ultra-Futuriste (Glassmorphism + Neon Glow)
 st.markdown("""
     <style>
-    /* Arrière-plan global */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Arrière-plan Spatial / Cyber */
     .stApp {
-        background-color: #0d0e15;
-        color: #f1f5f9;
+        background: radial-gradient(circle at 50% -20%, #1e1b4b 0%, #0f172a 45%, #020617 100%);
+        color: #f8fafc;
+    }
+
+    /* En-tête Principal WOW */
+    .hero-container {
+        text-align: center;
+        padding: 40px 20px 20px 20px;
     }
     
-    /* Titre Principal */
+    .hero-badge {
+        background: linear-gradient(90deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.2));
+        border: 1px solid rgba(168, 85, 247, 0.4);
+        color: #c084fc;
+        padding: 6px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: 15px;
+        box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+    }
+
     .hero-title {
-        font-size: 2.8rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #3b82f6 100%);
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff 20%, #c084fc 60%, #38bdf8 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 0px;
-        letter-spacing: -1px;
+        margin-bottom: 10px;
+        line-height: 1.1;
     }
-    
+
     .hero-subtitle {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         color: #94a3b8;
-        margin-bottom: 30px;
+        max-width: 650px;
+        margin: 0 auto 40px auto;
     }
-    
-    /* Cartes de sections */
-    .premium-card {
-        background: #181a25;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+
+    /* Effet Glassmorphism pour les blocs */
+    div[data-testid="stVerticalBlock"] > div {
         border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-        margin-bottom: 20px;
     }
     
-    /* Style du bouton principal */
-    .stButton>button {
-        width: 100%;
-        background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
-        color: white;
-        font-weight: 700;
-        font-size: 1.1rem;
-        border-radius: 12px;
-        padding: 14px 20px;
-        border: none;
-        box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+    .stTextInput input, .stSelectbox div[data-baseweb="select"] {
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        color: #f8fafc !important;
+        backdrop-filter: blur(12px);
         transition: all 0.3s ease;
     }
     
+    .stTextInput input:focus, .stSelectbox div[data-baseweb="select"]:focus-within {
+        border-color: #a855f7 !important;
+        box-shadow: 0 0 15px rgba(168, 85, 247, 0.4) !important;
+    }
+
+    /* Le Bouton WOW Ultra-Futuriste */
+    .stButton>button {
+        width: 100%;
+        background: linear-gradient(135deg, #8b5cf6 0%, #d946ef 50%, #06b6d4 100%);
+        background-size: 200% auto;
+        color: white;
+        font-weight: 800;
+        font-size: 1.2rem;
+        border-radius: 14px;
+        padding: 18px 24px;
+        border: none;
+        box-shadow: 0 0 25px rgba(217, 70, 239, 0.4);
+        cursor: pointer;
+        transition: all 0.4s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
+        background-position: right center;
+        transform: translateY(-3px) scale(1.01);
+        box-shadow: 0 0 35px rgba(217, 70, 239, 0.7);
         color: white;
     }
-    
-    /* Inputs et Selectbox stylisés */
-    .stTextInput input, .stSelectbox div[data-baseweb="select"] {
-        background-color: #0f1017 !important;
-        border-radius: 8px !important;
-        border: 1px solid #2e3248 !important;
-        color: #f8fafc !important;
-    }
-    
-    /* Badges de statut */
-    .badge-pro {
-        background: rgba(168, 85, 247, 0.15);
-        color: #c084fc;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        border: 1px solid rgba(168, 85, 247, 0.3);
+
+    /* Boîte de résultat Neon */
+    .result-box {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+        backdrop-filter: blur(16px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
     </style>
 """, unsafe_allow_html=True)
 
-# En-tête Premium
-st.markdown('<span class="badge-pro">⚡ AUTOCLIP STUDIO PRO v2.5</span>', unsafe_allow_html=True)
-st.markdown('<p class="hero-title">AutoClip AI Pro</p>', unsafe_allow_html=True)
-st.markdown('<p class="hero-subtitle">Moteur IA haute performance pour générer vos kits viraux TikTok, Reels & Shorts.</p>', unsafe_allow_html=True)
+# Hero Section
+st.markdown("""
+    <div class="hero-container">
+        <span class="hero-badge">✨ AutoClip Engine v3.0</span>
+        <h1 class="hero-title">Créez des Vidéos Virales à la Vitesse de la Lumière</h1>
+        <p class="hero-subtitle">Générez des scripts captivants, des titres explosifs et des kits réseaux parfaits pour l'humain et les IA vidéo.</p>
+    </div>
+""", unsafe_allow_html=True)
 
-# Disposition en 2 colonnes équilibrées
-col_left, col_right = st.columns([1, 1.1], gap="large")
+# Colonnes principales aérées
+col_left, col_right = st.columns([1, 1.2], gap="large")
 
 with col_left:
-    st.markdown('### ⚙️ Paramètres du Projet')
+    st.markdown("### 🎛️ Configuration du Studio")
     
-    sujet = st.text_input("🎯 Quel est le sujet principal ?", placeholder="ex: 3 erreurs à éviter pour mixer la house music")
+    sujet = st.text_input("🎯 Quel est le sujet de ta vidéo ?", placeholder="ex: 3 astuces pour composer une Bassline House incroyable")
     
     c1, c2 = st.columns(2)
     with c1:
-        plateforme = st.selectbox("📱 Plateforme cible", ["TikTok", "Instagram Reels", "YouTube Shorts"])
-        style = st.selectbox("🎨 Format & Style", ["Éducatif / Conseil", "Storytelling", "Promotion Musique / Art", "Divertissement"])
+        plateforme = st.selectbox("📱 Plateforme Cible", ["TikTok", "Instagram Reels", "YouTube Shorts"])
+        style = st.selectbox("🎨 Style de Format", ["Éducatif / Conseil", "Storytelling", "Promotion Musique / Art", "Divertissement"])
     with c2:
         ton = st.selectbox("🎙️ Ton & Ambiance", ["Énergique & Rythmé", "Humoristique & Décalé", "Cash & Direct", "Professionnel & Inspirant"])
-        duree = st.selectbox("⏱️ Durée de la vidéo", ["15 secondes", "30 secondes", "45 secondes", "1 minute", "1 minute 30 secondes"])
+        duree = st.selectbox("⏱️ Durée Estimée", ["15 secondes", "30 secondes", "45 secondes", "1 minute", "1 minute 30 secondes"])
         
     methode = st.selectbox(
-        "🛠️ Méthode de création", 
+        "🎬 Méthode de Réalisation", 
         [
-            "Tournage humain (Face caméra & B-roll)", 
-            "IA Text-to-Video (InVideo / CapCut Script-to-Video)"
+            "Tournage Humain (Visage caméra + B-roll)", 
+            "IA Text-to-Video (Pour InVideo / CapCut)"
         ]
     )
     
     ambiance_musique = st.text_input(
-        "🎵 Musique / BPM / Synchro (Optionnel)", 
-        placeholder="ex: House 126 BPM, Drop à 15s, Bassline percutante..."
+        "🎵 Musique & Synchro Sonore (Optionnel)", 
+        placeholder="ex: House 126 BPM, Drop puissant à 15s, Bassline groovy..."
     )
     
     st.markdown("<br>", unsafe_allow_html=True)
-    btn_generer = st.button("✨ Générer le Kit Vidéo Pro")
+    btn_generer = st.button("⚡ Générer le Kit Studio Pro")
 
 with col_right:
-    st.markdown('### 💎 Espace de Génération')
+    st.markdown("### 🚀 Rendu du Kit Studio")
     
     if btn_generer:
         if not sujet:
-            st.warning("⚠️ Veuillez préciser un sujet pour lancer l'analyse de l'IA.")
+            st.warning("⚠️ Merci d'entrer un sujet pour lancer la génération !")
         else:
-            with st.spinner("🧠 Optimisation des algorithmes et création du kit en cours..."):
+            with st.spinner("🌌 L'IA fusionne les algorithmes pour composer ton kit d'exception..."):
                 
                 GROQ_API_KEY = "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"
                 
                 instructions_methode = (
-                    "Rédige le script pour une personne réelle face caméra avec indications de jeu, de découpe et de plans."
-                    if "Tournage humain" in methode else
-                    "Rédige le script sous forme de prompts séquentiels et descriptifs prêts à être intégrés dans une IA vidéo (InVideo/CapCut)."
+                    "Rédige le script pour une personne réelle face caméra avec indications d'acting, d'expressions et d'angles."
+                    if "Tournage Humain" in methode else
+                    "Rédige le script sous forme de prompts ultra-descriptifs prêts à coller dans une IA vidéo (InVideo/CapCut)."
                 )
                 
-                instruction_musique = f"Intègre des repères temporels de synchronisation basés sur l'ambiance musicale suivante : '{ambiance_musique}'." if ambiance_musique else ""
+                instruction_musique = f"Intègre des repères de synchronisation calés sur le rythme de cette musique/ambiance : '{ambiance_musique}'." if ambiance_musique else ""
 
                 prompt = f"""
-                Tu es un Director Marketing Viral senior spécialisé dans les formats courts sur {plateforme}.
-                Génère un Kit de Production Complet de niveau professionnel pour une vidéo de {duree} sur : '{sujet}' (Style: {style}, Ton: {ton}).
+                Tu es un Director Creative Viral mondialement reconnu sur {plateforme}.
+                Génère un Kit de Production Complet de niveau Masterclass pour une vidéo de {duree} sur : '{sujet}' (Style: {style}, Ton: {ton}).
                 
                 Directives :
                 - {instructions_methode}
@@ -153,15 +189,15 @@ with col_right:
                 
                 Format de sortie attendu :
                 
-                ### 🎬 1. Titres Accrocheurs & Miniature
-                - **Option Titre A** : [Titre ultra-engageant]
-                - **Option Titre B** : [Alternative intrigante]
-                - **Texte Vignette (Thumbnail)** : [3 à 4 mots percutants max]
+                ### 🎬 1. Titres Explosifs & Couverture
+                - **Option Titre A** : [Titre ultra-viral]
+                - **Option Titre B** : [Alternative accrocheuse]
+                - **Texte Vignette (Thumbnail)** : [3 à 4 mots max]
 
-                ### 🪝 2. Script de Production ({duree})
-                - **[00:00 - 00:05] Accroche Visuelle & Audio** : [Hook visuel + Texte écran + Phrase choc + Synchro son]
-                - **[Développement Séquencé]** : [Plans détaillés avec visuels B-roll, paroles exactes et indications sonores]
-                - **[Outro & Conversion]** : [Appel à l'action stratégique]
+                ### 🪝 2. Script de Production Mètre-Ruban ({duree})
+                - **[00:00 - 00:05] Accroche Dévastatrice** : [Hook visuel + Texte écran + Phrase choc + Synchro son]
+                - **[Développement Séquencé]** : [Plans détaillés avec visuels B-roll, paroles exactes et variations de son/beat]
+                - **[Outro & Conversion]** : [Appel à l'action irrésistible]
 
                 ### 📝 3. Optimisation SEO & Réseaux
                 - **Description** : [Texte captivant avec question ouverte d'engagement]
@@ -184,17 +220,10 @@ with col_right:
                     
                     if response.status_code == 200:
                         kit_genere = result["choices"][0]["message"]["content"]
-                        st.success("🎉 Kit Studio Pro généré avec succès !")
+                        st.balloons()  # Animation de succès !
+                        st.success("🔥 Ton kit d'élite a été créé avec succès !")
                         
-                        # Affichage du résultat dans une carte élégante
                         st.markdown(kit_genere)
                         
                         st.divider()
-                        st.markdown("##### 📋 Exporter / Copier le Kit")
-                        st.code(kit_genere, language="markdown")
-                    else:
-                        st.error(f"Erreur API : {result.get('error', {}).get('message', 'Erreur inconnue')}")
-                except Exception as e:
-                    st.error(f"Erreur de connexion : {e}")
-    else:
-        st.info("💡 **Prêt à créer ?** Renseignez vos critères à gauche et cliquez sur **Générer** pour obtenir votre kit complet.")
+                        st.markdown("#####
