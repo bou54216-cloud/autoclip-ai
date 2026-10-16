@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. Design Minimaliste, Brutaliste & Fluide
+# 2. Design Minimaliste, Brutaliste & Équilibré
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
@@ -28,7 +28,7 @@ st.markdown("""
     /* En-tête style éditorial */
     .editorial-header {
         text-align: center;
-        padding: 30px 20px 10px 20px;
+        padding: 40px 20px 20px 20px;
     }
     
     .editorial-tag {
@@ -57,17 +57,19 @@ st.markdown("""
         margin: 0 auto;
     }
 
-    /* Cartes interactives haut de gamme */
+    /* Cartes interactives harmonisées en hauteur */
     .card-wrapper {
         background: #121216;
         border: 1px solid #27272a;
-        border-radius: 20px;
-        padding: 30px 22px;
+        border-radius: 18px;
+        padding: 28px 22px;
         text-align: left;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
-        overflow: hidden;
-        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 220px;
+        height: 100%;
     }
 
     .card-wrapper:hover {
@@ -78,15 +80,15 @@ st.markdown("""
     }
 
     .card-number {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
         color: #52525b;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         font-family: monospace;
     }
 
     .card-title {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 700;
         color: #ffffff;
         margin-bottom: 8px;
@@ -96,7 +98,6 @@ st.markdown("""
         font-size: 0.88rem;
         color: #a1a1aa;
         line-height: 1.5;
-        margin-bottom: 15px;
     }
 
     /* Champs de saisie intégrés */
@@ -164,14 +165,16 @@ if st.session_state["module_choisi"] is None:
     """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3, gap="medium")
+    col1, col2, col3 = st.columns(3, gap="large")
 
     with col1:
         st.markdown("""
             <div class="card-wrapper">
-                <div class="card-number">01 // VIDEO ENGINE</div>
-                <div class="card-title">AutoClip AI</div>
-                <div class="card-desc">Scripts vidéo, hooks viraux, titres dynamiques et structures pour TikTok, Reels et Shorts.</div>
+                <div>
+                    <div class="card-number">01 // VIDEO ENGINE</div>
+                    <div class="card-title">AutoClip AI</div>
+                    <div class="card-desc">Scripts vidéo, hooks viraux, titres dynamiques et structures optimisées pour TikTok, Reels et Shorts.</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
@@ -182,9 +185,11 @@ if st.session_state["module_choisi"] is None:
     with col2:
         st.markdown("""
             <div class="card-wrapper">
-                <div class="card-number">02 // BRAND IDENTITY</div>
-                <div class="card-title">BioCraft AI</div>
-                <div class="card-desc">Architecture d'identité de marque, bios magnétiques d'élite et positionnement stratégique.</div>
+                <div>
+                    <div class="card-number">02 // BRAND IDENTITY</div>
+                    <div class="card-title">BioCraft AI</div>
+                    <div class="card-desc">Architecture d'identité de marque, bios magnétiques d'élite et positionnement stratégique sur-mesure.</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
@@ -195,9 +200,11 @@ if st.session_state["module_choisi"] is None:
     with col3:
         st.markdown("""
             <div class="card-wrapper">
-                <div class="card-number">03 // COPYWRITING & SALES</div>
-                <div class="card-title">CopyCraft AI</div>
-                <div class="card-desc">Rédaction persuasive, e-mails de prospection B2B, pages de vente et textes à haute conversion.</div>
+                <div>
+                    <div class="card-number">03 // COPYWRITING & SALES</div>
+                    <div class="card-title">CopyCraft AI</div>
+                    <div class="card-desc">Rédaction persuasive, e-mails de prospection B2B, pages de vente et structures de conversion directes.</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
@@ -319,7 +326,7 @@ elif st.session_state["module_choisi"] == "BioCraft":
                     st.error(f"Erreur : {e}")
 
 # =========================================================
-# MODULE 3 : COPYCRAFT AI (Nouveau)
+# MODULE 3 : COPYCRAFT AI
 # =========================================================
 elif st.session_state["module_choisi"] == "CopyCraft":
     st.markdown("### 📝 CopyCraft AI — Copywriting & Émails de Vente")
@@ -338,7 +345,7 @@ elif st.session_state["module_choisi"] == "CopyCraft":
     cta_souhaite = st.text_input("🎯 Appel à l'Action Principal (CTA)", placeholder="ex: Réserver un appel de 15 min, Télécharger le guide, Acheter maintenant...")
     
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("Générer le Text Copywriting ↗"):
+    if st.button("Générer le Texte Copywriting ↗"):
         if not description_offre:
             st.warning("⚠️ Veuillez décrire votre offre.")
         else:
