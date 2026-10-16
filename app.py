@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# 2. Design Minimaliste / Brutaliste & Fluide (Inspiré de l'univers créatif de Federico Valla)
+# 2. Design Minimaliste / Brutaliste & Fluide
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
@@ -57,7 +57,7 @@ st.markdown("""
         margin: 0 auto;
     }
 
-    /* Cartes interactives haut de gamme (Style Portfolio Créatif) */
+    /* Cartes interactives haut de gamme */
     .card-wrapper {
         background: #121216;
         border: 1px solid #27272a;
@@ -199,19 +199,19 @@ elif st.session_state["module_choisi"] == "AutoClip":
     st.markdown("### ⚡ AutoClip AI — Configuration Vidéo")
     st.caption("Paramétrez votre contenu pour obtenir un rendu immédiat et structuré.")
     
-    sujet_clip = st.text_input("🎯 Sujet ou concept de la vidéo", placeholder="ex: 3 clés pour composer une Bassline House percutante")
+    sujet_clip = st.text_input("🎯 Sujet ou concept de la vidéo", placeholder="ex: 3 astuces pour booster sa productivité au quotidien")
     
     c1, c2 = st.columns(2)
     with c1:
         plateforme = st.selectbox("📱 Plateforme Cible", ["TikTok", "Instagram Reels", "YouTube Shorts"])
-        style_clip = st.selectbox("🎨 Style de Format", ["Éducatif / Conseil", "Storytelling", "Promotion Musique / Art", "Divertissement"])
+        style_clip = st.selectbox("🎨 Style de Format", ["Éducatif / Conseil", "Storytelling", "Promotion / Business", "Divertissement"])
         type_rendu_autoclip = st.selectbox("📌 Type de Résultat", ["Texte final prêt à publier", "Script / Prompt de consignes pour une IA vidéo"])
     with c2:
         ton_clip = st.selectbox("🎙️ Ton Souhaité", ["Énergique & Rythmé", "Humoristique & Décalé", "Cash & Direct", "Professionnel & Inspirant"])
         duree = st.selectbox("⏱️ Durée Estimée", ["15 secondes", "30 secondes", "45 secondes", "1 minute", "1 minute 30 secondes"])
         
     methode = st.selectbox("🎬 Méthode de Réalisation", ["Tournage Humain (Visage caméra + B-roll)", "Génération IA (InVideo / CapCut)"])
-    ambiance_musique = st.text_input("🎵 Ambiance Sonore / BPM (Optionnel)", placeholder="ex: House 126 BPM...")
+    ambiance_musique = st.text_input("🎵 Ambiance Sonore / Style musical (Optionnel)", placeholder="ex: Lo-fi relaxant, beat dynamique...")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("Générer le Kit Vidéo ↗"):
@@ -255,16 +255,16 @@ elif st.session_state["module_choisi"] == "BioCraft":
     
     c1, c2 = st.columns(2)
     with c1:
-        plateforme_bio = st.selectbox("🌐 Plateforme Principale", ["TikTok / Instagram (Créateur / Artiste)", "LinkedIn (Professionnel / Corporate)", "Spotify / SoundCloud (Musicien)", "Site Web / Portfolio"])
+        plateforme_bio = st.selectbox("🌐 Plateforme Principale", ["TikTok / Instagram (Créateur)", "LinkedIn (Professionnel / Corporate)", "Site Web / Portfolio", "Autre"])
         ton_bio = st.selectbox("🎯 Posture de Marque", ["Autoritaire & Visionnaire", "Mystérieux & Énigmatique", "Accessible & Pédagogue", "Audacieux & Disruptif"])
         type_rendu_bio = st.selectbox("📌 Type de Résultat", ["Texte final prêt à publier (Bios & CTA)", "Script / Prompt de consignes pour une IA de branding"])
     with c2:
-        objectif_bio = st.selectbox("📈 Objectif Principal", ["Attirer des opportunités B2B", "Convertir en abonnés fidèles", "Vendre un produit / service / musique", "Établir une crédibilité instantanée"])
+        objectif_bio = st.selectbox("📈 Objectif Principal", ["Attirer des opportunités B2B", "Convertir en abonnés fidèles", "Vendre un produit ou service", "Établir une crédibilité instantanée"])
         longueur_bio = st.selectbox("📏 Format de la Bio", ["Ultra-court & Percutant", "Narratif & Inspirant", "À puces / Preuve sociale"])
         style_emojis = st.selectbox("✨ Style d'Émojis", ["Minimaliste & Chic", "Dynamique & Thématique", "Aucun"])
 
-    parcours_pro = st.text_area("✍️ Votre parcours, compétences clés ou accomplissements", placeholder="Renseignez votre parcours ici...", height=120)
-    mots_cles_cles = st.text_input("🔑 Mots-clés incontournables (Optionnel)", 
+    parcours_pro = st.text_area("✍️ Votre parcours, compétences clés ou accomplissements", placeholder="Renseignez votre parcours, vos projets ou vos réalisations ici...", height=120)
+    mots_cles_cles = st.text_input("🔑 Mots-clés incontournables (Optionnel)", placeholder="ex: Innovation, Stratégie, Design...")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("Forger l'Identité ↗"):
