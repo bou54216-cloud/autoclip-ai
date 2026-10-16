@@ -15,7 +15,7 @@ if st.button("Générer mon script viral 🔥"):
     else:
         with st.spinner("L'IA prépare tes hooks et ton script..."):
             
-            # Mets ta vraie clé Groq ici entre les guillemets :
+            
             GROQ_API_KEY = "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"
             
             prompt = f"""
@@ -44,7 +44,7 @@ if st.button("Générer mon script viral 🔥"):
             }
             
             payload = {
-                "model": "llama-3.3-70b-versatile",
+                "model": "llama-3.1-8b-instant",
                 "messages": [{"role": "user", "content": prompt}]
             }
             
