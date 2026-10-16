@@ -1,23 +1,22 @@
 import streamlit as st
-from groq import Groq
+import requests
+import json
 
-# Configuration de la page
 st.set_page_config(page_title="AutoClip AI", page_icon="🚀")
 st.title("🚀 AutoClip AI")
 st.caption("Générateur automatique de hooks et scripts viraux pour TikTok & Reels")
 
-# Formulaire utilisateur
-sujet = st.text_input("1. Quel est le sujet ou l'idée de ta vidéo ?", placeholder="ex: Mes conseils pour produire de la house music")
+sujet = st.text_input("1. Quel est le sujet ou l'idée de ta vidéo ?", placeholder="ex: Mes conseils pour produire de la house viral")
 style = st.selectbox("2. Quel est le style / format ?", ["Éducatif / Conseil", "Storytelling", "Promotion Musique / Art", "Divertissement"])
 
-# Bouton d'action
 if st.button("Générer mon script viral 🔥"):
     if not sujet:
         st.warning("Pense à entrer un sujet avant de lancer la génération !")
     else:
         with st.spinner("L'IA prépare tes hooks et ton script..."):
-            # Connexion à l'API Groq
-            client = Groq(api_key="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")
+            
+            # Mets ta vraie clé Groq ici entre les guillemets :
+            GROQ_API_KEY = "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"
             
             prompt = f"""
             Tu es un expert en marketing viral TikTok et Reels.
@@ -39,11 +38,25 @@ if st.button("Générer mon script viral 🔥"):
             ---
             """
             
-            completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}]
-        )
+            headers = {
+                "Authorization": f"Bearer {GROQ_API_KEY}",
+                "Content-Type": "application/json"
+            }
             
-            # Affichage du résultat
-            st.success("C'est prêt !")
-            st.markdown(completion.choices[0].message.content)
+            payload = {
+                "model": "llama-3.1-8b-instant",
+                "messages": [{"role": "user", "content": prompt}]
+            }
+            
+            try:
+                response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload))
+                result = response.json()
+                
+                if response.status_code == 200:
+                    script_genere = result["choices"][0]["message"]["content"]
+                    st.success("C'est prêt !")
+                    st.markdown(script_genere)
+                else:
+                    st.error(f"Erreur API Groq : {result.get('error', {}).get('message', 'Erreur inconnue')}")
+            except Exception as e:
+                st.error(f"Erreur de connexion : {e}")
