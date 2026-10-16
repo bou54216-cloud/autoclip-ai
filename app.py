@@ -15,7 +15,6 @@ if st.button("Générer mon script viral 🔥"):
     else:
         with st.spinner("L'IA prépare tes hooks et ton script..."):
             
-            
             GROQ_API_KEY = "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"
             
             prompt = f"""
@@ -44,7 +43,7 @@ if st.button("Générer mon script viral 🔥"):
             }
             
             payload = {
-                "model": "openai/gpt-oss-20b"
+                "model": "openai/gpt-oss-120b",
                 "messages": [{"role": "user", "content": prompt}]
             }
             
