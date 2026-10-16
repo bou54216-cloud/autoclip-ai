@@ -108,21 +108,21 @@ st.markdown("""
 st.markdown("""
     <div class="imperial-container">
         <span class="imperial-badge">👑 The Imperial Suite — All-Access</span>
-        <h1 class="imperial-title">Bienvenue dans votre Empire</h1>
-        <p class="imperial-subtitle">Sélectionnez ci-dessous l'outil souverain que vous souhaitez déployer pour dominer votre marché.</p>
+        <h1 class="imperial-title">Plateforme Souveraine</h1>
+        <p class="imperial-subtitle">Sélectionnez ci-dessous l'outil de précision que vous souhaitez déployer.</p>
     </div>
 """, unsafe_allow_html=True)
 
 # Clé API Groq
 GROQ_API_KEY = "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"
 
-# --- CHOIX DE L'OUTIL (Souveraineté de l'Empereur) ---
+# --- CHOIX DE L'OUTIL ---
 choix_outil = st.selectbox(
-    "🏛️ Choisissez votre division impériale :",
+    "🏛️ Choisissez votre division :",
     [
         "⚡ AutoClip AI (Vidéos & Kits Viraux)", 
-        "🎵 LyricPulse AI (Paroles & Concepts de Clips)", 
-        "💼 BioCraft AI (Profils Pro & Bios d'Élite)"
+        "🎵 LyricPulse AI (Paroles & Concepts de Clips d'Élite)", 
+        "💼 BioCraft AI (Identité Pro & Stratégie de Marque)"
     ]
 )
 
@@ -158,12 +158,12 @@ if "AutoClip" in choix_outil:
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("🚀 Déployer le Kit AutoClip"):
         if not sujet_clip:
-            st.warning("⚠️ Majesté, veuillez renseigner un sujet.")
+            st.warning("⚠️ Veuillez renseigner un sujet.")
         else:
-            with st.spinner("🌌 L'Empire orchestre la création de votre kit..."):
+            with st.spinner("🌌 Orchestration de la création du kit..."):
                 prompt = f"""
-                Tu es le Directeur Artistique suprême de l'Empire pour {plateforme}.
-                Génère un Kit de Production de niveau Impérial pour une vidéo de {duree} sur : '{sujet_clip}' (Style: {style_clip}, Ton: {ton_clip}).
+                Tu es le Directeur Artistique suprême pour {plateforme}.
+                Génère un Kit de Production de niveau supérieur pour une vidéo de {duree} sur : '{sujet_clip}' (Style: {style_clip}, Ton: {ton_clip}).
                 Méthode : {methode}. Ambiance sonore : {ambiance_musique}.
                 
                 Structure :
@@ -182,43 +182,63 @@ if "AutoClip" in choix_outil:
                     res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
                     if "choices" in res:
                         contenu = res["choices"][0]["message"]["content"]
-                        st.toast("👑 Votre kit impérial est prêt !", icon="⚡")
+                        st.toast("⚡ Kit de production généré avec succès !", icon="🚀")
                         st.markdown(contenu)
                         st.divider()
                         st.code(contenu, language="markdown")
                     else:
-                        st.error("Erreur de génération par l'Empire.")
+                        st.error("Erreur de génération.")
                 except Exception as e:
                     st.error(f"Erreur : {e}")
 
 # ==========================================
-# 2. LYRICPULSE AI (Paroles & Clips)
+# 2. LYRICPULSE AI (Paroles & Clips d'Élite)
 # ==========================================
 elif "LyricPulse" in choix_outil:
     st.markdown("### 🎵 LyricPulse AI — Division Musicale & Artistique")
-    st.caption("Façonnez des hymnes intemporels et des concepts visuels souverains pour vos tracks.")
+    st.caption("Conception artistique sur-mesure : écriture millimétrée, structure des émotions et storyboard de clip.")
     
-    genre_musique = st.selectbox("🎹 Genre Musical", ["House / Deep House", "Tech House", "Synthwave / Electronic", "Hip-Hop / Trap", "Pop / Commercial"])
-    theme_morceau = st.text_input("💡 Thème ou Émotion du morceau", placeholder="ex: Nuit d'été en club, évasion, énergie pure, mélancolie nocturne...")
-    ambiance_paroles = st.selectbox("🎙️ Style d'écriture", ["Anglais (Vocal puissant & accrocheur)", "Français (Poétique & Rythmé)", "Instru / Minimaliste (Quelques vocaux percutants)"])
+    c1, c2 = st.columns(2)
+    with c1:
+        genre_musique = st.selectbox("🎹 Genre Musical", ["House / Deep House", "Tech House", "Synthwave / Electronic", "Hip-Hop / Trap", "Pop / Commercial", "RnB / Lo-Fi"])
+        structure_morceau = st.selectbox("🎼 Structure Souhaitée", ["Standard (Intro > Couplet > Refrain > Pont > Outro)", "Club Extended (Grosse intro, drop massif, break, second drop)", "Court / Formateur (Direct au refrain / Idéal TikTok)"])
+        langue_chant = st.selectbox("🌍 Langue des Paroles", ["Anglais (Standard international)", "Français (Moderne & Poétique)", "Anglais avec phrasé FR / Bilingue"])
+    with c2:
+        ambiance_paroles = st.selectbox("🎙️ Émotion / Vibe", ["Énergique & Euphorique (Festival / Club)", "Mélancolique & Nocturne", "Hypnotique & Planant", "Sombre & Perforant (Underground)"])
+        style_voix = st.selectbox("🗣️ Texture Vocale", ["Vocaux pitchés & rythmés (Staccato)", "Voix aérienne & éthérée (Reverb prononcée)", "Spoken Word / Chant parlé intense", "Mélodie entraînante et entêtante (Earworm)"])
+
+    theme_morceau = st.text_area("💡 Histoire, concept précis ou mots-clés à intégrer", placeholder="ex: Une nuit blanche d'été à Ibiza, l'adrénaline du dancefloor, la sensation de liberté au moment du drop...")
+    ref_artiste = st.text_input("🎧 Artistes de référence (Optionnel)", placeholder="ex: Fred again.., Fisher, Daft Punk, The Weeknd...")
     
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("🎶 Composer l'Hymne et le Concept"):
+    if st.button("🎹 Composer l'Œuvre Musicale & Visuelle"):
         if not theme_morceau:
-            st.warning("⚠️ Majesté, veuillez indiquer le thème du morceau.")
+            st.warning("⚠️ Veuillez indiquer le concept ou l'histoire du morceau.")
         else:
-            with st.spinner("🎹 L'Empire compose les harmonies et structure le clip..."):
+            with st.spinner("🎵 Analyse harmonique et rédaction artistique en cours..."):
                 prompt = f"""
-                Tu es le Producer et Directeur Musical légendaire de l'Empire.
-                Génère une œuvre musicale et visuelle complète pour un morceau de {genre_musique} axé sur : '{theme_morceau}' (Style d'écriture : {ambiance_paroles}).
+                Tu es un Producer, Auteur-Compositeur et Réalisateur de clips de renommée internationale.
+                Crée une œuvre musicale et visuelle d'une précision absolue basée sur les critères suivants :
+                - Genre : {genre_musique}
+                - Structure : {structure_morceau}
+                - Langue : {langue_chant}
+                - Vibe / Émotion : {ambiance_paroles}
+                - Texture Vocale : {style_voix}
+                - Concept / Histoire : '{theme_morceau}'
+                - Références artistiques : {ref_artiste if ref_artiste else "Libre"}
                 
-                Structure ta réponse ainsi :
-                ### 🎤 1. Paroles Impériales (Structure complète)
-                - Intro / Couplet / Refrain / Pont / Outro avec instructions de voix.
-                ### 🎥 2. Concept de Clip Vidéo Scène par Scène
-                - Ambiance lumineuse, décors, tenues, rythme de montage et effets visuels calés sur le beat.
-                ### 📢 3. Stratégie de Sortie & Teasing Réseaux
-                - Idées de posts pour annoncer le son avant la sortie.
+                Structure ta réponse de manière ultra-détaillée :
+                ### 🎼 1. Analyse & Direction Artistique du Morceau
+                - BPM conseillé, choix des accords principaux et design sonore global.
+                
+                ### 🎤 2. Paroles Intégrales (Section par Section)
+                - Écris l'intégralité des paroles ({langue_chant}) avec les indications de placement rythmique et les effets sur la voix (ex: [Effet radio], [Écho lourd sur le mot...]).
+                
+                ### 🎥 3. Storyboard & Concept du Clip Vidéo (Scène par Scène)
+                - Description minutieuse du clip : colorimétrie, lumières stroboscopiques ou douces, tenues, jeu d'acteur, mouvements de caméra et synchronisation exacte des images avec le drop ou les temps forts.
+                
+                ### 🚀 4. Stratégie de Teasing & Sortie
+                - 3 idées de concepts de vidéos courtes pour teaser le son sur TikTok/Reels avant la sortie.
                 """
                 
                 headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
@@ -228,7 +248,7 @@ elif "LyricPulse" in choix_outil:
                     res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
                     if "choices" in res:
                         contenu = res["choices"][0]["message"]["content"]
-                        st.toast("👑 Votre œuvre musicale est prête !", icon="🎵")
+                        st.toast("🎵 Œuvre musicale et visuelle générée avec succès !", icon="🎶")
                         st.markdown(contenu)
                         st.divider()
                         st.code(contenu, language="markdown")
@@ -238,33 +258,53 @@ elif "LyricPulse" in choix_outil:
                     st.error(f"Erreur : {e}")
 
 # ==========================================
-# 3. BIOCRAFT AI (Profils Pro & Bios d'Élite)
+# 3. BIOCRAFT AI (Identité Pro & Stratégie)
 # ==========================================
 elif "BioCraft" in choix_outil:
     st.markdown("### 💼 BioCraft AI — Division Identité & Rayonnement")
-    st.caption("Sculptez une image de marque et des profils sociaux d'une prestance absolue.")
+    st.caption("Architecture d'image de marque : positionnement, bios magnétiques et messages de conversion.")
     
-    plateforme_bio = st.selectbox("🌐 Réseau Principal", ["TikTok / Instagram", "LinkedIn / Professionnel", "Spotify / SoundCloud (Artiste)"])
-    parcours = st.text_area("✍️ Votre parcours, vos passions ou vos réalisations", placeholder="ex: Producteur de house music, étudiant en droit d'affaires, passionné par la tech...")
-    objectif = st.selectbox("🎯 Objectif Souhaité", ["Impressionner et asseoir son autorité", "Attirer des partenariats / clients", "Générer un maximum d'abonnés curieux"])
+    c1, c2 = st.columns(2)
+    with c1:
+        plateforme_bio = st.selectbox("🌐 Plateforme Principale", ["TikTok / Instagram (Créateur / Artiste)", "LinkedIn (Professionnel / Corporate)", "Spotify / SoundCloud (Musicien)", "Site Web / Portfolio (Landing Page)"])
+        ton_bio = st.selectbox("🎯 Posture de Marque", ["Autoritaire & Visionnaire (Expert incontesté)", "Mystérieux & Énigmatique (Génère la curiosité)", "Accessible & Pédagogue (Proche de sa communauté)", "Audacieux & Disruptif (Casqueur de codes)"])
+        objectif_bio = st.selectbox("📈 Objectif Numéro 1", ["Convertir les visiteurs en abonnés fidèles", "Attirer des opportunités B2B / Partenariats", "Vendre un produit, service ou une œuvre musicale", "Établir une crédibilité instantanée"])
+    with c2:
+        longueur_bio = st.selectbox("📏 Format de la Bio", ["Ultra-court & Percutant (Ligne par ligne)", "Narratif & Inspirant (Mini-histoire)", "À puces / Chiffré (Preuve sociale forte)"])
+        style_emojis = st.selectbox("✨ Utilisation des Émojis", ["Minimaliste & Chic (1 ou 2 max)", "Dynamique & Thématique (En lien avec la niche)", "Aucun (Pur style minimaliste strict)"])
+
+    parcours_pro = st.text_area("✍️ Votre parcours, vos compétences clés ou vos accomplissements", placeholder="ex: 5 ans de production musicale, des millions d'écoutes, étudiant passionné par le droit des affaires, création de projets innovants...")
+    mots_cles_cles = st.text_input("🔑 Mots-clés ou termes incontournables à placer (Optionnel)", placeholder="ex: House Music, Paris, Indépendant, Innovation...")
     
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("👑 Forger l'Identité Impériale"):
-        if not parcours:
-            st.warning("⚠️ Majesté, veuillez renseigner quelques éléments sur votre parcours.")
+    if st.button("✨ Forger l'Identité de Marque"):
+        if not parcours_pro:
+            st.warning("⚠️ Veuillez renseigner votre parcours ou vos réalisations.")
         else:
-            with st.spinner("✨ L'Empire forge votre blason numérique..."):
+            with st.spinner("💼 Calcul du positionnement et forgeage des bios..."):
                 prompt = f"""
-                Tu es le Grand Chancelier en Image de Marque et Personal Branding pour l'élite.
-                Génère un profil et des bios de niveau Impérial pour {plateforme_bio} basés sur : '{parcours}' (Objectif : {objectif}).
+                Tu es un Directeur de Stratégie en Image de Marque et Personal Branding pour célébrités et entrepreneurs d'élite.
+                Conçois une architecture d'identité numérique d'une puissance redoutable basée sur :
+                - Plateforme : {plateforme_bio}
+                - Posture : {ton_bio}
+                - Objectif : {objectif_bio}
+                - Format : {longueur_bio}
+                - Style d'émojis : {style_emojis}
+                - Parcours et réalisations : '{parcours_pro}'
+                - Mots-clés obligatoires : {mots_cles_cles if mots_cles_cles else "Aucun spécifique"}
                 
-                Structure ta réponse ainsi :
-                ### 🔥 1. 3 Options de Bios Souveraines (Courtes & Impactantes)
-                - Option Alpha / Option Mystique / Option Directe avec émojis choisis avec parcimonie.
-                ### 🔗 2. Appel à l'Action (CTA) & Liens Stratégiques
-                - Formules pour inciter à cliquer sur le lien en bio.
-                ### 🚀 3. Message d'Accroche / Pitch de Présentation (DM ou Accueil)
-                - Un message de bienvenue percutant pour marquer les esprits dès la première seconde.
+                Structure ta réponse de manière exhaustive :
+                ### 🎯 1. Analyse du Positionnement & de l'Angle d'Attaque
+                - Définition de la promesse unique et de la psychologie de l'audience vis-à-vis du profil.
+                
+                ### ✍️ 2. Les 4 Options de Bios Magnétiques (Prêtes à copier)
+                - Fournis 4 variations distinctes selon l'angle (ex: L'autoritaire, Le provocateur de curiosité, Le minimaliste chic, Le factuel axé résultats).
+                
+                ### 🔗 3. Stratégie de Lien (Call-to-Action)
+                - 3 formules irrésistibles pour inciter au clic sur le lien en bio (selon l'objectif : {objectif_bio}).
+                
+                ### 💬 4. Le Message d'Accueil / Premier Contact (DM ou Section À Propos)
+                - Un texte d'introduction percutant qui convertit instantanément un visiteur en allié ou en client.
                 """
                 
                 headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
@@ -274,12 +314,12 @@ elif "BioCraft" in choix_outil:
                     res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
                     if "choices" in res:
                         contenu = res["choices"][0]["message"]["content"]
-                        st.toast("👑 Votre identité royale est forgée !", icon="💼")
+                        st.toast("💼 Identité de marque forgée avec succès !", icon="👑")
                         st.markdown(contenu)
                         st.divider()
                         st.code(contenu, language="markdown")
                     else:
-                        st.error("Erreur de forgeage.")
+                        st.error("Erreur de génération.")
                 except Exception as e:
                     st.error(f"Erreur : {e}")
 
