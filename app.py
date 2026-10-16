@@ -59,3 +59,19 @@ if st.button("Générer mon script viral 🔥"):
                     st.error(f"Erreur API Groq : {result.get('error', {}).get('message', 'Erreur inconnue')}")
             except Exception as e:
                 st.error(f"Erreur de connexion : {e}")
+duree = st.radio("3. Quelle est la durée de ta vidéo ?", ["15 secondes (Court & Percutant)", "30 secondes (Standard)", "60 secondes (Storytelling détaillé)"])
+if script_genere:
+    st.success("C'est prêt !")
+    st.markdown(script_genere)
+    # Bouton de copie natif de Streamlit
+    st.code(script_genere, language="markdown")
+    st.code()if response.status_code == 200:
+                    script_genere = result["choices"][0]["message"]["content"]
+                    st.success("C'est prêt !")
+                    st.markdown(script_genere)
+                    
+                    # --- NOUVEAU : Bloc pour copier facilement le texte ---
+                    st.markdown("### 📋 Copier ton script")
+                    st.code(script_genere, language="markdown")
+                else:
+                    st.error(f"Erreur API Groq : {result.get('error', {}).get('message', 'Erreur inconnue')}")
