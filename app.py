@@ -68,11 +68,11 @@ def recharger_via_stripe(price_id, user_email):
             customer_email=user_email,
             success_url='https://the-empire-studio.streamlit.app/?success=true',
             cancel_url='https://the-empire-studio.streamlit.app/?canceled=true',
+            managed_payments={'enabled': False},  # <-- Désactive l'exigence de code taxe
         )
         st.markdown(f'<meta http-equiv="refresh" content="0;url={session.url}">', unsafe_allow_html=True)
     except Exception as e:
         st.error(f"Erreur lors de l'initialisation du paiement Stripe : {e}")
-
 # ---------------------------------------------------------
 # 4. INTERFACE D'AUTHENTIFICATION (SI NON CONNECTÉ)
 # ---------------------------------------------------------
