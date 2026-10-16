@@ -6,11 +6,11 @@ import json
 st.set_page_config(
     page_title="The Empire Studio — Creative Suite",
     page_icon="⚡",
-    layout="centered",
+    layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# 2. Design Minimaliste / Brutaliste & Fluide
+# 2. Design Minimaliste, Brutaliste & Fluide
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
@@ -28,7 +28,7 @@ st.markdown("""
     /* En-tête style éditorial */
     .editorial-header {
         text-align: center;
-        padding: 40px 20px 20px 20px;
+        padding: 30px 20px 10px 20px;
     }
     
     .editorial-tag {
@@ -53,7 +53,7 @@ st.markdown("""
     .editorial-subtitle {
         font-size: 1rem;
         color: #a1a1aa;
-        max-width: 500px;
+        max-width: 550px;
         margin: 0 auto;
     }
 
@@ -62,12 +62,12 @@ st.markdown("""
         background: #121216;
         border: 1px solid #27272a;
         border-radius: 20px;
-        padding: 35px 25px;
+        padding: 30px 22px;
         text-align: left;
         transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        cursor: pointer;
         position: relative;
         overflow: hidden;
+        min-height: 200px;
     }
 
     .card-wrapper:hover {
@@ -81,25 +81,25 @@ st.markdown("""
         font-size: 0.8rem;
         font-weight: 600;
         color: #52525b;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
         font-family: monospace;
     }
 
     .card-title {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         font-weight: 700;
         color: #ffffff;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     .card-desc {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         color: #a1a1aa;
         line-height: 1.5;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 
-    /* Champs de saisie intégrés et propres */
+    /* Champs de saisie intégrés */
     .stTextInput input, .stSelectbox div[data-baseweb="select"], .stTextArea textarea {
         background-color: #121216 !important;
         border: 1px solid #27272a !important;
@@ -118,9 +118,9 @@ st.markdown("""
         background: #ffffff;
         color: #09090b;
         font-weight: 700;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         border-radius: 12px;
-        padding: 14px 20px;
+        padding: 12px 18px;
         border: none;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -145,33 +145,33 @@ if "module_choisi" not in st.session_state:
 
 # --- BARRE DE NAVIGATION INTERNE SI UN MODULE EST CHOISI ---
 if st.session_state["module_choisi"] is not None:
-    col_nav1, col_nav2 = st.columns([8, 2])
-    with col_nav2:
+    c_space, c_nav = st.columns([8, 2])
+    with c_nav:
         if st.button("← Accueil"):
             st.session_state["module_choisi"] = None
             st.rerun()
 
 # =========================================================
-# ÉCRAN D'ACCUEIL : LES DEUX CARTES ÉDITORIALES
+# ÉCRAN D'ACCUEIL : LES TROIS CARTES ÉDITORIALES
 # =========================================================
 if st.session_state["module_choisi"] is None:
     st.markdown("""
         <div class="editorial-header">
             <span class="editorial-tag">Selected Works & Systems — 2026</span>
             <h1 class="editorial-title">The Empire Studio</h1>
-            <p class="editorial-subtitle">Sélectionnez le module créatif à déployer.</p>
+            <p class="editorial-subtitle">Sélectionnez le module créatif à déployer pour votre projet.</p>
         </div>
     """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    col_gauche, col_droite = st.columns(2, gap="large")
+    col1, col2, col3 = st.columns(3, gap="medium")
 
-    with col_gauche:
+    with col1:
         st.markdown("""
             <div class="card-wrapper">
                 <div class="card-number">01 // VIDEO ENGINE</div>
                 <div class="card-title">AutoClip AI</div>
-                <div class="card-desc">Génération de scripts vidéo, hooks viraux, titres dynamiques et structures pour TikTok, Reels et Shorts.</div>
+                <div class="card-desc">Scripts vidéo, hooks viraux, titres dynamiques et structures pour TikTok, Reels et Shorts.</div>
             </div>
         """, unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
@@ -179,7 +179,7 @@ if st.session_state["module_choisi"] is None:
             st.session_state["module_choisi"] = "AutoClip"
             st.rerun()
 
-    with col_droite:
+    with col2:
         st.markdown("""
             <div class="card-wrapper">
                 <div class="card-number">02 // BRAND IDENTITY</div>
@@ -190,6 +190,19 @@ if st.session_state["module_choisi"] is None:
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("Lancer BioCraft ↗", key="btn_biocraft"):
             st.session_state["module_choisi"] = "BioCraft"
+            st.rerun()
+
+    with col3:
+        st.markdown("""
+            <div class="card-wrapper">
+                <div class="card-number">03 // COPYWRITING & SALES</div>
+                <div class="card-title">CopyCraft AI</div>
+                <div class="card-desc">Rédaction persuasive, e-mails de prospection B2B, pages de vente et textes à haute conversion.</div>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+        if st.button("Lancer CopyCraft ↗", key="btn_copycraft"):
+            st.session_state["module_choisi"] = "CopyCraft"
             st.rerun()
 
 # =========================================================
@@ -298,6 +311,63 @@ elif st.session_state["module_choisi"] == "BioCraft":
                     if "choices" in res:
                         contenu = res["choices"][0]["message"]["content"]
                         st.toast("Identité forgée !", icon="✨")
+                        st.markdown("### 📋 Votre texte prêt à l'emploi :")
+                        st.code(contenu, language="markdown")
+                    else:
+                        st.error("Erreur de génération.")
+                except Exception as e:
+                    st.error(f"Erreur : {e}")
+
+# =========================================================
+# MODULE 3 : COPYCRAFT AI (Nouveau)
+# =========================================================
+elif st.session_state["module_choisi"] == "CopyCraft":
+    st.markdown("### 📝 CopyCraft AI — Copywriting & Émails de Vente")
+    st.caption("Concevez des textes de vente persuasifs et des séquences d'émails haute conversion.")
+    
+    c1, c2 = st.columns(2)
+    with c1:
+        type_copy = st.selectbox("📄 Type de Contenu", ["Émail de Prospection B2B (Cold Email)", "Séquence de Lancement de Produit", "Page de Vente / Landing Page", "Publicité Social Media (Meta / Google)"])
+        framework_copy = st.selectbox("⚙️ Framework de Copywriting", ["AIDA (Attention, Intérêt, Désir, Action)", "PAS (Problème, Agitation, Solution)", "BAB (Before, After, Bridge)", "Direct & Minimaliste"])
+        type_rendu_copy = st.selectbox("📌 Type de Résultat", ["Texte final prêt à être envoyé / publié", "Script / Prompt de consignes pour une IA de rédaction"])
+    with c2:
+        ton_copy = st.selectbox("🎙️ Ton & Style", ["Convaincant & Direct", "Inspirant & Storytelling", "Professionnel & B2B", "Urgent & Offre Limité"])
+        cible_copy = st.text_input("👥 Cible / Prospect (Audience)", placeholder="ex: Fondateurs de startups, Directeurs Marketing, Particuliers...")
+
+    description_offre = st.text_area("📦 Description du produit, service ou offre", placeholder="Décrivez les bénéfices clés, le problème résolu et la valeur ajoutée...", height=120)
+    cta_souhaite = st.text_input("🎯 Appel à l'Action Principal (CTA)", placeholder="ex: Réserver un appel de 15 min, Télécharger le guide, Acheter maintenant...")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("Générer le Text Copywriting ↗"):
+        if not description_offre:
+            st.warning("⚠️ Veuillez décrire votre offre.")
+        else:
+            with st.spinner("Rédaction en cours..."):
+                prompt = f"""
+                Tu es un copywriter d'élite reconnu mondialement.
+                Rédige un contenu ultra-persuasif ({type_rendu_copy}) basé sur :
+                - Type de contenu : {type_copy}
+                - Framework : {framework_copy}
+                - Ton : {ton_copy}
+                - Cible : {cible_copy}
+                - Offre : '{description_offre}'
+                - CTA : {cta_souhaite}
+                
+                Rédige directement un texte extrêmement complet, fluide et immédiatement utilisable sans explication.
+                Format de sortie :
+                ### 🎯 Objets & Accroches Striking (3 Variantes)
+                ### ✉️ Corps du Texte / Émail
+                ### 🚀 Appel à l'Action & P.S. Persuasif
+                """
+                
+                headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
+                payload = {"model": "openai/gpt-oss-120b", "messages": [{"role": "user", "content": prompt}]}
+                
+                try:
+                    res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload)).json()
+                    if "choices" in res:
+                        contenu = res["choices"][0]["message"]["content"]
+                        st.toast("Texte généré avec succès !", icon="✨")
                         st.markdown("### 📋 Votre texte prêt à l'emploi :")
                         st.code(contenu, language="markdown")
                     else:
