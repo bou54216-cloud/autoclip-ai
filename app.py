@@ -139,3 +139,88 @@ with col_left:
         [
             "Tournage Humain (Visage caméra + B-roll)", 
             "IA Text-to-Video (Pour InVideo / CapCut)"
+        ]
+    )
+    
+    ambiance_musique = st.text_input(
+        "🎵 Musique & Synchro Sonore (Optionnel)", 
+        placeholder="ex: House 126 BPM, Drop puissant à 15s, Bassline groovy..."
+    )
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    btn_generer = st.button("⚡ Générer le Kit Studio Pro")
+
+with col_right:
+    st.markdown("### 🚀 Rendu du Kit Studio")
+    
+    if btn_generer:
+        if not sujet:
+            st.warning("⚠️ Merci d'entrer un sujet pour lancer la génération !")
+        else:
+            with st.spinner("🌌 L'IA fusionne les algorithmes pour composer ton kit d'exception..."):
+                
+                GROQ_API_KEY = "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"
+                
+                instructions_methode = (
+                    "Rédige le script pour une personne réelle face caméra avec indications d'acting, d'expressions et d'angles."
+                    if "Tournage Humain" in methode else
+                    "Rédige le script sous forme de prompts ultra-descriptifs prêts à coller dans une IA vidéo (InVideo/CapCut)."
+                )
+                
+                instruction_musique = f"Intègre des repères de synchronisation calés sur le rythme de cette musique/ambiance : '{ambiance_musique}'." if ambiance_musique else ""
+
+                prompt = f"""
+                Tu es un Director Creative Viral mondialement reconnu sur {plateforme}.
+                Génère un Kit de Production Complet de niveau Masterclass pour une vidéo de {duree} sur : '{sujet}' (Style: {style}, Ton: {ton}).
+                
+                Directives :
+                - {instructions_methode}
+                - {instruction_musique}
+                
+                Format de sortie attendu :
+                
+                ### 🎬 1. Titres Explosifs & Couverture
+                - **Option Titre A** : [Titre ultra-viral]
+                - **Option Titre B** : [Alternative accrocheuse]
+                - **Texte Vignette (Thumbnail)** : [3 à 4 mots max]
+
+                ### 🪝 2. Script de Production Mètre-Ruban ({duree})
+                - **[00:00 - 00:05] Accroche Dévastatrice** : [Hook visuel + Texte écran + Phrase choc + Synchro son]
+                - **[Développement Séquencé]** : [Plans détaillés avec visuels B-roll, paroles exactes et variations de son/beat]
+                - **[Outro & Conversion]** : [Appel à l'action irrésistible]
+
+                ### 📝 3. Optimisation SEO & Réseaux
+                - **Description** : [Texte captivant avec question ouverte d'engagement]
+                - **Hashtags Ciblés** : [5 à 8 hashtags stratégiques pour la niche]
+                """
+                
+                headers = {
+                    "Authorization": f"Bearer {GROQ_API_KEY}",
+                    "Content-Type": "application/json"
+                }
+                
+                payload = {
+                    "model": "openai/gpt-oss-120b",
+                    "messages": [{"role": "user", "content": prompt}]
+                }
+                
+                try:
+                    response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, data=json.dumps(payload))
+                    result = response.json()
+                    
+                    if response.status_code == 200:
+                        kit_genere = result["choices"][0]["message"]["content"]
+                        st.balloons()
+                        st.success("🔥 Ton kit d'élite a été créé avec succès !")
+                        
+                        st.markdown(kit_genere)
+                        
+                        st.divider()
+                        st.markdown("##### 📋 Copier tout le Kit en 1-Clic")
+                        st.code(kit_genere, language="markdown")
+                    else:
+                        st.error(f"Erreur API : {result.get('error', {}).get('message', 'Erreur inconnue')}")
+                except Exception as e:
+                    st.error(f"Erreur de connexion : {e}")
+    else:
+        st.info("⚡ **Prêt à frapper fort ?** Remplis le formulaire à gauche et lance la génération pour voir la magie opérer.")
