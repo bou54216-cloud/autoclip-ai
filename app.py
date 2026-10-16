@@ -133,8 +133,22 @@ st.markdown("""
 
 GROQ_API_KEY = "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"
 
-# --- SYSTÈME D'AUTHENTIFICATION GOOGLE ---
-if not st.experimental_user.is_logged_in:
+# --- GESTION DE LA CONNEXION COMPATIBLE TUTES VERSIONS ---
+user_is_logged_in = False
+user_name = "Utilisateur"
+user_email = ""
+
+# Vérification sécurisée
+if hasattr(st, "user") and st.user:
+    user_is_logged_in = True
+    user_name = getattr(st.user, "name", "Utilisateur")
+    user_email = getattr(st.user, "email", "")
+elif hasattr(st, "experimental_user") and getattr(st.experimental_user, "is_logged_in", False):
+    user_is_logged_in = True
+    user_name = getattr(st.experimental_user, "name", "Utilisateur")
+    user_email = getattr(st.experimental_user, "email", "")
+
+if not user_is_logged_in:
     st.markdown("""
         <div class="editorial-header" style="margin-top: 50px;">
             <span class="editorial-tag">Accès Sécurisé — Imperial Suite</span>
@@ -149,14 +163,10 @@ if not st.experimental_user.is_logged_in:
         if st.button("🌐 Se connecter avec Google"):
             st.login("google")
 else:
-    # L'utilisateur est connecté
-    nom_utilisateur = st.experimental_user.name
-    email_utilisateur = st.experimental_user.email
-
     # Barre supérieure de profil
     col_prof1, col_prof2 = st.columns([8, 2])
     with col_prof1:
-        st.caption(f"👤 Connecté en tant que **{nom_utilisateur}** ({email_utilisateur})")
+        st.caption(f"👤 Connecté en tant que **{user_name}** ({user_email})")
     with col_prof2:
         if st.button("Se déconnecter"):
             st.logout()
