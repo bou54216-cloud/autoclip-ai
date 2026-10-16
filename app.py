@@ -8,6 +8,7 @@ st.caption("Générateur automatique de hooks et scripts viraux pour TikTok & Re
 
 sujet = st.text_input("1. Quel est le sujet ou l'idée de ta vidéo ?", placeholder="ex: Mes conseils pour produire de la house viral")
 style = st.selectbox("2. Quel est le style / format ?", ["Éducatif / Conseil", "Storytelling", "Promotion Musique / Art", "Divertissement"])
+ton = st.selectbox("3. Quel est le ton souhaité ?", ["Énergique & Rythmé", "Humoristique & Décalé", "Cash & Direct", "Professionnel & Inspirant"])
 
 if st.button("Générer mon script viral 🔥"):
     if not sujet:
@@ -19,7 +20,7 @@ if st.button("Générer mon script viral 🔥"):
             
             prompt = f"""
             Tu es un expert en marketing viral TikTok et Reels.
-            Génère un contenu optimisé pour le sujet suivant : '{sujet}' (Style: {style}).
+            Génère un contenu optimisé pour le sujet suivant : '{sujet}' (Style: {style}, Ton: {ton}).
             
             Structure la réponse exactement comme ceci :
             ---
