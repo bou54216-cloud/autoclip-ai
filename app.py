@@ -264,7 +264,7 @@ elif st.session_state["module_choisi"] == "BioCraft":
         style_emojis = st.selectbox("✨ Style d'Émojis", ["Minimaliste & Chic", "Dynamique & Thématique", "Aucun"])
 
     parcours_pro = st.text_area("✍️ Votre parcours, compétences clés ou accomplissements", placeholder="Renseignez votre parcours ici...", height=120)
-    mots_cles_cles = st.text_input("🔑 Mots-clés incontournables (Optionnel)", placeholder="ex: Droit des Affaires, House Music...")
+    mots_cles_cles = st.text_input("🔑 Mots-clés incontournables (Optionnel)", 
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("Forger l'Identité ↗"):
