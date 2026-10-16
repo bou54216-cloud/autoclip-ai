@@ -204,11 +204,11 @@ elif "LyricPulse" in choix_outil:
         structure_morceau = st.selectbox("🎼 Structure Souhaitée", ["Standard (Intro > Couplet > Refrain > Pont > Outro)", "Club Extended (Grosse intro, drop massif, break, second drop)", "Court / Formateur (Direct au refrain / Idéal TikTok)"])
         langue_chant = st.selectbox("🌍 Langue des Paroles", ["Anglais (Standard international)", "Français (Moderne & Poétique)", "Anglais avec phrasé FR / Bilingue"])
     with c2:
-        ambiance_paroles = st.selectbox("🎙️ Émotion / Vibe", ["Énergique & Euphorique (Festival / Club)", "Mélancolique & Nocturne", "Hypnotique & Planant", "Sombre & Perforant (Underground)"])
+        ambiance_paroles = st.selectbox("🎙️ Style / Vibe Vocale", ["Vocaux anglais captivants & groovy (Style House)", "Énergique & Euphorique (Festival / Club)", "Mélancolique & Nocturne", "Hypnotique & Planant"])
         style_voix = st.selectbox("🗣️ Texture Vocale", ["Vocaux pitchés & rythmés (Staccato)", "Voix aérienne & éthérée (Reverb prononcée)", "Spoken Word / Chant parlé intense", "Mélodie entraînante et entêtante (Earworm)"])
 
     theme_morceau = st.text_area("💡 Histoire, concept précis ou mots-clés à intégrer", placeholder="ex: Une nuit blanche d'été à Ibiza, l'adrénaline du dancefloor, la sensation de liberté au moment du drop...")
-    ref_artiste = st.text_input("🎧 Artistes de référence (Optionnel)", placeholder="ex: Fred again.., Fisher, Daft Punk, The Weeknd...")
+    ref_artiste = st.text_input("🎧 Artistes de référence (Optionnel)", placeholder="ex: CH@NC3, Fred again.., Fisher, Daft Punk...")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("🎹 Composer l'Œuvre Musicale & Visuelle"):
@@ -268,13 +268,16 @@ elif "BioCraft" in choix_outil:
     with c1:
         plateforme_bio = st.selectbox("🌐 Plateforme Principale", ["TikTok / Instagram (Créateur / Artiste)", "LinkedIn (Professionnel / Corporate)", "Spotify / SoundCloud (Musicien)", "Site Web / Portfolio (Landing Page)"])
         ton_bio = st.selectbox("🎯 Posture de Marque", ["Autoritaire & Visionnaire (Expert incontesté)", "Mystérieux & Énigmatique (Génère la curiosité)", "Accessible & Pédagogue (Proche de sa communauté)", "Audacieux & Disruptif (Casqueur de codes)"])
-        objectif_bio = st.selectbox("📈 Objectif Numéro 1", ["Convertir les visiteurs en abonnés fidèles", "Attirer des opportunités B2B / Partenariats", "Vendre un produit, service ou une œuvre musicale", "Établir une crédibilité instantanée"])
+        objectif_bio = st.selectbox("📈 Objectif Numéro 1", ["Attirer des opportunités B2B / Partenariats", "Convertir les visiteurs en abonnés fidèles", "Vendre un produit, service ou une œuvre musicale", "Établir une crédibilité instantanée"])
     with c2:
         longueur_bio = st.selectbox("📏 Format de la Bio", ["Ultra-court & Percutant (Ligne par ligne)", "Narratif & Inspirant (Mini-histoire)", "À puces / Chiffré (Preuve sociale forte)"])
         style_emojis = st.selectbox("✨ Utilisation des Émojis", ["Minimaliste & Chic (1 ou 2 max)", "Dynamique & Thématique (En lien avec la niche)", "Aucun (Pur style minimaliste strict)"])
 
-    parcours_pro = st.text_area("✍️ Votre parcours, vos compétences clés ou vos accomplissements", placeholder="ex: 5 ans de production musicale, des millions d'écoutes, étudiant passionné par le droit des affaires, création de projets innovants...")
-    mots_cles_cles = st.text_input("🔑 Mots-clés ou termes incontournables à placer (Optionnel)", placeholder="ex: House Music, Paris, Indépendant, Innovation...")
+    # Texte pré-rempli sur mesure direct
+    parcours_default = "Étudiant passionné en droit des affaires et futur avocat d'affaires. Parallèlement producteur de house music indépendant et créateur de contenu sur TikTok. Je combine la rigueur juridique et la créativité artistique pour bâtir des projets innovants."
+    
+    parcours_pro = st.text_area("✍️ Votre parcours, vos compétences clés ou vos accomplissements", value=parcours_default, height=120)
+    mots_cles_cles = st.text_input("🔑 Mots-clés ou termes incontournables à placer (Optionnel)", value="Droit des Affaires, House Music, TikTok, Innovation")
     
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button("✨ Forger l'Identité de Marque"):
@@ -291,7 +294,7 @@ elif "BioCraft" in choix_outil:
                 - Format : {longueur_bio}
                 - Style d'émojis : {style_emojis}
                 - Parcours et réalisations : '{parcours_pro}'
-                - Mots-clés obligatoires : {mots_cles_cles if mots_cles_cles else "Aucun spécifique"}
+                - Mots-clés obligatoires : {mots_cles_cles}
                 
                 Structure ta réponse de manière exhaustive :
                 ### 🎯 1. Analyse du Positionnement & de l'Angle d'Attaque
