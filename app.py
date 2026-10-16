@@ -55,8 +55,10 @@ elif "canceled" in query_params:
 # ---------------------------------------------------------
 # 3. FONCTIONS D'ACHAT STRIPE CHECKOUT
 # ---------------------------------------------------------
+import streamlit.components.v1 as components
+
 def recharger_via_stripe(price_id, user_email):
-    """ Redirige vers la page de paiement sécurisée Stripe Checkout """
+    """ Redirige la fenêtre principale vers la page de paiement sécurisée Stripe Checkout """
     try:
         is_subscription = (price_id != st.secrets["PRICE_SINGLE"])
         session = stripe.checkout.Session.create(
@@ -68,9 +70,16 @@ def recharger_via_stripe(price_id, user_email):
             customer_email=user_email,
             success_url='https://the-empire-studio.streamlit.app/?success=true',
             cancel_url='https://the-empire-studio.streamlit.app/?canceled=true',
-            managed_payments={'enabled': False},  # <-- Désactive l'exigence de code taxe
+            managed_payments={'enabled': False},
         )
-        st.markdown(f'<meta http-equiv="refresh" content="0;url={session.url}">', unsafe_allow_html=True)
+        
+        # Forcer la redirection de toute la page (window.top) vers Stripe Checkout
+        js_code = f"""
+        <script>
+            window.top.location.href = "{session.url}";
+        </script>
+        """
+        components.html(js_code, height=0)
     except Exception as e:
         st.error(f"Erreur lors de l'initialisation du paiement Stripe : {e}")
 # ---------------------------------------------------------
