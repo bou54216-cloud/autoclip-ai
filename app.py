@@ -123,18 +123,34 @@ if not st.session_state.user:
                 except Exception as e:
                     st.error(f"Erreur de connexion : {e}")
 
-        with tab_signup:
-            new_email = st.text_input("Email", key="signup_email")
-            new_password = st.text_input("Mot de passe", type="password", key="signup_pass")
-            if st.button("Créer mon compte", use_container_width=True):
-                try:
-                    res = supabase.auth.sign_up({"email": new_email, "password": new_password})
-                    st.success("Compte créé ! Vous pouvez vous connecter.")
-                except Exception as e:
-                    st.error(f"Erreur d'inscription : {e}")
+       with tab_signup:
+            # Vérification par LocalStorage (1 seul compte par navigateur/appareil)
+            components.html("""
+                <script>
+                    if (localStorage.getItem('device_registered')) {
+                        window.parent.postMessage({type: 'STREAMLIT_DEVICE_BLOCKED'}, '*');
+                    }
+                </script>
+            """, height=0)
 
-    st.stop()
-
+            if st.session_state.get("device_blocked", False):
+                st.error("⚠️ Un compte a déjà été créé depuis cet appareil/navigateur. Veuillez vous connecter.")
+            else:
+                new_email = st.text_input("Email", key="signup_email")
+                new_password = st.text_input("Mot de passe", type="password", key="signup_pass")
+                if st.button("Créer mon compte", use_container_width=True):
+                    try:
+                        res = supabase.auth.sign_up({"email": new_email, "password": new_password})
+                        st.success("Compte créé ! Vous pouvez vous connecter.")
+                        
+                        # Marquer l'appareil comme enregistré dans le navigateur
+                        components.html("""
+                            <script>
+                                localStorage.setItem('device_registered', 'true');
+                            </script>
+                        """, height=0)
+                    except Exception as e:
+                        st.error(f"Erreur d'inscription : {e}")
 # ---------------------------------------------------------
 # 6. APPLICATION PRINCIPALE & BARRE LATÉRALE
 # ---------------------------------------------------------
