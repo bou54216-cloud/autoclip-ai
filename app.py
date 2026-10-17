@@ -95,7 +95,7 @@ def recharger_via_stripe(price_id, user_email):
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur de Scripts Vidéo le Plus Avancé du Marché</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur de Scripts Vidéo Ultra-Détaillés le Plus Avancé du Marché</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -188,7 +188,7 @@ with st.sidebar:
 # 7. MODULE EXPERT : CONFIGURATION COMPLÈTE DE PRODUCTION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting High-End")
-st.markdown("Configurez la totalité des paramètres de votre vidéo pour recevoir un script de niveau cinéma / agence publicitaire.")
+st.markdown("Configurez la totalité des paramètres de votre vidéo pour recevoir une bible de production et un script cinéma exhaustif.")
 
 st.divider()
 
@@ -229,97 +229,107 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         
         prompt = f"""
         Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo et Master Copywriter au Monde.
-        Rédige un SCRIPT ULTRA-DÉTAILLÉ, LONG, HYPER PRÉCIS ET PROFESSIONNEL pour une vidéo à haut taux de rétention.
+        Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER LONG, DÉTAILLÉ SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS.
 
+        NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
-        --- FICHE DE TOURNAGE / PRODUCTION ---
+        --- CONFIGURATION DE PRODUCTION ---
         - Sujet : {topic}
         - Mode de production : {creator_type}
         - Plateforme : {platform}
         - Durée : {duration}
-        - Persona / Cible : {target_persona if target_persona else 'Grand public'}
-        - Frustration majeure traitée : {audience_frustration if audience_frustration else 'Non spécifiée'}
+        - Persona / Audience Cible : {target_persona if target_persona else 'Grand public'}
+        - Frustration majeure : {audience_frustration if audience_frustration else 'Non spécifiée'}
         - Ton & Ambiance : {tone}
-        - Style de Hook (0-3s) : {hook_style}
+        - Hook (0-3s) : {hook_style}
         - Rythme de montage : {pacing}
         - Framework narratif : {structure}
-        - Call To Action (CTA) : {cta_type}
-        - Style musical : {music_genre if music_genre else 'À adapter selon l ambiance'}
-        - Exigences spécifiques : {extra_details if extra_details else 'Aucune'}
+        - CTA : {cta_type}
+        - Style musical : {music_genre if music_genre else 'Inconnu'}
+        - Exigences : {extra_details if extra_details else 'Aucune'}
 
         --- FORMAT DE RÉPONSE EXIGÉ (Markdown d'Élite) ---
 
-        # 🎬 PLAN DE PRODUCTION HAUTE PERFORMANCE
+        # 🎬 BIBLE DE PRODUCTION & SCRIPT ULTRA-DÉTAILLÉ
 
-        ### 📋 1. DIRECTION ARTISTIQUE & FICHE TECHNIQUE
-        - **Format & Cadre** : 9:16 Vertical
-        - **Éclairage & Palette de couleurs** : [Direction précise des néons, ombres, contrastes]
-        - **Ambiance sonore & Musique** : {music_genre if music_genre else 'BPM adapté, sons percutants'}
-        - **Style de sous-titres** : [Style dynamique, surlignage mot par mot, couleurs clés]
-        - **Stratégie de Rétention** : [Méthode appliquée pour garder l'attention de 0 à la fin]
+        ### 📋 1. DIRECTION ARTISTIQUE & SETUP DÉTAILLÉ
+        - **Format & Ratio** : 9:16 Vertical
+        - **Palette de couleurs & Ambiance lumineuse** : [Détails ultra-précis des teintes, ombres et réflecteurs]
+        - **Sound Design & Musique** : [Tempo exact BPM, style sonore, moments de coupure audio]
+        - **Règles Typographiques (Sous-titres)** : [Police, taille, couleur active/inactive, effets de pop-up]
+        - **Stratégie de Rétention algorithmique** : [Découpage des micro-hooks à 3s, 10s et 25s]
 
         ---
 
-        ### 🪝 2. L'ACCROCHE CHOC (HOOK - 0 à 3 SECONDES)
+        ### 🪝 2. L'ACCROCHE ULTIME (HOOK - 00:00 à 00:03)
         * **Timecode** : `00:00 - 00:03`
-        * **Texte / Dialogue exact (Word-for-word)** : "..."
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Jeu du présentateur"}** : {"`...`" if is_ia_mode else "[Action exacte, mouvement rapide devant la caméra]"}
-        * **Incrustation Texte (On-Screen Text)** : "..."
-        * **Effet Sonore (SFX)** : [Boom / Whoosh / Glitch]
+        * **Voix-off / Dialogues exacts (Word-for-word)** : "..."
+        * **Intonation & Tonalité** : [Ex: Ton provocateur, hausse de voix à la fin]
+        * **Visuel Direction / {"Prompt Visuel Brut en Anglais (8K, Cinematic)" if is_ia_mode else "Mouvement de caméra & Jeu du présentateur"}** : {"`...`" if is_ia_mode else "[Explication exacte du geste et du plan de caméra]"}
+        * **Incrustation Texte à l'écran** : "..." [Couleur, effet d'apparition]
+        * **Sound Effect (SFX)** : [Bruitage précis]
 
         ---
 
-        ### 🎬 3. DÉCOUPAGE DÉTAILLÉ SÉQUENCE PAR SÉQUENCE (Minuté)
+        ### 🎬 3. DÉCOUPAGE EXHAUSTIF SÉQUENCE PAR SÉQUENCE (MINUTÉ & MOT À MOT)
 
-        Découpe la vidéo en 4 à 6 séquences chronologiques détaillées :
+        Fournis 5 à 7 séquences hyper détaillées. Chaque dialogue doit être rédigé au mot près.
 
-        #### 🔹 SÉQUENCE 1 : Agitation du Problème & Empirisme (`00:03 - 00:15`)
-        * **Voix-off / Dialogues exacts** : "..."
-        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Préciser le plan B-Roll]"}
-        * **Texte & Graphisme à l'écran** : [Mots-clés en gros / Surlignage]
-        * **SFX & Transitions** : [Swoosh / Bip]
+        #### 🔹 SÉQUENCE 1 : Agitation de la Frustration (`00:03 - 00:12`)
+        * **Timecode** : `00:03 - 00:12`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Intonation & Pauses** : [Ex: Pause de 0.5s après le mot 'erreur']
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du B-Roll exact à insérer]"}
+        * **Incrustation Texte / Graphisme** : [Texte affiché]
+        * **SFX & Musique** : [Variation de volume musical, bruitage]
 
-        #### 🔹 SÉQUENCE 2 : La Révélation / Déconstruction du Mythe (`00:15 - 00:30`)
-        * **Voix-off / Dialogues exacts** : "..."
-        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Démonstration à l écran / Geste]"}
-        * **Texte & Graphisme à l'écran** : [Puces clés / Graphique]
+        #### 🔹 SÉQUENCE 2 : Déconstruction de l'Erreur Courante (`00:12 - 00:25`)
+        * **Timecode** : `00:12 - 00:25`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Intonation & Pauses** : [Consignes vocales]
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du plan]"}
+        * **Incrustation Texte / Graphisme** : [Graphique / Animation]
+        * **SFX** : [Bruitage]
 
-        #### 🔹 SÉQUENCE 3 : L'Astuce Maîtresse & Application Pratique (`00:30 - 00:50`)
-        * **Voix-off / Dialogues exacts** : "..."
-        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Zoom sur l action ou l outil]"}
-        * **Texte & Graphisme à l'écran** : [Étape 1, 2, 3]
+        #### 🔹 SÉQUENCE 3 : La Révélation de la Solution (`00:25 - 00:40`)
+        * **Timecode** : `00:25 - 00:40`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du plan]"}
+        * **Incrustation Texte / Graphisme** : [Puces explicatives]
+        * **SFX** : [Bruitage]
 
-        #### 🔹 SÉQUENCE 4 : Preuve & Transformation (`00:50 - 01:10`)
-        * **Voix-off / Dialogues exacts** : "..."
-        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Résultat final probant]"}
+        #### 🔹 SÉQUENCE 4 : Application Pratique Pas-à-Pas (`00:40 - 00:55`)
+        * **Timecode** : `00:40 - 00:55`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Démonstration]"}
+        * **Incrustation Texte / Graphisme** : [Étapes 1, 2, 3]
+
+        #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`00:55 - 01:10`)
+        * **Timecode** : `00:55 - 01:10`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Résultat final]"}
 
         ---
 
-        ### 🎯 4. CONCLUSION & CONVERSION (CTA)
-        * **Timecode** : `Fin de vidéo`
-        * **Réplique exacte** : "..."
-        * **Visual Direction** : [Animation de bouton / Pointage du doigt]
-        * **Incrustation Graphique** : [Mot-clé à commenter ou appel à s abonner]
+        ### 🎯 4. CONCLUSION & CALL TO ACTION (CONVERSION)
+        * **Timecode** : `01:10 - Fin`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Action Visuelle & Incrustation** : [Flèche vers le profil, bouton follow, mot-clé à commenter]
+        * **Outro Audio** : [Fondu de musique]
 
         ---
 
-        ### 💡 5. SECRETS DU RÉALISATEUR POUR BOOSTER L'ALGORITHME
-        - **Astuce de rétention** : [Expliciter le hook visuel secondaire à 10s]
-        - **Sound Design** : [Astuce de mixage audio]
-
-        ---
-
-        ### 🤖 6. SCRIPT AUTO-PROMPT CLÉ EN MAIN (POUR IA CRÉATEUR DE VIDÉO)
-        Rédige TOUT EN BAS de ta réponse un bloc de code unique, ultra-clair, nettoyé et rédigé en Anglais technique, prêt à être copié-collé directement dans n'importe quel générateur de vidéo IA.
-        Ce prompt doit contenir :
-        1. **Topic & Visual Style** (Cinematic, 8K, Lighting, Mood).
-        2. **Full Voiceover Script** (Mot à mot sans fioritures).
-        3. **Scene-by-Scene Visual Prompts** (Chronologique avec minuterie).
+        ### 🤖 5. SCRIPT AUTO-PROMPT CLÉ EN MAIN (POUR IA CRÉATEUR DE VIDÉO)
+        Rédige en bas de ta réponse un bloc de code unique, ultra-net, nettoyé de toute fioriture et rédigé en Anglais technique (Master Automation Prompt).
+        Inclus :
+        1. **Global Topic & Style Directive** (Lighting, 8K, Cinematic Aspect Ratio 9:16).
+        2. **Full Voiceover Script** (Mot à mot, sans abréviation).
+        3. **Scene-by-Scene Visual Prompts** (Chronologique avec minutage).
         4. **Audio & Subtitle Directives**.
         """
 
-        with st.spinner("🎬 Production du plan de tournage et script d'élite..."):
+        with st.spinner("🎬 Production du script ultra-détaillé et de la bible de tournage..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -331,7 +341,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("✨ Plan de production & Script d'Élite générés avec succès !")
+                st.success("✨ Bible de production & Script ultra-détaillé générés avec succès !")
                 st.markdown(script)
 
             except Exception as e:
