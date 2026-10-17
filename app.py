@@ -5,6 +5,11 @@ from groq import Groq
 import streamlit.components.v1 as components
 
 # ---------------------------------------------------------
+# CONFIGURATION ADMINISTRATEUR
+# ---------------------------------------------------------
+ADMIN_EMAIL = "elliotcarretto29@gmail.com"  # ⚠️ Remplace par ton email de connexion Supabase
+
+# ---------------------------------------------------------
 # 1. CONFIGURATION ET DESIGN CSS PREMIUM
 # ---------------------------------------------------------
 st.set_page_config(
@@ -57,6 +62,10 @@ if "credits" not in st.session_state:
 
 def refresh_user_credits(user_id):
     try:
+        if st.session_state.user and st.session_state.user.email == ADMIN_EMAIL:
+            st.session_state.credits = 999999
+            return
+
         res = supabase.table("profiles").select("credits").eq("id", user_id).execute()
         if res.data and len(res.data) > 0:
             st.session_state.credits = res.data[0].get("credits", 0)
@@ -161,7 +170,11 @@ elif "canceled" in query_params:
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
     st.write(f"👤 **Membre :** {st.session_state.user.email}")
-    st.metric(label="Solde de Crédits", value=f"{st.session_state.credits} CR")
+    
+    if st.session_state.user.email == ADMIN_EMAIL:
+        st.metric(label="Solde de Crédits", value="∞ (Admin)")
+    else:
+        st.metric(label="Solde de Crédits", value=f"{st.session_state.credits} CR")
     
     if st.button("Se déconnecter", use_container_width=True):
         supabase.auth.sign_out()
@@ -222,7 +235,7 @@ with col4:
 st.divider()
 
 if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit)", type="primary", use_container_width=True):
-    if st.session_state.credits <= 0:
+    if st.session_state.credits <= 0 and st.session_state.user.email != ADMIN_EMAIL:
         st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
     else:
         is_ia_mode = (creator_type == "Générée par IA (Automation / Faceless)")
@@ -306,7 +319,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Démonstration]"}
         * **Incrustation Texte / Graphisme** : [Étapes 1, 2, 3]
 
-        #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`00:55 - 01:10`)
+        #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`01:10 - Fin`)
         * **Timecode** : `01:10 - Fin`
         * **Dialogues / Voix-off intégrale** : "..."
         * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Résultat final]"}
@@ -338,9 +351,11 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
                 )
                 script = response.choices[0].message.content
 
-                new_credits = st.session_state.credits - 1
-                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                st.session_state.credits = new_credits
+                # Décrémenter les crédits uniquement si ce n'est pas l'administrateur
+                if st.session_state.user.email != ADMIN_EMAIL:
+                    new_credits = st.session_state.credits - 1
+                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                    st.session_state.credits = new_credits
 
                 st.success("✨ Bible de production & Master-Prompt IA générés avec succès !")
                 st.markdown(script)
