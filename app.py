@@ -150,57 +150,61 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 6. MODULES IA DU STUDIO
+# 6. MODULES IA DU STUDIO (VERSION AVANCÉE & PROFONDE)
 # ---------------------------------------------------------
-st.title("🚀 Espace de Création")
+st.title("🚀 Espace de Création Avancé")
 
 tab_autoclip, tab_biocraft, tab_copycraft = st.tabs(["🎬 AutoClip AI", "👤 BioCraft AI", "✍️ CopyCraft AI"])
 
-# --- MODULE 1: AutoClip AI (Version Complète) ---
+# --- MODULE 1: AutoClip AI (Générateur de scripts ultra-détaillé) ---
 with tab_autoclip:
-    st.header("🎬 AutoClip AI — Générateur de scripts vidéo")
+    st.header("🎬 AutoClip AI — Générateur de scripts vidéo sur-mesure")
     
     col1, col2 = st.columns(2)
     
     with col1:
-        topic = st.text_input("Sujet de la vidéo :", placeholder="ex: 3 conseils pour réussir en e-commerce")
-        platform = st.selectbox("Plateforme :", ["TikTok / Shorts / Reels", "YouTube Long Format", "LinkedIn Video"])
-        duration = st.selectbox("Durée souhaitée :", ["Très court (< 30 sec)", "Format classique (30 - 60 sec)", "Format long (> 1 min)"])
+        topic = st.text_input("Sujet principal de la vidéo :", placeholder="ex: 3 erreurs à éviter quand on lance son business")
+        platform = st.selectbox("Plateforme cible :", ["TikTok / Reels / Shorts (< 1 min)", "YouTube Long Format", "LinkedIn Vidéo pro", "Publicité vidéo (Meta/TikTok)"])
+        duration = st.selectbox("Format / Durée :", ["Flash (< 30 sec - Rythme ultra-rapide)", "Standard (30 à 60 sec)", "Approfondi (1 à 3 minutes)"])
+        tone = st.selectbox("Ton de la voix / Ambiance :", ["Dynamique & Énergique", "Cash, Direct & Provocant", "Éducatif & Expert", "Storytelling & Émotionnel", "Humoristique & Décalé"])
 
     with col2:
-        tone = st.selectbox("Ton de la vidéo :", ["Dynamique & Captivant", "Professionnel & Expert", "Humoristique & Décalé", "Inspirant & Émotionnel"])
-        hook_style = st.selectbox("Style d'accroche (Hook) :", ["Question choc", "Statistique / Fait surprenant", "Histoire / Storytelling", "Erreur courante à éviter"])
-        target_audience = st.text_input("Cible / Audience (Optionnel) :", placeholder="ex: Débutants, Étudiants, Entrepreneurs...")
+        hook_style = st.selectbox("Style d'accroche (Hook des 3 premières secondes) :", ["Question choc / Provocation", "Statistique ou Fait insolite", "Scénario 'Imagine si...'", "Briser une idée reçue / Mythe"])
+        structure = st.selectbox("Structure narrative :", ["Méthode des 3 étapes clés", "Problème / Agitation / Solution", "Avant / Après (Transformation)", "Liste numérotée rythmée"])
+        target_audience = st.text_input("Audience cible (Persona précis) :", placeholder="ex: Étudiants, entrepreneurs débutants, passionnés de musique...")
+        cta_type = st.selectbox("Appel à l'action (CTA) final :", ["S'abonner / S'abonner pour la suite", "Commenter pour recevoir un guide/lien", "Cliquer sur le lien en bio", "Partager à un ami"])
 
-    if st.button("Générer le script complet (-1 crédit)", type="primary", use_container_width=True):
+    keywords = st.text_input("Mots-clés ou expressions obligatoires (optionnel) :", placeholder="ex: indépendance, house music, stratégie")
+
+    if st.button("Générer le script professionnel (-1 crédit)", type="primary", use_container_width=True):
         if st.session_state.credits <= 0:
             st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
         else:
-            # Construction d'un prompt ultra-précis grâce aux nouveaux champs
             prompt = f"""
-            Rédige un script complet et engageant pour une vidéo.
-            - Sujet : {topic}
+            Agis en tant que Directeur Artistique et Expert en Copywriting vidéo. Rédige un script ultra-performant et engageant.
+            - Sujet : '{topic}'
             - Plateforme : {platform}
             - Durée : {duration}
             - Ton : {tone}
-            - Style d'accroche (Hook) : {hook_style}
-            - Cible : {target_audience if target_audience else 'Grand public'}
+            - Style d'accroche : {hook_style}
+            - Structure narrative : {structure}
+            - Audience cible : {target_audience if target_audience else 'Grand public'}
+            - Appel à l'action (CTA) : {cta_type}
+            - Mots-clés à intégrer : {keywords if keywords else 'Aucun'}
 
-            Structure le script avec :
-            1. HOOK (Accroche visuelle et verbale - 3 premières secondes)
-            2. CORPS DU SCRIPT (Détaillé étape par étape)
-            3. CALL TO ACTION (CTA pour l'engagement)
-            4. INDICATIONS VISUELLES / B-ROLL (Entre crochets [ ])
+            Structure ton output clairement avec :
+            1. **LE HOOK (0-3s)** : Accroche verbale percutante + indication visuelle [B-ROLL / Texte à l'écran].
+            2. **LE DÉVELOPPEMENT** : Corps du script structuré selon la méthode choisie, avec un rythme soutenu.
+            3. **LE CALL TO ACTION (CTA)** : Transition fluide vers l'action attendue.
+            4. **CONSEILS DE MONTAGE** : Idées d'effets visuels, de transitions ou de musique de fond.
             """
-            
-            with st.spinner("Génération du script sur-mesure en cours..."):
+            with st.spinner("Génération du script approfondi en cours..."):
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
                 )
                 script = response.choices[0].message.content
                 
-                # Décrémenter le crédit
                 new_credits = st.session_state.credits - 1
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
@@ -208,31 +212,35 @@ with tab_autoclip:
                 st.success("Script généré avec succès !")
                 st.markdown(script)
 
-# --- MODULE 2: BioCraft AI (Version enrichie) ---
+# --- MODULE 2: BioCraft AI (Optimisation de profil experte) ---
 with tab_biocraft:
-    st.header("👤 BioCraft AI — Optimisation de profil")
+    st.header("👤 BioCraft AI — Optimisation de profil multi-plateforme")
     
     col_b1, col_b2 = st.columns(2)
     with col_b1:
-        bio_topic = st.text_input("Quelle est votre activité ou niche ?", placeholder="ex: Producteur de House Music & Créateur TikTok")
-        platform_bio = st.selectbox("Plateforme cible :", ["Instagram", "TikTok", "LinkedIn", "Twitter / X", "YouTube Bio"])
+        bio_topic = st.text_input("Activité / Niche / Domaine :", placeholder="ex: Producteur de House Music & Créateur de contenus")
+        platform_bio = st.selectbox("Plateforme cible :", ["Instagram", "TikTok", "LinkedIn", "X (Twitter)", "YouTube Channel Bio"])
+        bio_vibe = st.selectbox("Vibe / Identité visuelle :", ["Minimaliste & Propre", "Énergique & Impactant", "Corporate & Autorité", "Artistique & Créatif", "Mystérieux & Exclusif"])
     with col_b2:
-        bio_tone = st.selectbox("Style de bio :", ["Minimaliste & Propre", "Accrocheur & Énergique", "Humoristique & Décalé", "Mystérieux & Intriguant"])
-        include_cta = st.selectbox("Appel à l'action (CTA) :", ["Lien vers écoute/musique", "Lien site web / e-commerce", "S'abonner / Follow", "Aucun"])
+        include_stats = st.text_input("Chiffres clés ou accomplissements (optionnel) :", placeholder="ex: +1M vues, 5 ans d'expérience...")
+        cta_bio = st.selectbox("Objectif du lien en bio :", ["Écouter mon titre / ma musique", "Visiter le site web / E-commerce", "Réserver un appel / Consultation", "S'abonner à la newsletter"])
+        emoji_style = st.selectbox("Utilisation des émojis :", ["Subtile et élégante (1 ou 2 max)", "Dynamique et moderne", "Aucun emoji (Pur texte brut)"])
 
-    if st.button("Générer les bios (-1 crédit)", type="primary", use_container_width=True):
+    if st.button("Générer les options de bio sur-mesure (-1 crédit)", type="primary", use_container_width=True):
         if st.session_state.credits <= 0:
             st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
         else:
             prompt = f"""
-            Génère 3 propositions de bios différentes optimisées pour {platform_bio}.
-            - Activité / Niche : '{bio_topic}'
-            - Style : {bio_tone}
-            - CTA souhaité : {include_cta}
+            Agis en tant qu'expert en Personal Branding. Fournis 3 propositions de bios différentes, percutantes et optimisées pour {platform_bio}.
+            - Activité : '{bio_topic}'
+            - Vibe : {bio_vibe}
+            - Accomplissements / Chiffres : {include_stats if include_stats else 'Aucun'}
+            - Objectif du CTA : {cta_bio}
+            - Style d'émojis : {emoji_style}
             
-            Formatte chaque proposition clairement avec des émojis adaptés et respecte la limite de caractères de la plateforme.
+            Respecte scrupuleusement les contraintes de caractères de la plateforme. Propose des structures aérées avec retours à la ligne.
             """
-            with st.spinner("Optimisation des bios en cours..."):
+            with st.spinner("Création des bios en cours..."):
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
@@ -246,35 +254,40 @@ with tab_biocraft:
                 st.success("Bios générées avec succès !")
                 st.markdown(bios)
 
-# --- MODULE 3: CopyCraft AI (Version enrichie) ---
+# --- MODULE 3: CopyCraft AI (Rédaction commerciale & Marketing avancé) ---
 with tab_copycraft:
-    st.header("✍️ CopyCraft AI — Rédaction commerciale")
+    st.header("✍️ CopyCraft AI — Studio de Copywriting Professionnel")
     
-    copy_topic = st.text_area("Décrivez votre produit ou service :", placeholder="ex: Une montre Citizen Promaster Dive Eco-Drive 200m")
+    copy_topic = st.text_area("Décrivez votre produit, service ou projet en détail :", placeholder="ex: Une montre de plongée Citizen Promaster Dive Eco-Drive, robuste, étanche 200m, design intemporel.")
     
     col_c1, col_c2 = st.columns(2)
     with col_c1:
-        copy_format = st.selectbox("Format de rédaction :", ["Fiche produit e-commerce", "Post publicitaire réseaux sociaux", "Email de vente / Newsletter", "Page de vente (Landing Page)"])
-        copy_objective = st.selectbox("Objectif marketing :", ["Générer des clics / Trafic", "Pousser à l'achat immédiat", "Mettre en avant les caractéristiques techniques", "Créer de l'émotion / Coup de cœur"])
-    with col_c2:
-        copy_tone = st.selectbox("Ton publicitaire :", ["Vendeur & Persuasif (Hard sell)", "Élégant & Premium", "Urgent & Dynamique", "Éducatif & Rassurant"])
-        target_client = st.text_input("Client idéal (Persona) :", placeholder="ex: Passionnés de montres, plongeurs, aventuriers...")
+        copy_format = st.selectbox("Format de contenu marketing :", ["Fiche produit e-commerce optimisée SEO", "Post publicitaire réseaux sociaux (Conversion)", "Séquence d'Emails de vente / Newsletter", "Page de vente complète (Landing Page)", "Script publicitaire UGC"])
+        copy_objective = st.selectbox("Objectif psychologique principal :", ["Générer un achat immédiat (Conversion directe)", "Créer l'urgence / Rareté", "Rassurer et lever les objections techniques", "Créer un coup de cœur émotionnel"])
+        copywriting_framework = st.selectbox("Cadre de copywriting (Framework) :", ["AIDA (Attention, Intérêt, Désir, Action)", "PAS (Problème, Agitation, Solution)", "FAB (Features, Advantages, Benefits)"])
 
-    if st.button("Rédiger le contenu (-1 crédit)", type="primary", use_container_width=True):
+    with col_c2:
+        copy_tone = st.selectbox("Ton rédactionnel :", ["Vendeur percutant (Hard Sell)", "Élégant, Luxe & Premium", "Proche de la communauté (Authentique)", "Éducatif & Autoritaire"])
+        target_persona = st.text_input("Client idéal (Persona & Frustrations) :", placeholder="ex: Passionnés d'horlogerie cherchant une montre fiable sans se ruiner")
+        urgency_element = st.text_input("Offre spéciale ou urgence (optionnel) :", placeholder="ex: -20% ce weekend, Stock limité à 50 pièces...")
+
+    if st.button("Lancer la rédaction stratégique (-1 crédit)", type="primary", use_container_width=True):
         if st.session_state.credits <= 0:
             st.error("❌ Crédits insuffisants. Veuillez recharger votre compte dans la barre latérale.")
         else:
             prompt = f"""
-            Rédige un texte marketing de haute qualité.
+            Agis en tant que Copywriter Senior spécialisé en e-commerce et conversion. Rédige un texte marketing hautement persuasif.
             - Produit / Service : '{copy_topic}'
             - Format : {copy_format}
             - Objectif : {copy_objective}
+            - Framework psychologique : {copywriting_framework}
             - Ton : {copy_tone}
-            - Client cible : {target_client if target_client else 'Grand public'}
-            
-            Structure ton texte avec un titre fort, des points clés percutants et un appel à l'action irrésistible.
+            - Client cible : {target_persona if target_persona else 'Grand public'}
+            - Élément d'urgence / Offre : {urgency_element if urgency_element else 'Aucun'}
+
+            Structure ton texte avec un titre irrésistible, des puces bien ciselées, une mise en valeur des bénéfices clients et un appel à l'action percutant.
             """
-            with st.spinner("Rédaction commerciale en cours..."):
+            with st.spinner("Rédaction commerciale experte en cours..."):
                 response = groq_client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
