@@ -30,7 +30,7 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF CORRIGÉ (ANTI-SATURATION D'ESPACE)
+# 3. MOTEUR EXPORT PDF PROPRE & SANS CARACTÈRES CORROMPUS
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
@@ -46,13 +46,11 @@ class ScriptPDF(FPDF):
         self.cell(0, 8, f'Page {self.page_no()}', 0, 0, 'C')
 
 def generer_pdf_script(titre_video, contenu_markdown):
-    # Format A4 portrait, unité en mm, marges de 10mm partout pour maximiser l'espace
     pdf = ScriptPDF(orientation='P', unit='mm', format='A4')
     pdf.set_margins(left=10, top=10, right=10)
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
-    # Nettoyage et encodage du titre
     titre_propre = (titre_video or "Script_Video")\
         .replace('—', '-').replace('–', '-').replace('’', "'").replace('«', '"').replace('»', '"')
     titre_propre = titre_propre.encode('latin-1', 'replace').decode('latin-1')
@@ -62,18 +60,20 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf.multi_cell(0, 6, f"Sujet : {titre_propre}")
     pdf.ln(3)
     
-    # Largeur utile de la page (210mm - 20mm de marges = 190mm)
     largeur_utile = 190
     
     lignes = contenu_markdown.split('\n')
     for ligne in lignes:
+        # Nettoyage radical des émojis et des caractères spéciaux non gérés par Helvetica
         ligne_nettoyee = (ligne or "")\
             .replace('—', '-').replace('–', '-').replace('’', "'")\
-            .replace('«', '"').replace('»', '"').replace('•', '*')
+            .replace('«', '"').replace('»', '"').replace('•', '*')\
+            .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
+            .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
+            .replace('1??', '1.').replace('2??', '2.').replace('3??', '3.').replace('4??', '4.').replace('5??', '5.')
             
         ligne_propre = ligne_nettoyee.encode('latin-1', 'replace').decode('latin-1')
         
-        # Application des styles selon le markdown sans risquer de saturer l'espace
         if ligne.startswith('# '):
             pdf.set_font("Helvetica", 'B', 12)
             pdf.set_text_color(220, 53, 69)
@@ -92,7 +92,6 @@ def generer_pdf_script(titre_video, contenu_markdown):
             pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('### ', ''))
         else:
             pdf.set_font("Helvetica", size=8.5)
-            # multi_cell avec largeur_utile fixe de 190 empêche l'erreur de calcul d'espace
             pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
             
     return bytes(pdf.output())
