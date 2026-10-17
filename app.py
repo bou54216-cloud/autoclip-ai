@@ -50,7 +50,51 @@ def init_groq():
     return Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 groq_client = init_groq()
+# ---------------------------------------------------------
+# FONCTION DE GÉNÉRATION DE PDF POUR CRÉATEUR HUMAIN
+# ---------------------------------------------------------
+from fpdf import FPDF
 
+class ScriptPDF(FPDF):
+    def header(self):
+        self.set_font('Helvetica', 'B', 14)
+        self.set_text_color(220, 53, 69)
+        self.cell(0, 10, 'AUTOCLIP AI — BIBLE DE TOURNAGE & SCRIPT', new_x="LMARGIN", new_y="NEXT", align='C')
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Helvetica', 'I', 8)
+        self.set_text_color(128, 128, 128)
+        self.cell(0, 10, f'Page {self.page_no()}', align='C')
+
+def generer_pdf_script(titre_video, contenu_markdown):
+    pdf = ScriptPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    
+    pdf.set_font("Helvetica", 'B', 12)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(0, 10, f"Sujet : {titre_video}", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(5)
+    
+    lignes = contenu_markdown.split('\n')
+    for ligne in lignes:
+        ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
+        if ligne.startswith('# '):
+            pdf.set_font("Helvetica", 'B', 14)
+            pdf.cell(0, 10, ligne_propre.replace('# ', ''), new_x="LMARGIN", new_y="NEXT")
+        elif ligne.startswith('## '):
+            pdf.set_font("Helvetica", 'B', 12)
+            pdf.cell(0, 8, ligne_propre.replace('## ', ''), new_x="LMARGIN", new_y="NEXT")
+        elif ligne.startswith('### '):
+            pdf.set_font("Helvetica", 'B', 10)
+            pdf.cell(0, 6, ligne_propre.replace('### ', ''), new_x="LMARGIN", new_y="NEXT")
+        else:
+            pdf.set_font("Helvetica", size=9)
+            pdf.multi_cell(0, 5, ligne_propre)
+            
+    return bytes(pdf.output())
 # ---------------------------------------------------------
 # 3. GESTION DE LA SESSION & DES CRÉDITS
 # ---------------------------------------------------------
