@@ -30,55 +30,70 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF ULTRA-CLAIR POUR LE CLIENT
+# 3. MOTEUR EXPORT PDF CORRIGÉ (ANTI-SATURATION D'ESPACE)
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
-        self.set_font('Helvetica', 'B', 13)
+        self.set_font('Helvetica', 'B', 12)
         self.set_text_color(220, 53, 69)
-        self.multi_cell(0, 8, 'BIBLE DE PRODUCTION & SCRIPT VIDEO', align='C')
-        self.ln(4)
+        self.cell(0, 8, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT', 0, 1, 'C')
+        self.ln(3)
 
     def footer(self):
-        self.set_y(-15)
+        self.set_y(-12)
         self.set_font('Helvetica', 'I', 8)
         self.set_text_color(128, 128, 128)
-        self.cell(0, 10, f'Page {self.page_no()}', align='C')
+        self.cell(0, 8, f'Page {self.page_no()}', 0, 0, 'C')
 
 def generer_pdf_script(titre_video, contenu_markdown):
-    pdf = ScriptPDF()
-    pdf.set_margins(left=15, top=15, right=15)
+    # Format A4 portrait, unité en mm, marges de 10mm partout pour maximiser l'espace
+    pdf = ScriptPDF(orientation='P', unit='mm', format='A4')
+    pdf.set_margins(left=10, top=10, right=10)
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
-    titre_propre = (titre_video or "Script_Video").replace('—', '-').replace('–', '-').replace('’', "'").replace('«', '"').replace('»', '"')
-        
-    pdf.set_font("Helvetica", 'B', 12)
+    # Nettoyage et encodage du titre
+    titre_propre = (titre_video or "Script_Video")\
+        .replace('—', '-').replace('–', '-').replace('’', "'").replace('«', '"').replace('»', '"')
+    titre_propre = titre_propre.encode('latin-1', 'replace').decode('latin-1')
+    
+    pdf.set_font("Helvetica", 'B', 11)
     pdf.set_text_color(0, 0, 0)
-    pdf.multi_cell(0, 7, f"Sujet : {titre_propre}")
-    pdf.ln(4)
+    pdf.multi_cell(0, 6, f"Sujet : {titre_propre}")
+    pdf.ln(3)
+    
+    # Largeur utile de la page (210mm - 20mm de marges = 190mm)
+    largeur_utile = 190
     
     lignes = contenu_markdown.split('\n')
     for ligne in lignes:
-        ligne_nettoyee = (ligne or "").replace('—', '-').replace('–', '-').replace('’', "'").replace('«', '"').replace('»', '"').replace('•', '*')
+        ligne_nettoyee = (ligne or "")\
+            .replace('—', '-').replace('–', '-').replace('’', "'")\
+            .replace('«', '"').replace('»', '"').replace('•', '*')
+            
         ligne_propre = ligne_nettoyee.encode('latin-1', 'replace').decode('latin-1')
         
+        # Application des styles selon le markdown sans risquer de saturer l'espace
         if ligne.startswith('# '):
-            pdf.set_font("Helvetica", 'B', 13)
+            pdf.set_font("Helvetica", 'B', 12)
             pdf.set_text_color(220, 53, 69)
-            pdf.multi_cell(0, 8, ligne_propre.replace('# ', ''))
+            pdf.ln(3)
+            pdf.multi_cell(largeur_utile, 6, ligne_propre.replace('# ', ''))
             pdf.set_text_color(0, 0, 0)
         elif ligne.startswith('## '):
-            pdf.set_font("Helvetica", 'B', 11)
+            pdf.set_font("Helvetica", 'B', 10)
             pdf.set_text_color(40, 40, 40)
-            pdf.multi_cell(0, 7, ligne_propre.replace('## ', ''))
+            pdf.ln(2)
+            pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('## ', ''))
             pdf.set_text_color(0, 0, 0)
         elif ligne.startswith('### '):
-            pdf.set_font("Helvetica", 'B', 10)
-            pdf.multi_cell(0, 6, ligne_propre.replace('### ', ''))
+            pdf.set_font("Helvetica", 'B', 9)
+            pdf.ln(2)
+            pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('### ', ''))
         else:
-            pdf.set_font("Helvetica", size=9)
-            pdf.multi_cell(0, 5, ligne_propre)
+            pdf.set_font("Helvetica", size=8.5)
+            # multi_cell avec largeur_utile fixe de 190 empêche l'erreur de calcul d'espace
+            pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
             
     return bytes(pdf.output())
 
