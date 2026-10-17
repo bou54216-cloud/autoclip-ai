@@ -1,6 +1,5 @@
 import streamlit as st
 from groq import Groq
-from fpdf import FPDF
 
 # ---------------------------------------------------------
 # 1. CONFIGURATION PAGE ET DESIGN CSS
@@ -30,83 +29,20 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF ULTRA-PROPRE & LISIBLE
-# ---------------------------------------------------------
-class ScriptPDF(FPDF):
-    def header(self):
-        self.set_font('Helvetica', 'B', 10)
-        self.set_text_color(220, 53, 69)
-        self.cell(0, 6, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT CLIENT', 0, 1, 'C')
-        self.ln(3)
-
-    def footer(self):
-        self.set_y(-12)
-        self.set_font('Helvetica', 'I', 8)
-        self.set_text_color(128, 128, 128)
-        self.cell(0, 6, f'Page {self.page_no()}', 0, 0, 'C')
-
-def generer_pdf_script(titre_video, contenu_markdown):
-    pdf = ScriptPDF(orientation='P', unit='mm', format='A4')
-    pdf.set_margins(left=15, top=15, right=15)
-    pdf.add_page()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    
-    # Titre propre
-    titre_propre = (titre_video or "Script_Video").replace('—', '-').replace('–', '-').replace('’', "'")
-    titre_propre = titre_propre.encode('latin-1', 'replace').decode('latin-1')
-    
-    pdf.set_font("Helvetica", 'B', 12)
-    pdf.set_text_color(0, 0, 0)
-    pdf.multi_cell(0, 6, f"SUJET : {titre_propre}")
-    pdf.ln(5)
-    
-    largeur_utile = 180 # 210 - 30 (marges de 15 de chaque côté)
-    
-    # Nettoyage rigoureux des caractères spéciaux pour FPDF
-    texte_brut = (contenu_markdown or "")\
-        .replace('—', '-').replace('–', '-').replace('’', "'")\
-        .replace('«', '"').replace('»', '"').replace('•', '-')\
-        .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
-        .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
-        .replace('🔥', '').replace('⚡', '').replace('💬', '').replace('⏱️', '')\
-        .replace('|', '').replace('>', '').replace('**', '')
-        
-    lignes = texte_brut.split('\n')
-    for ligne in lignes:
-        ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
-        ligne_trim = ligne_propre.strip()
-        
-        # Détection des grands titres de sections
-        if ligne_trim.startswith('1.') or ligne_trim.startswith('2.') or ligne_trim.startswith('3.') or ligne_trim.startswith('4.') or ligne_trim.startswith('5.'):
-            pdf.ln(4)
-            pdf.set_font("Helvetica", 'B', 11)
-            pdf.set_text_color(220, 53, 69)
-            pdf.multi_cell(largeur_utile, 6, ligne_trim)
-            pdf.set_text_color(0, 0, 0)
-        elif ligne_trim == "":
-            pdf.ln(2)
-        else:
-            # Texte standard bien aéré pour éviter toute superposition
-            pdf.set_font("Helvetica", size=9)
-            pdf.multi_cell(largeur_utile, 5, ligne_propre)
-            
-    return bytes(pdf.output())
-
-# ---------------------------------------------------------
-# 4. BARRE LATÉRALE (SIDEBAR)
+# 3. BARRE LATÉRALE (SIDEBAR)
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Pro Actif**")
+    st.success("⚡ **Mode Texte Pro Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez un script clair et téléchargez un PDF impeccable pour vos clients.")
+    st.write("Générez un script ultra-détaillé et qualitatif, prêt à être copié en un clic pour vos clients.")
 
 # ---------------------------------------------------------
-# 5. INTERFACE PRINCIPALE DE CONFIGURATION
+# 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer le PDF de tournage professionnel.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un script et une bible de tournage d'une qualité irréprochable.")
 
 st.divider()
 
@@ -152,17 +88,17 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 6. GÉNÉRATION & TÉLÉCHARGEMENT DU PDF PRO
+# 5. GÉNÉRATION DU SCRIPT PRO TEXTE PUR
 # ---------------------------------------------------------
-if st.button("🚀 Générer le PDF Pro pour le Client", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script & la Bible de Tournage", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
-        # Prompt ultra-structuré pour empêcher l'IA de couper les lignes
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde.
-        Rédige un script vidéo et une bible de tournage complets et détaillés pour un client.
-        IMPORTANT : Rédige chaque phrase de manière complète, sans abréviation, sans symboles complexes, sans tableaux, uniquement avec des phrases claires et des tirets (-) pour les listes.
+        Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
+        Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER PROFESSIONNEL, NET, PRÉCIS ET COMPRÉHENSIBLE PAR UN CLIENT, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
+        NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
+        NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -190,36 +126,13 @@ if st.button("🚀 Générer le PDF Pro pour le Client", type="primary", use_con
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        STRUCTURE OBLIGATOIRE DE TA REPONSE :
-
-        1. BIBLE DE PRODUCTION
-        - Ambiance generale : décris l'atmosphère en une phrase simple.
-        - Decor et accessoires : décris le lieu et les objets.
-        - Ton et energie : décris la posture du créateur.
-
-        2. ACCROCHE (0-3 SECONDES)
-        - Texte affiche a l'ecran : texte exact.
-        - Replique exacte : phrase dite mot a mot par le createur.
-        - Consigne visuelle : mouvement ou intonation.
-
-        3. DECOUPAGE SEQUENCE PAR SEQUENCE
-        - Sequence 1 (Debut de video) :
-          * Replique exacte : phrase complete dite par le createur.
-          * Consigne visuelle et montage : description simple.
-        - Sequence 2 (Milieu de video) :
-          * Replique exacte : phrase complete dite par le createur.
-          * Consigne visuelle et montage : description simple.
-        - Sequence 3 (Fin de video) :
-          * Replique exacte : phrase complete dite par le createur.
-          * Consigne visuelle et montage : description simple.
-
-        4. CONCLUSION ET APPEL A L'ACTION
-        - Replique exacte du CTA : phrase exacte pour appeler a l'action.
-        - Consigne visuelle : instruction particuliere.
-
-        5. LEGENDE ET HASHTAGS
-        - Legende de publication : texte complet pret a copier-coller.
-        - Hashtags : liste des hashtags separes par des espaces.
+        Format de réponse exigé en Markdown clair, structuré et prêt à être copié-collé dans un document de travail pour un client :
+        # BIBLE DE PRODUCTION ET SCRIPT VIDEO
+        ## 1. DIRECTION ARTISTIQUE & SETUP
+        ## 2. L'ACCROCHE (0-3 SECONDES)
+        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques exactes et consignes visuelles)
+        ## 4. CONCLUSION & CALL TO ACTION (CTA)
+        ## 5. LÉGENDE & HASHTAGS VIRAUX
         """
 
         prompt = prompt_template.format(
@@ -234,7 +147,7 @@ if st.button("🚀 Générer le PDF Pro pour le Client", type="primary", use_con
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Génération du script et mise en page propre du PDF..."):
+        with st.spinner("🎬 Rédaction experte du script en cours..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -242,15 +155,10 @@ if st.button("🚀 Générer le PDF Pro pour le Client", type="primary", use_con
                 )
                 script = response.choices[0].message.content
 
-                pdf_data = generer_pdf_script(topic, script)
+                st.success("✨ Script généré avec succès ! Tu peux le copier directement ci-dessous :")
                 
-                st.success("✨ Le PDF propre et lisible a été généré avec succès !")
-                st.download_button(
-                    label="📥 Télécharger le PDF Pro Définitif",
-                    data=pdf_data,
-                    file_name=f"Script_Client_{topic.replace(' ', '_')}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
+                # Zone de texte propre avec bouton de copie intégré de Streamlit
+                st.code(script, language="markdown")
+
             except Exception as e:
                 st.error(f"Erreur lors de la génération : {e}")
