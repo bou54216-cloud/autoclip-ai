@@ -17,34 +17,25 @@ st.set_page_config(
 # Injection CSS pour une interface SaaS haut de gamme
 st.markdown("""
 <style>
-    /* Styling général */
     .stApp {
         background-color: #0E1117;
     }
-    
-    /* Cartes et conteneurs */
     div[data-testid="stVerticalBlock"] > div {
         border-radius: 10px;
     }
-    
-    /* Boutons principaux */
     .stButton>button {
         border-radius: 8px;
         font-weight: 600;
         transition: all 0.3s ease;
     }
-    
-    /* Onglets de navigation */
     .stTabs [data-baseweb="tab-list"] {
         gap: 12px;
     }
-    
     .stTabs [data-baseweb="tab"] {
         border-radius: 6px;
         padding: 8px 16px;
         background-color: #1E232A;
     }
-    
     .stTabs [aria-selected="true"] {
         background-color: #FF4B4B !important;
         color: white !important;
@@ -85,14 +76,32 @@ def refresh_user_credits(user_id):
         if res.data and len(res.data) > 0:
             st.session_state.credits = res.data[0].get("credits", 0)
         else:
-            # Création automatique du profil avec 5 crédits offerts
             supabase.table("profiles").insert({"id": user_id, "email": st.session_state.user.email, "credits": 5}).execute()
             st.session_state.credits = 5
     except Exception as e:
         st.error(f"Erreur de synchronisation Supabase : {e}")
 
 # ---------------------------------------------------------
-# 4. FONCTION REDIRECTION STRIPE CHECKOUT
+# 4. FONCTION DE GÉNÉRATION GROQ AVEC SÉCOURS (FALLBACK)
+# ---------------------------------------------------------
+def generer_avec_groq(prompt):
+    """ Tente plusieurs modèles Groq en cascade pour éviter les erreurs de disponibilité """
+    modeles = ["llama-3.3-70b-versatile", "llama3-70b-8192", "llama3-8b-8192"]
+    
+    for model in modeles:
+        try:
+            response = groq_client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return response.choices[0].message.content
+        except Exception:
+            continue
+            
+    raise Exception("Tous les modèles Groq ont échoué. Veuillez vérifier votre clé API.")
+
+# ---------------------------------------------------------
+# 5. FONCTION REDIRECTION STRIPE CHECKOUT
 # ---------------------------------------------------------
 def recharger_via_stripe(price_id, user_email):
     """ Crée la session Stripe Checkout et redirige la fenêtre principale """
@@ -111,7 +120,6 @@ def recharger_via_stripe(price_id, user_email):
             managed_payments={'enabled': False},
         )
         
-        # Redirection via JS
         js = f"<script>window.top.location.href = '{session.url}';</script>"
         components.html(js, height=0)
         st.info("Redirection sécurisée vers Stripe Checkout...")
@@ -121,7 +129,7 @@ def recharger_via_stripe(price_id, user_email):
         st.error(f"Erreur de paiement Stripe : {e}")
 
 # ---------------------------------------------------------
-# 5. ECRAN DE CONNEXION / INSCRIPTION
+# 6. ECRAN DE CONNEXION / INSCRIPTION
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>⚡ The Empire Studio</h1>", unsafe_allow_html=True)
@@ -157,25 +165,22 @@ if not st.session_state.user:
     st.stop()
 
 # ---------------------------------------------------------
-# 6. APPLICATION PRINCIPALE & BARRE LATÉRALE
+# 7. APPLICATION PRINCIPALE & BARRE LATÉRALE
 # ---------------------------------------------------------
-# Synchronisation initiale
 refresh_user_credits(st.session_state.user.id)
 
-# Gestion dynamique des retours de paiements Stripe
 query_params = st.query_params
 
 if "success" in query_params and "payment_processed" not in st.session_state:
     price_id_paid = query_params.get("price_id", "")
     
-    # Détermination du nombre de crédits selon l'achat
     credits_to_add = 1
     if price_id_paid == st.secrets.get("PRICE_PRO"):
         credits_to_add = 15
     elif price_id_paid == st.secrets.get("PRICE_PREMIUM"):
         credits_to_add = 30
     elif price_id_paid == st.secrets.get("PRICE_INFINITE"):
-        credits_to_add = 999  # Mode Illimité
+        credits_to_add = 999
 
     try:
         new_credits = st.session_state.credits + credits_to_add
@@ -218,7 +223,7 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 7. MODULES IA DE CRÉATION
+# 8. MODULES IA DE CRÉATION
 # ---------------------------------------------------------
 st.title("🚀 Espace de Création Avancé")
 
@@ -267,19 +272,17 @@ with tab_autoclip:
             4. **CONSEILS MONTAGE**: Musique, rythme, effets.
             """
             with st.spinner("Génération du script sur-mesure..."):
-                response = groq_client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                script = response.choices[0].message.content
-                
-                # Décrémentation
-                new_credits = st.session_state.credits - 1
-                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                st.session_state.credits = new_credits
+                try:
+                    script = generer_avec_groq(prompt)
+                    
+                    new_credits = st.session_state.credits - 1
+                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                    st.session_state.credits = new_credits
 
-                st.success("Script généré avec succès !")
-                st.markdown(script)
+                    st.success("Script généré avec succès !")
+                    st.markdown(script)
+                except Exception as e:
+                    st.error(f"Erreur lors de la génération : {e}")
 
 # --- MODULE 2: BioCraft AI ---
 with tab_biocraft:
@@ -308,18 +311,17 @@ with tab_biocraft:
             - Émojis: {emoji_style}
             """
             with st.spinner("Création des bios..."):
-                response = groq_client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                bios = response.choices[0].message.content
+                try:
+                    bios = generer_avec_groq(prompt)
 
-                new_credits = st.session_state.credits - 1
-                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                st.session_state.credits = new_credits
+                    new_credits = st.session_state.credits - 1
+                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                    st.session_state.credits = new_credits
 
-                st.success("Bios générées !")
-                st.markdown(bios)
+                    st.success("Bios générées !")
+                    st.markdown(bios)
+                except Exception as e:
+                    st.error(f"Erreur lors de la génération : {e}")
 
 # --- MODULE 3: CopyCraft AI ---
 with tab_copycraft:
@@ -353,15 +355,14 @@ with tab_copycraft:
             - Urgence: {urgency_element if urgency_element else 'Aucun'}
             """
             with st.spinner("Rédaction stratégique en cours..."):
-                response = groq_client.chat.completions.create(
-                    model="llama-3.1-70b-versatile",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                copy_text = response.choices[0].message.content
+                try:
+                    copy_text = generer_avec_groq(prompt)
 
-                new_credits = st.session_state.credits - 1
-                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                st.session_state.credits = new_credits
+                    new_credits = st.session_state.credits - 1
+                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                    st.session_state.credits = new_credits
 
-                st.success("Texte rédigé avec succès !")
-                st.markdown(copy_text)
+                    st.success("Texte rédigé avec succès !")
+                    st.markdown(copy_text)
+                except Exception as e:
+                    st.error(f"Erreur lors de la rédaction : {e}")
