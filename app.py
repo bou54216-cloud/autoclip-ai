@@ -58,9 +58,10 @@ elif "canceled" in query_params:
 import streamlit.components.v1 as components
 
 def recharger_via_stripe(price_id, user_email):
-    """ Redirige la fenêtre principale vers la page de paiement sécurisée Stripe Checkout """
+    """ Crée la session Stripe Checkout et redirige directement l'utilisateur """
     try:
         is_subscription = (price_id != st.secrets["PRICE_SINGLE"])
+        
         session = stripe.checkout.Session.create(
             line_items=[{
                 'price': price_id,
@@ -73,15 +74,20 @@ def recharger_via_stripe(price_id, user_email):
             managed_payments={'enabled': False},
         )
         
-        # Forcer la redirection de toute la page (window.top) vers Stripe Checkout
-        js_code = f"""
+        # Redirection automatique via JavaScript vers la page Checkout Stripe
+        js = f"""
         <script>
             window.top.location.href = "{session.url}";
         </script>
         """
-        components.html(js_code, height=0)
+        components.html(js, height=0)
+        
+        # Message de secours avec bouton direct si la redirection automatique est bloquée
+        st.info("Redirection vers la page de paiement Stripe...")
+        st.markdown(f"[👉 Cliquez ici si la page ne s'ouvre pas automatiquement]({session.url})")
+        
     except Exception as e:
-        st.error(f"Erreur lors de l'initialisation du paiement Stripe : {e}")
+        st.error(f"Erreur Stripe : {e}")
 # ---------------------------------------------------------
 # 4. INTERFACE D'AUTHENTIFICATION (SI NON CONNECTÉ)
 # ---------------------------------------------------------
