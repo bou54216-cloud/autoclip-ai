@@ -30,39 +30,39 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF ULTRA-CARRÉ & PROPRE
+# 3. MOTEUR EXPORT PDF ULTRA-PROPRE & LISIBLE
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
         self.set_font('Helvetica', 'B', 10)
         self.set_text_color(220, 53, 69)
         self.cell(0, 6, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT CLIENT', 0, 1, 'C')
-        self.ln(2)
+        self.ln(3)
 
     def footer(self):
-        self.set_y(-10)
+        self.set_y(-12)
         self.set_font('Helvetica', 'I', 8)
         self.set_text_color(128, 128, 128)
         self.cell(0, 6, f'Page {self.page_no()}', 0, 0, 'C')
 
 def generer_pdf_script(titre_video, contenu_markdown):
     pdf = ScriptPDF(orientation='P', unit='mm', format='A4')
-    pdf.set_margins(left=12, top=12, right=12)
+    pdf.set_margins(left=15, top=15, right=15)
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
-    # En-tête du sujet
+    # Titre propre
     titre_propre = (titre_video or "Script_Video").replace('—', '-').replace('–', '-').replace('’', "'")
     titre_propre = titre_propre.encode('latin-1', 'replace').decode('latin-1')
     
     pdf.set_font("Helvetica", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    pdf.multi_cell(0, 7, f"SUJET DE LA VIDEO : {titre_propre}")
-    pdf.ln(4)
+    pdf.multi_cell(0, 6, f"SUJET : {titre_propre}")
+    pdf.ln(5)
     
-    largeur_utile = 186 # 210 - 24 (marges de 12 de chaque côté)
+    largeur_utile = 180 # 210 - 30 (marges de 15 de chaque côté)
     
-    # Nettoyage global du contenu généré par l'IA
+    # Nettoyage rigoureux des caractères spéciaux pour FPDF
     texte_brut = (contenu_markdown or "")\
         .replace('—', '-').replace('–', '-').replace('’', "'")\
         .replace('«', '"').replace('»', '"').replace('•', '-')\
@@ -74,20 +74,21 @@ def generer_pdf_script(titre_video, contenu_markdown):
     lignes = texte_brut.split('\n')
     for ligne in lignes:
         ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
+        ligne_trim = ligne_propre.strip()
         
-        # Gestion stricte de la mise en page selon les niveaux de titres
-        if ligne.strip().startswith('#') or ligne.strip().startswith('1.') or ligne.strip().startswith('2.') or ligne.strip().startswith('3.') or ligne.strip().startswith('4.') or ligne.strip().startswith('5.'):
-            pdf.ln(3)
-            pdf.set_font("Helvetica", 'B', 10)
+        # Détection des grands titres de sections
+        if ligne_trim.startswith('1.') or ligne_trim.startswith('2.') or ligne_trim.startswith('3.') or ligne_trim.startswith('4.') or ligne_trim.startswith('5.'):
+            pdf.ln(4)
+            pdf.set_font("Helvetica", 'B', 11)
             pdf.set_text_color(220, 53, 69)
-            pdf.multi_cell(largeur_utile, 6, ligne_propre.replace('#', '').strip())
+            pdf.multi_cell(largeur_utile, 6, ligne_trim)
             pdf.set_text_color(0, 0, 0)
+        elif ligne_trim == "":
+            pdf.ln(2)
         else:
+            # Texte standard bien aéré pour éviter toute superposition
             pdf.set_font("Helvetica", size=9)
-            if ligne.strip() == "":
-                pdf.ln(2)
-            else:
-                pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
+            pdf.multi_cell(largeur_utile, 5, ligne_propre)
             
     return bytes(pdf.output())
 
@@ -96,16 +97,16 @@ def generer_pdf_script(titre_video, contenu_markdown):
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Carré Actif**")
+    st.success("⚡ **Mode Pro Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez un script propre et téléchargez directement votre PDF prêt à l'emploi pour votre client.")
+    st.write("Générez un script clair et téléchargez un PDF impeccable pour vos clients.")
 
 # ---------------------------------------------------------
 # 5. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer instantanément le PDF complet et structuré.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer le PDF de tournage professionnel.")
 
 st.divider()
 
@@ -151,18 +152,17 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 6. GÉNÉRATION & TÉLÉCHARGEMENT DU PDF CARRÉ
+# 6. GÉNÉRATION & TÉLÉCHARGEMENT DU PDF PRO
 # ---------------------------------------------------------
-if st.button("🚀 Générer le PDF de Tournage Définitif", type="primary", use_container_width=True):
+if st.button("🚀 Générer le PDF Pro pour le Client", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
+        # Prompt ultra-structuré pour empêcher l'IA de couper les lignes
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
-        Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER CLAIR, NET, PRÉCIS ET COMPRÉHENSIBLE PAR UN CLIENT, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
-        INTERDICTION TOTALE D'UTILISER DES TABLEAUX MARKDOWN OU DES SYMBOLES BIZARRES. Utilise uniquement du texte rédigé en paragraphes et listes à puces simples avec des tirets (-).
-        NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
-        NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
+        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde.
+        Rédige un script vidéo et une bible de tournage complets et détaillés pour un client.
+        IMPORTANT : Rédige chaque phrase de manière complète, sans abréviation, sans symboles complexes, sans tableaux, uniquement avec des phrases claires et des tirets (-) pour les listes.
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -190,30 +190,36 @@ if st.button("🚀 Générer le PDF de Tournage Définitif", type="primary", use
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Format de réponse exigé (clair, net, structuré en texte brut) :
+        STRUCTURE OBLIGATOIRE DE TA REPONSE :
+
         1. BIBLE DE PRODUCTION
-        - Ambiance generale : ...
-        - Decor : ...
-        - Ton et energie : ...
+        - Ambiance generale : décris l'atmosphère en une phrase simple.
+        - Decor et accessoires : décris le lieu et les objets.
+        - Ton et energie : décris la posture du créateur.
 
         2. ACCROCHE (0-3 SECONDES)
-        - Texte a l'ecran : ...
-        - Replique exacte au mot pres : ...
-        - Intonation : ...
+        - Texte affiche a l'ecran : texte exact.
+        - Replique exacte : phrase dite mot a mot par le createur.
+        - Consigne visuelle : mouvement ou intonation.
 
         3. DECOUPAGE SEQUENCE PAR SEQUENCE
-        - Sequence 1 (00:03 - 00:10) :
-          * Replique exacte : ...
-          * Consignes visuelles et mouvements de camera : ...
-        (Repeter pour chaque sequence)
+        - Sequence 1 (Debut de video) :
+          * Replique exacte : phrase complete dite par le createur.
+          * Consigne visuelle et montage : description simple.
+        - Sequence 2 (Milieu de video) :
+          * Replique exacte : phrase complete dite par le createur.
+          * Consigne visuelle et montage : description simple.
+        - Sequence 3 (Fin de video) :
+          * Replique exacte : phrase complete dite par le createur.
+          * Consigne visuelle et montage : description simple.
 
-        4. CONCLUSION ET APPEL A L'ACTION (CTA)
-        - Replique exacte du CTA : ...
-        - Consigne visuelle : ...
+        4. CONCLUSION ET APPEL A L'ACTION
+        - Replique exacte du CTA : phrase exacte pour appeler a l'action.
+        - Consigne visuelle : instruction particuliere.
 
-        5. LEGENDE ET HASHTAGS VIRAUX
-        - Legende : ...
-        - Hashtags : ...
+        5. LEGENDE ET HASHTAGS
+        - Legende de publication : texte complet pret a copier-coller.
+        - Hashtags : liste des hashtags separes par des espaces.
         """
 
         prompt = prompt_template.format(
@@ -228,7 +234,7 @@ if st.button("🚀 Générer le PDF de Tournage Définitif", type="primary", use
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction et compilation du PDF carré en cours..."):
+        with st.spinner("🎬 Génération du script et mise en page propre du PDF..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -238,11 +244,11 @@ if st.button("🚀 Générer le PDF de Tournage Définitif", type="primary", use
 
                 pdf_data = generer_pdf_script(topic, script)
                 
-                st.success("✨ Le PDF carré et détaillé a été généré avec succès !")
+                st.success("✨ Le PDF propre et lisible a été généré avec succès !")
                 st.download_button(
-                    label="📥 Télécharger le PDF Définitif pour le Client",
+                    label="📥 Télécharger le PDF Pro Définitif",
                     data=pdf_data,
-                    file_name=f"Script_Tournage_Pro_{topic.replace(' ', '_')}.pdf",
+                    file_name=f"Script_Client_{topic.replace(' ', '_')}.pdf",
                     mime="application/pdf",
                     use_container_width=True
                 )
