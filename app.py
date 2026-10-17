@@ -8,8 +8,8 @@ import streamlit.components.v1 as components
 # 1. CONFIGURATION ET DESIGN CSS PREMIUM
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="The Empire Studio — AI Content Suite",
-    page_icon="⚡",
+    page_title="AutoClip AI — Studio de Scripts Vidéo Pro",
+    page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -19,9 +19,14 @@ st.markdown("""
     .stApp { background-color: #0E1117; }
     div[data-testid="stVerticalBlock"] > div { border-radius: 10px; }
     .stButton>button { border-radius: 8px; font-weight: 600; transition: all 0.3s ease; }
-    .stTabs [data-baseweb="tab-list"] { gap: 12px; }
-    .stTabs [data-baseweb="tab"] { border-radius: 6px; padding: 8px 16px; background-color: #1E232A; }
-    .stTabs [aria-selected="true"] { background-color: #FF4B4B !important; color: white !important; }
+    
+    /* Style pour encadrer le rendu du script */
+    .script-container {
+        background-color: #161B22;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #30363D;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -90,8 +95,8 @@ def recharger_via_stripe(price_id, user_email):
 # 5. ECRAN DE CONNEXION / INSCRIPTION
 # ---------------------------------------------------------
 if not st.session_state.user:
-    st.markdown("<h1 style='text-align: center;'>⚡ The Empire Studio</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Studio IA Haute Performance — Monetization Ready</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Générateur de Scripts Vidéo Haute Conversion pour Créateurs & Marques</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -155,7 +160,7 @@ elif "canceled" in query_params:
 
 # --- BARRE LATÉRALE (SIDEBAR) ---
 with st.sidebar:
-    st.title("⚡ Empire Studio")
+    st.title("🎬 AutoClip Studio")
     st.write(f"👤 **Membre :** {st.session_state.user.email}")
     st.metric(label="Solde de Crédits", value=f"{st.session_state.credits} CR")
     
@@ -181,158 +186,115 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 7. MODULES IA DE CRÉATION
+# 7. MODULE UNIQUE : AUTOCLIP AI ULTRA-APPROFONDI
 # ---------------------------------------------------------
-st.title("🚀 Espace de Création Avancé")
+st.title("🎬 AutoClip AI — Studio de Scripting Vidéo Pro")
+st.markdown("Configurez vos critères avec précision pour générer un découpage vidéo professionnel sur-mesure.")
 
-tab_autoclip, tab_biocraft, tab_copycraft = st.tabs(["🎬 AutoClip AI", "👤 BioCraft AI", "✍️ CopyCraft AI"])
+st.divider()
 
-# --- MODULE 1: AutoClip AI ---
-with tab_autoclip:
-    st.header("🎬 AutoClip AI — Générateur de scripts vidéo sur-mesure")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        topic = st.text_input("Sujet principal de la vidéo :", placeholder="ex: 3 erreurs à éviter quand on lance son business")
-        platform = st.selectbox("Plateforme cible :", ["TikTok / Shorts / Reels (< 1 min)", "YouTube Long Format", "LinkedIn Vidéo pro", "Publicité vidéo (Meta/TikTok)"])
-        duration = st.selectbox("Format / Durée :", ["Flash (< 30 sec)", "Standard (30 à 60 sec)", "Approfondi (1 à 3 min)"])
-        tone = st.selectbox("Ton / Ambiance :", ["Dynamique & Énergique", "Cash, Direct & Provocant", "Éducatif & Expert", "Storytelling", "Humoristique"])
+col1, col2, col3 = st.columns(3)
 
-    with col2:
-        hook_style = st.selectbox("Style d'accroche (Hook 0-3s) :", ["Question choc", "Statistique / Fait insolite", "Scénario 'Imagine si...'", "Mythe à briser"])
-        structure = st.selectbox("Structure narrative :", ["3 étapes clés", "Problème / Agitation / Solution", "Avant / Après", "Liste numérotée"])
-        target_audience = st.text_input("Audience cible (Persona) :", placeholder="ex: Étudiants, entrepreneurs, passionnés de musique...")
-        cta_type = st.selectbox("Appel à l'action (CTA) :", ["S'abonner", "Commenter pour recevoir un lien", "Cliquer sur le lien en bio", "Partager à un ami"])
+with col1:
+    topic = st.text_input("🎯 Sujet / Concept de la vidéo :", placeholder="ex: 3 secrets pour produire de la house music captivante")
+    creator_type = st.radio("👤 Type de créateur / Présentateur :", ["Personne Réelle (Face Cam)", "IA / Faceless (Avatar / Voix Off / B-Roll)"])
+    platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Vidéo"])
 
-    keywords = st.text_input("Mots-clés obligatoires (optionnel) :", placeholder="ex: house music, productivité, indépendance")
+with col2:
+    duration = st.selectbox("⏱️ Durée souhaitée :", ["Ultra-court (15 à 30 sec)", "Standard Short (30 à 60 sec)", "Long Short (60 à 90 sec)", "Format Long (3 à 5 min)"])
+    tone = st.selectbox("🎭 Ton & Style d'énergie :", ["Dynamique & Cash", "Éducatif & Inspirant", "Mystérieux & Captivant", "Humoristique & Décalé", "Corporate & Expert"])
+    hook_style = st.selectbox("🪝 Style de Hook (Accroche) :", ["Question choc / Provocation", "Chiffre / Statistique incroyable", "Scénario 'Imagine si...'", "Mythe populaire à déconstruire", "Avertissement / Erreur grave"])
 
-    if st.button("Générer le script (-1 crédit)", type="primary", use_container_width=True):
-        if st.session_state.credits <= 0:
-            st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
-        else:
-            prompt = f"""
-            Agis en tant que Directeur Artistique et Expert Copywriter vidéo.
-            Rédige un script hautement engageant.
-            - Sujet: {topic}
-            - Plateforme: {platform}
-            - Durée: {duration}
-            - Ton: {tone}
-            - Hook: {hook_style}
-            - Structure: {structure}
-            - Audience: {target_audience if target_audience else 'Grand public'}
-            - CTA: {cta_type}
-            - Mots-clés: {keywords if keywords else 'Aucun'}
+with col3:
+    structure = st.selectbox("🏗️ Structure narrative :", ["Problème -> Agitation -> Solution", "Storytelling dramatique", "Méthode pas-à-pas (1, 2, 3)", "Avant / Après (Transformation)"])
+    cta_type = st.selectbox("🎯 Objectif du Call To Action (CTA) :", ["Commenter un mot-clé précis", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Partager la vidéo"])
+    extra_details = st.text_area("✍️ Mots-clés / Consignes spécifiques :", placeholder="ex: Parler de tempo 128 BPM, ajouter une ambiance néon sombre...")
 
-            Format exigé :
-            1. **HOOK (0-3s)**: Verbal + Indication visuelle [B-Roll].
-            2. **DÉVELOPPEMENT**: Corps du script rythmé.
-            3. **CALL TO ACTION**: Transition naturelle.
-            4. **CONSEILS MONTAGE**: Musique, rythme, effets.
-            """
-            with st.spinner("Génération du script sur-mesure..."):
-                try:
-                    response = groq_client.chat.completions.create(
-                        model="openai/gpt-oss-120b",
-                        messages=[{"role": "user", "content": prompt}]
-                    )
-                    script = response.choices[0].message.content
-                    
-                    new_credits = st.session_state.credits - 1
-                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                    st.session_state.credits = new_credits
+st.divider()
 
-                    st.success("Script généré avec succès !")
-                    st.markdown(script)
-                except Exception as e:
-                    st.error(f"Erreur Groq : {e}")
+if st.button("🚀 Générer le Script Vidéo Ultra-Détaillé (-1 crédit)", type="primary", use_container_width=True):
+    if st.session_state.credits <= 0:
+        st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
+    else:
+        # Prompt ultra-directif pour forcer un rendu structuré et non vague
+        prompt = f"""
+        Tu es un Réalisateur Vidéo et Copywriter Expert pour réseaux sociaux.
+        Rédige un script complet et hyper structuré pour une vidéo court-format.
 
-# --- MODULE 2: BioCraft AI ---
-with tab_biocraft:
-    st.header("👤 BioCraft AI — Optimisation de profil multi-plateforme")
-    
-    col_b1, col_b2 = st.columns(2)
-    with col_b1:
-        bio_topic = st.text_input("Activité / Domaine :", placeholder="ex: Producteur de House Music & Créateur TikTok")
-        platform_bio = st.selectbox("Plateforme cible :", ["Instagram", "TikTok", "LinkedIn", "X (Twitter)", "YouTube Bio"])
-        bio_vibe = st.selectbox("Vibe / Style :", ["Minimaliste & Clean", "Énergique & Impactant", "Corporate", "Artistique", "Exclusif"])
-    with col_b2:
-        include_stats = st.text_input("Réalisations / Stats (optionnel) :", placeholder="ex: +1M d'écoutes, 5 ans d'expérience")
-        cta_bio = st.selectbox("Objectif CTA :", ["Écouter ma musique", "Visiter le site e-commerce", "Prendre RDV", "S'abonner"])
-        emoji_style = st.selectbox("Émojis :", ["Subtil (1 ou 2 max)", "Dynamique", "Aucun"])
+        --- CRITÈRES DE PRODUCTION ---
+        - Sujet : {topic}
+        - Présentateur : {creator_type}
+        - Plateforme : {platform}
+        - Durée : {duration}
+        - Ton / Énergie : {tone}
+        - Style de Hook (0-3 sec) : {hook_style}
+        - Structure narrative : {structure}
+        - Objectif CTA : {cta_type}
+        - Consignes / Mots-clés : {extra_details if extra_details else 'Aucun'}
 
-    if st.button("Générer les bios (-1 crédit)", type="primary", use_container_width=True):
-        if st.session_state.credits <= 0:
-            st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
-        else:
-            prompt = f"""
-            Génère 3 variations de bios captivantes optimisées pour {platform_bio}.
-            - Domaine: {bio_topic}
-            - Style: {bio_vibe}
-            - Stats: {include_stats if include_stats else 'Aucune'}
-            - Objectif CTA: {cta_bio}
-            - Émojis: {emoji_style}
-            """
-            with st.spinner("Création des bios..."):
-                try:
-                    response = groq_client.chat.completions.create(
-                        model="openai/gpt-oss-120b",
-                        messages=[{"role": "user", "content": prompt}]
-                    )
-                    bios = response.choices[0].message.content
+        --- FORMAT DE RÉPONSE EXIGÉ ---
+        Structure impérativement ton résultat avec les sections suivantes en Markdown propre :
 
-                    new_credits = st.session_state.credits - 1
-                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                    st.session_state.credits = new_credits
+        ### 📌 1. FICHE TECHNIQUE DE LA VIDÉO
+        - **Format & Cadrage** : (ex: 9:16 Vertical, plan serré / plan large)
+        - **Ambiance Sonore / Musique** : (ex: House dynamique à 128 BPM, fondu d'entrée)
+        - **Style d'Édition** : (ex: Rythme de coupe rapide toutes les 1.5s, sous-titres dynamiques jaune/blanc)
 
-                    st.success("Bios générées !")
-                    st.markdown(bios)
-                except Exception as e:
-                    st.error(f"Erreur Groq : {e}")
+        ---
 
-# --- MODULE 3: CopyCraft AI ---
-with tab_copycraft:
-    st.header("✍️ CopyCraft AI — Studio de Copywriting")
-    
-    copy_topic = st.text_area("Description du produit / service :", placeholder="ex: Montre Citizen Promaster Dive Eco-Drive 200m, étanche, solaire, bracelet résine...")
-    
-    col_c1, col_c2 = st.columns(2)
-    with col_c1:
-        copy_format = st.selectbox("Format marketing :", ["Fiche produit e-commerce SEO", "Publicité réseaux sociaux (Conversion)", "Email de vente", "Landing Page", "Script UGC"])
-        copy_objective = st.selectbox("Objectif principal :", ["Conversion directe", "Créer l'urgence", "Lever les objections", "Coup de cœur émotionnel"])
-        copywriting_framework = st.selectbox("Framework :", ["AIDA (Attention, Intérêt, Désir, Action)", "PAS (Problème, Agitation, Solution)", "FAB (Features, Advantages, Benefits)"])
+        ### 🪝 2. LE HOOK (0 à 3 Secondes - Maintien de l'attention)
+        - **Texte Parlé (Voiceover)** : "..."
+        - **Visuel à l'écran** : [Préciser ce que l'on voit ou ce que fait l'avatar/personne]
+        - **Texte en Gros à l'écran (On-Screen Text)** : "..."
+        - **Effet Sonore (SFX)** : [ex: Whoosh / Explosion sound]
 
-    with col_c2:
-        copy_tone = st.selectbox("Ton :", ["Vendeur percutant", "Luxe & Premium", "Authentique & Proche", "Éducatif"])
-        target_persona = st.text_input("Client idéal (Persona) :", placeholder="ex: Passionnés d'horlogerie et d'aventure")
-        urgency_element = st.text_input("Offre / Urgence (optionnel) :", placeholder="ex: -20% ce weekend")
+        ---
 
-    if st.button("Lancer la rédaction (-1 crédit)", type="primary", use_container_width=True):
-        if st.session_state.credits <= 0:
-            st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
-        else:
-            prompt = f"""
-            Agis en tant que Copywriter Senior. Rédige un texte marketing hautement persuasif.
-            - Produit: {copy_topic}
-            - Format: {copy_format}
-            - Objectif: {copy_objective}
-            - Framework: {copywriting_framework}
-            - Ton: {copy_tone}
-            - Persona: {target_persona if target_persona else 'Grand public'}
-            - Urgence: {urgency_element if urgency_element else 'Aucun'}
-            """
-            with st.spinner("Rédaction stratégique en cours..."):
-                try:
-                    response = groq_client.chat.completions.create(
-                        model="openai/gpt-oss-120b",
-                        messages=[{"role": "user", "content": prompt}]
-                    )
-                    copy_text = response.choices[0].message.content
+        ### 🎬 3. DÉCOUPAGE SCÈNE PAR SCÈNE (Script Complet)
+        Fournis un tableau Markdown ou une liste détaillée horodatée :
 
-                    new_credits = st.session_state.credits - 1
-                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                    st.session_state.credits = new_credits
+        * **[0:03 - 0:10] Scène 1 : Introduction de la problématique**
+          - **Voix / Discours** : "..."
+          - **Visuel / B-Roll** : [Description exacte de l'image ou vidéo d'illustration]
+          - **Texte / Graphisme** : [Mots-clés affichés]
 
-                    st.success("Texte rédigé avec succès !")
-                    st.markdown(copy_text)
-                except Exception as e:
-                    st.error(f"Erreur Groq : {e}")
+        * **[0:10 - 0:25] Scène 2 : Développement & Conseils clés**
+          - **Voix / Discours** : "..."
+          - **Visuel / B-Roll** : [Description visuelle]
+          - **Texte / Graphisme** : [Mots-clés affichés]
+
+        * **[0:25 - 0:40] Scène 3 : Preuve / Démonstration / Exemple**
+          - **Voix / Discours** : "..."
+          - **Visuel / B-Roll** : [Description visuelle]
+
+        ---
+
+        ### 🎯 4. CALL TO ACTION (CTA & Engagement)
+        - **Discours Final** : "..."
+        - **Visuel / Animation** : [Animation d'abonnement / Flèche vers le profil]
+
+        ---
+
+        ### 🤖 5. PROMPTS IA PRÊTS À L'EMPLOI (Pour la génération visuelle & sonore)
+        - **Prompt Midjourney / Leonardo (B-Roll / Images)** : `...`
+        - **Prompt Voix Off ElevenLabs (Style de voix)** : `...`
+        """
+
+        with st.spinner("🎬 Rédaction du script vidéo structuré en cours..."):
+            try:
+                response = groq_client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                script = response.choices[0].message.content
+
+                # Décrémenter 1 crédit
+                new_credits = st.session_state.credits - 1
+                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                st.session_state.credits = new_credits
+
+                st.success("✨ Script généré avec succès !")
+                st.markdown(script)
+
+            except Exception as e:
+                st.error(f"Erreur lors de la génération : {e}")
