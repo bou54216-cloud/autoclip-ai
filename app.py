@@ -146,36 +146,46 @@ if not st.session_state.user:
 # ---------------------------------------------------------
 # 5. APPLICATION PRINCIPALE (UTILISATEUR CONNECTÉ)
 # ---------------------------------------------------------
-# Mise à jour des crédits
+# 1. On s'assure d'abord de charger les crédits actuels de l'utilisateur
 refresh_user_credits(st.session_state.user.id)
 
-# Barre latérale (Sidebar)
-with st.sidebar:
-    st.title("⚡ Empire Studio")
-    st.write(f"👤 **Compte :** {st.session_state.user.email}")
-    st.metric(label="Crédits disponibles", value=st.session_state.credits)
+# 2. On traite le retour de Stripe APRES s'être assuré que l'utilisateur est bien connecté
+query_params = st.query_params
 
-    if st.button("Se déconnecter"):
-        supabase.auth.sign_out()
-        st.session_state.user = None
-        st.session_state.credits = 0
-        st.rerun()
+if "success" in query_params:
+    st.success("🎉 Paiement réussi !")
+    
+    # On utilise st.session_state pour s'assurer de ne créditer qu'une seule fois
+    if "payment_processed" not in st.session_state:
+        try:
+            # Récupération en direct du solde dans Supabase
+            res = supabase.table("profiles").select("credits").eq("id", st.session_state.user.id).execute()
+            
+            if res.data and len(res.data) > 0:
+                current_credits = res.data[0].get("credits", 0)
+                new_credits = current_credits + 1  # Ajout du crédit acheté
+                
+                # Mise à jour dans la base Supabase
+                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                
+                # Mise à jour de la session
+                st.session_state.credits = new_credits
+                st.session_state.payment_processed = True
+                
+                st.balloons()  # Animation de succès
+                st.success(f"✅ Vos crédits ont été mis à jour ! Nouveau solde : {new_credits} crédit(s).")
+            else:
+                # Si l'utilisateur n'existait pas encore dans la table profiles, on le crée
+                supabase.table("profiles").insert({"id": st.session_state.user.id, "email": st.session_state.user.email, "credits": 1}).execute()
+                st.session_state.credits = 1
+                st.session_state.payment_processed = True
+                st.success("✅ Votre profil a été créé et votre crédit a été ajouté !")
+                
+        except Exception as e:
+            st.error(f"Erreur lors de la mise à jour des crédits dans Supabase : {e}")
 
-    st.divider()
-    st.markdown("### 💳 Tarifs & Recharges")
-
-    # Options d'achat
-    if st.button("1 Crédit — 3,49 $", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_SINGLE"], st.session_state.user.email)
-
-    if st.button("Plan PRO (15 crédits) — 14,99 $/mois", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_PRO"], st.session_state.user.email)
-
-    if st.button("Plan PREMIUM (30 crédits) — 24,99 $/mois", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_PREMIUM"], st.session_state.user.email)
-
-    if st.button("Plan INFINITE (Illimité) — 49,99 $/mois", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
+elif "canceled" in query_params:
+    st.warning("⚠️ Le paiement a été annulé.")
 
 # ---------------------------------------------------------
 # 6. MODULES IA DU STUDIO (VERSION AVANCÉE & PROFONDE)
