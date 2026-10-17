@@ -43,7 +43,7 @@ class ScriptPDF(FPDF):
     def header(self):
         self.set_font('Helvetica', 'B', 14)
         self.set_text_color(220, 53, 69)
-        self.cell(0, 10, 'AUTOCLIP AI — BIBLE DE TOURNAGE & SCRIPT', new_x="LMARGIN", new_y="NEXT", align='C')
+        self.cell(0, 10, 'AUTOCLIP AI - BIBLE DE TOURNAGE & SCRIPT', new_x="LMARGIN", new_y="NEXT", align='C')
         self.ln(5)
 
     def footer(self):
@@ -56,15 +56,33 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf = ScriptPDF()
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
-    
+
+    # Nettoyage des caractères spéciaux incompatibles avec Helvetica
+    titre_propre = (titre_video or "Script_Video")\
+        .replace('—', '-')\
+        .replace('–', '-')\
+        .replace('’', "'")\
+        .replace('«', '"')\
+        .replace('»', '"')
+
     pdf.set_font("Helvetica", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, 10, f"Sujet : {titre_video}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 10, f"Sujet : {titre_propre}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(5)
-    
+
     lignes = contenu_markdown.split('\n')
     for ligne in lignes:
-        ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
+        # Remplacement des caractères non-Latin1
+        ligne_nettoyee = (ligne or "")\
+            .replace('—', '-')\
+            .replace('–', '-')\
+            .replace('’', "'")\
+            .replace('«', '"')\
+            .replace('»', '"')\
+            .replace('•', '*')
+
+        ligne_propre = ligne_nettoyee.encode('latin-1', 'replace').decode('latin-1')
+
         if ligne.startswith('# '):
             pdf.set_font("Helvetica", 'B', 14)
             pdf.cell(0, 10, ligne_propre.replace('# ', ''), new_x="LMARGIN", new_y="NEXT")
@@ -77,7 +95,7 @@ def generer_pdf_script(titre_video, contenu_markdown):
         else:
             pdf.set_font("Helvetica", size=9)
             pdf.multi_cell(0, 5, ligne_propre)
-            
+
     return bytes(pdf.output())
 
 # ---------------------------------------------------------
