@@ -56,23 +56,23 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf = ScriptPDF()
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
-
-    # Nettoyage des caractères spéciaux incompatibles avec Helvetica
+    
+    # Nettoyage du titre
     titre_propre = (titre_video or "Script_Video")\
         .replace('—', '-')\
         .replace('–', '-')\
         .replace('’', "'")\
         .replace('«', '"')\
         .replace('»', '"')
-
+        
     pdf.set_font("Helvetica", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, 10, f"Sujet : {titre_propre}", new_x="LMARGIN", new_y="NEXT")
+    # Utilisation de multi_cell pour éviter l'erreur d'espace horizontal
+    pdf.multi_cell(0, 8, f"Sujet : {titre_propre}")
     pdf.ln(5)
-
+    
     lignes = contenu_markdown.split('\n')
     for ligne in lignes:
-        # Remplacement des caractères non-Latin1
         ligne_nettoyee = (ligne or "")\
             .replace('—', '-')\
             .replace('–', '-')\
@@ -80,22 +80,22 @@ def generer_pdf_script(titre_video, contenu_markdown):
             .replace('«', '"')\
             .replace('»', '"')\
             .replace('•', '*')
-
+            
         ligne_propre = ligne_nettoyee.encode('latin-1', 'replace').decode('latin-1')
-
+        
         if ligne.startswith('# '):
             pdf.set_font("Helvetica", 'B', 14)
-            pdf.cell(0, 10, ligne_propre.replace('# ', ''), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 10, ligne_propre.replace('# ', ''))
         elif ligne.startswith('## '):
             pdf.set_font("Helvetica", 'B', 12)
-            pdf.cell(0, 8, ligne_propre.replace('## ', ''), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 8, ligne_propre.replace('## ', ''))
         elif ligne.startswith('### '):
             pdf.set_font("Helvetica", 'B', 10)
-            pdf.cell(0, 6, ligne_propre.replace('### ', ''), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 6, ligne_propre.replace('### ', ''))
         else:
             pdf.set_font("Helvetica", size=9)
             pdf.multi_cell(0, 5, ligne_propre)
-
+            
     return bytes(pdf.output())
 
 # ---------------------------------------------------------
