@@ -37,13 +37,13 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF POUR CREA / CLIENT
+# 3. MOTEUR EXPORT PDF CORRIGÉ
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
         self.set_font('Helvetica', 'B', 14)
         self.set_text_color(220, 53, 69)
-        self.cell(0, 10, 'AUTOCLIP AI - BIBLE DE TOURNAGE & SCRIPT', new_x="LMARGIN", new_y="NEXT", align='C')
+        self.multi_cell(0, 10, 'AUTOCLIP AI - BIBLE DE TOURNAGE & SCRIPT', align='C')
         self.ln(5)
 
     def footer(self):
@@ -57,7 +57,7 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
-    # Nettoyage du titre
+    # Nettoyage complet des caractères spéciaux pour FPDF / Helvetica
     titre_propre = (titre_video or "Script_Video")\
         .replace('—', '-')\
         .replace('–', '-')\
@@ -67,7 +67,6 @@ def generer_pdf_script(titre_video, contenu_markdown):
         
     pdf.set_font("Helvetica", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    # Utilisation de multi_cell pour éviter l'erreur d'espace horizontal
     pdf.multi_cell(0, 8, f"Sujet : {titre_propre}")
     pdf.ln(5)
     
@@ -147,7 +146,7 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 6. GENERATION & EXPORT
+# 6. GÉNÉRATION & EXPORT PDF
 # ---------------------------------------------------------
 if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="primary", use_container_width=True):
     if not topic:
@@ -231,53 +230,4 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         #### 🔹 SÉQUENCE 4 : Application Pratique Pas-à-Pas (`00:40 - 00:55`)
         * **Timecode** : `00:40 - 00:55`
         * **Dialogues / Voix-off intégrale** : "..."
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Démonstration]"}
-        * **Incrustation Texte / Graphisme** : [Étapes 1, 2, 3]
-
-        #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`01:10 - Fin`)
-        * **Timecode** : `01:10 - Fin`
-        * **Dialogues / Voix-off intégrale** : "..."
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Résultat final]"}
-
-        ---
-
-        ### 🎯 4. CONCLUSION & CALL TO ACTION (CONVERSION)
-        * **Timecode** : `Fin de vidéo`
-        * **Dialogues / Voix-off intégrale** : "..."
-        * **Action Visuelle & Incrustation** : [Flèche vers le profil, bouton follow, mot-clé à commenter]
-        * **Outro Audio** : [Fondu de musique]
-
-        ---
-
-        ### 🤖 5. SCRIPT AUTO-PROMPT CLÉ EN MAIN (À COPIER-COLLER POUR L'IA GÉNÉRATRICE DE VIDÉO)
-        C'EST UNE SECTION OBLIGATOIRE. Rédige tout en bas un bloc de code unique (```) en Anglais technique, ultra-clair et structuré, prêt à être directement copié-collé dans n'importe quelle IA génératrice de vidéo.
-        Inclus obligatoirement :
-        1. **Global Topic, Mood & Style Directive** (Cinematic, 8K, 9:16 Aspect Ratio, Lighting).
-        2. **Full Voiceover Script** (Mot à mot en français ou anglais selon la cible, sans résumé).
-        3. **Scene-by-Scene Visual Generation Prompts** (Horodatés de 0s à la fin).
-        4. **Audio & On-Screen Text Overlay Directives**.
-        """
-
-        with st.spinner("🎬 Production du script d'élite et de la bible de tournage..."):
-            try:
-                response = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                script = response.choices[0].message.content
-
-                st.success("✨ Bible de production & Script générés avec succès !")
-                st.markdown(script)
-
-                # Export PDF
-                pdf_data = generer_pdf_script(topic if topic else "Script_Video", script)
-                st.download_button(
-                    label="📄 Télécharger le Script & Bible de Tournage en PDF",
-                    data=pdf_data,
-                    file_name=f"Script_{topic.replace(' ', '_') if topic else 'Production'}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
-
-            except Exception as e:
-                st.error(f"Erreur lors de la génération : {e}")
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-
