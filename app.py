@@ -30,20 +30,20 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF INTÉGRAL ET CORRIGÉ
+# 3. MOTEUR EXPORT PDF ROBUSTE (100% INTÉGRAL)
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
-        self.set_font('Helvetica', 'B', 12)
+        self.set_font('Helvetica', 'B', 11)
         self.set_text_color(220, 53, 69)
-        self.cell(0, 8, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT', 0, 1, 'C')
-        self.ln(3)
+        self.cell(0, 7, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT CLIENT', 0, 1, 'C')
+        self.ln(2)
 
     def footer(self):
-        self.set_y(-12)
+        self.set_y(-10)
         self.set_font('Helvetica', 'I', 8)
         self.set_text_color(128, 128, 128)
-        self.cell(0, 8, f'Page {self.page_no()}', 0, 0, 'C')
+        self.cell(0, 6, f'Page {self.page_no()}', 0, 0, 'C')
 
 def generer_pdf_script(titre_video, contenu_markdown):
     pdf = ScriptPDF(orientation='P', unit='mm', format='A4')
@@ -51,6 +51,7 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
+    # Nettoyage du titre
     titre_propre = (titre_video or "Script_Video")\
         .replace('—', '-').replace('–', '-').replace('’', "'").replace('«', '"').replace('»', '"')
     titre_propre = titre_propre.encode('latin-1', 'replace').decode('latin-1')
@@ -58,24 +59,27 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf.set_font("Helvetica", 'B', 11)
     pdf.set_text_color(0, 0, 0)
     pdf.multi_cell(0, 6, f"Sujet : {titre_propre}")
-    pdf.ln(4)
+    pdf.ln(3)
     
     largeur_utile = 190
     
-    # Nettoyage des caractères spéciaux et balises pour éviter les erreurs d'encodage FPDF
-    texte_nettoye = (contenu_markdown or "")\
+    # Nettoyage global du texte pour FPDF (suppression des tableaux Markdown et émojis bloquants)
+    texte_brut = (contenu_markdown or "")\
         .replace('—', '-').replace('–', '-').replace('’', "'")\
         .replace('«', '"').replace('»', '"').replace('•', '*')\
         .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
         .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
         .replace('🔥', '').replace('⚡', '').replace('💬', '').replace('⏱️', '')\
-        .replace('<br>', '\n').replace('<b>', '').replace('</b>', '')
+        .replace('|', ' - ').replace('>', '')
         
-    lignes = texte_nettoye.split('\n')
+    lignes = texte_brut.split('\n')
     for ligne in lignes:
+        # Ignore les séparateurs de tableaux de type |---|---|
+        if '---' in ligne:
+            continue
+            
         ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
         
-        # Gestion de la mise en forme selon les niveaux Markdown
         if ligne.startswith('# '):
             pdf.set_font("Helvetica", 'B', 11)
             pdf.set_text_color(220, 53, 69)
@@ -95,7 +99,7 @@ def generer_pdf_script(titre_video, contenu_markdown):
         else:
             pdf.set_font("Helvetica", size=8.5)
             if ligne.strip() == "":
-                pdf.ln(2)
+                pdf.ln(1.5)
             else:
                 pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
             
@@ -167,9 +171,11 @@ if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
+        # Prompt mis à jour pour interdire les tableaux Markdown et forcer du texte clair rédigé
         prompt_template = """
         Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
         Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER CLAIR, NET, PRÉCIS ET COMPRÉHENSIBLE PAR UN CLIENT, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
+        INTERDICTION TOTALE D'UTILISER DES TABLEAUX MARDOWN (Pas de '|'). Rédige tout en paragraphes clairs, listes à puces ou tirets simples.
         NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
@@ -199,12 +205,28 @@ if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Format de réponse exigé en Markdown clair, net et structuré :
-        1. BIBLE DE PRODUCTION (Ambiance, Décor, Ton, Règles)
-        2. ACCROCHE (0-3s avec mots exacts, intonation, texte écran)
-        3. DECOUPAGE SEQUENCE PAR SEQUENCE (Minuté, répliques exactes au mot près, consignes visuelles)
-        4. CONCLUSION & CALL TO ACTION
-        5. LEGENDE / CAPTION & HASHTAGS VIRAUX
+        Format de réponse exigé en Markdown clair, net, sans aucun tableau :
+        # 1. BIBLE DE PRODUCTION
+        (Détails de l'ambiance, décor, ton, règles en texte rédigé)
+
+        # 2. ACCROCHE (0-3s)
+        - Texte écran : ...
+        - Réplique exacte : ...
+        - Intonation : ...
+
+        # 3. DECOUPAGE SEQUENCE PAR SEQUENCE
+        - Séquence 1 (Minutage) : 
+          * Réplique exacte : ...
+          * Consignes visuelles & SFX : ...
+        (Faire de même pour toutes les séquences)
+
+        # 4. CONCLUSION & CALL TO ACTION
+        - Réplique exacte du CTA : ...
+        - Consigne : ...
+
+        # 5. LEGENDE ET HASHTAGS VIRAUX
+        - Légende : ...
+        - Hashtags : ...
         """
 
         prompt = prompt_template.format(
@@ -231,7 +253,7 @@ if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type
                 
                 st.success("✨ Le PDF complet a été généré avec succès !")
                 st.download_button(
-                    label="📥 Cliquer ici pour télécharger votre PDF de tournage",
+                    label="📥 Cliquer ici pour télécharger votre PDF de tournage complet",
                     data=pdf_data,
                     file_name=f"Script_Tournage_{topic.replace(' ', '_')}.pdf",
                     mime="application/pdf",
