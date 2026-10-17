@@ -268,7 +268,7 @@ with tab_autoclip:
             """
             with st.spinner("Génération du script sur-mesure..."):
                 response = groq_client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="llama-3.1-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
                 )
                 script = response.choices[0].message.content
@@ -309,7 +309,7 @@ with tab_biocraft:
             """
             with st.spinner("Création des bios..."):
                 response = groq_client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="llama-3.1-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
                 )
                 bios = response.choices[0].message.content
@@ -354,7 +354,7 @@ with tab_copycraft:
             """
             with st.spinner("Rédaction stratégique en cours..."):
                 response = groq_client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model="llama-3.1-70b-versatile",
                     messages=[{"role": "user", "content": prompt}]
                 )
                 copy_text = response.choices[0].message.content
