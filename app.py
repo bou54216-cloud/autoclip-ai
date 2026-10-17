@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Texte Simple & Accessible Actif**")
+    st.success("⚡ **Mode Précis & Lexique Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez un script ultra-clair, sans jargon technique, prêt à être copié pour vos clients.")
+    st.write("Générez un script ultra-précis et détaillé, avec un dictionnaire des termes techniques intégré à la fin pour le client.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un script 100 % compréhensible, sans termes techniques complexes.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un script hyper détaillé, complet, avec son lexique explicatif pour le client.")
 
 st.divider()
 
@@ -64,7 +64,7 @@ with col2:
     desired_result = st.text_input("✨ Résultat rêvé du prospect :", placeholder="ex: Obtenir les clés en 3 mois")
     main_objection = st.text_input("🛑 Objection majeure :", placeholder="ex: 'Je n'ai pas assez d'épargne'")
     target_emotion = st.selectbox("🔥 Émotion clé à provoquer :", ["Curiosité & Choc", "Peur de rater (FOMO)", "Espoir & Inspiration", "Indignation / Colère"])
-    proof_social = st.text_input("🏆 Preuve Sociale / Chiffre clé :", placeholder="ex: +150 dossiers acceptés")
+    proof_social = st.text_input("🏆 Preuve Sociale / Chiffre clé :", placeholder="ex: +150 dossiers accepted")
 
 with col3:
     st.subheader("3. Rétention & Style")
@@ -88,19 +88,19 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT SANS JARGON TECHNIQUE
+# 5. GÉNÉRATION DU SCRIPT DÉTAILLÉ AVEC LEXIQUE
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script Accessible au Client", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script Ultra-Précis & Son Lexique", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde.
-        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE TOURNAGE conçus spécifiquement pour un client grand public. 
-        REGLE ABSOLUE : INTERDICTION TOTALE D'UTILISER DU JARGON TECHNIQUE DE MONTAGE OU DU CINÉMA (interdit d'utiliser les termes 'SFX', 'cut', 'cut dynamique', 'jump cut', 'étalonnage', 'sound design', 'script', etc.). 
-        Utilise à la place des mots simples que tout le monde comprend (ex: au lieu de 'SFX crack', écris 'Bruitage sonore de craquement' ; au lieu de 'cut rapide', écris 'Changement rapide d'image').
-        Rédige chaque réplique intégrale au mot près, sans résumé ni '...'.
+        Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
+        Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER DÉTAILLÉ, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
+        NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
+
+        IMPORTANT : À la toute fin de ton texte, rajoute obligatoirement une section intitulée "LEXIQUE POUR COMPRENDRE LES TERMES TECHNIQUES", qui explique de manière très simple les termes de montage utilisés (par exemple : SFX = bruitage sonore, Cut = changement rapide d'image, Face-cam = parler directement face à la caméra, etc.).
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -128,13 +128,14 @@ if st.button("🚀 Générer le Script Accessible au Client", type="primary", us
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Format de réponse exigé en Markdown clair, simple et 100% accessible :
-        # GUIDE DE TOURNAGE POUR LA VIDEO
-        ## 1. AMBIANCE ET DECOR
-        ## 2. LA PHRASE D'ACCROCHE (Les 3 premières secondes)
-        ## 3. CE QU'IL FAUT DIRE ET FAIRE (Séquence par séquence avec des mots simples)
-        ## 4. COMMENT TERMINER LA VIDEO (Appel à l'action)
-        ## 5. TEXTE À ÉCRIRE SOUS LA VIDÉO (Légende et hashtags)
+        Format de réponse exigé en Markdown d'Élite :
+        # BIBLE DE PRODUCTION ET SCRIPT VIDÉO
+        ## 1. DIRECTION ARTISTIQUE & SETUP
+        ## 2. L'ACCROCHE (0-3 SECONDES)
+        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques exactes au mot près, consignes visuelles, timecodes)
+        ## 4. CONCLUSION & CALL TO ACTION (CTA)
+        ## 5. LÉGENDE & HASHTAGS VIRAUX
+        ## 6. LEXIQUE POUR COMPRENDRE LES TERMES TECHNIQUES (Explications simples pour le client)
         """
 
         prompt = prompt_template.format(
@@ -149,7 +150,7 @@ if st.button("🚀 Générer le Script Accessible au Client", type="primary", us
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction d'un script simple et compréhensible par tous..."):
+        with st.spinner("🎬 Rédaction ultra-détaillée et ajout du lexique client en cours..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -157,7 +158,7 @@ if st.button("🚀 Générer le Script Accessible au Client", type="primary", us
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script généré avec succès ! Aucun terme technique n'est présent, c'est parfaitement clair pour ton client :")
+                st.success("✨ Script ultra-précis généré avec succès ! Le lexique explicatif est inclus à la fin.")
                 
                 # Zone de texte propre avec bouton de copie intégré
                 st.code(script, language="markdown")
