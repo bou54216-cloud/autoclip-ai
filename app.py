@@ -57,7 +57,6 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
-    # Nettoyage complet des caractères spéciaux pour FPDF / Helvetica
     titre_propre = (titre_video or "Script_Video")\
         .replace('—', '-')\
         .replace('–', '-')\
@@ -153,6 +152,8 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         is_ia_mode = (creator_type == "Générée par IA (Automation / Faceless)")
+        visual_label = "Prompt Visuel Brut en Anglais (8K, Cinematic)" if is_ia_mode else "Mouvement de caméra & Jeu du présentateur"
+        broll_label = "Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"
         
         prompt = f"""
         Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo et Master Copywriter au Monde.
@@ -194,7 +195,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         * **Timecode** : `00:00 - 00:03`
         * **Voix-off / Dialogues exacts (Word-for-word)** : "..."
         * **Intonation & Tonalité** : [Ex: Ton provocateur, hausse de voix à la fin]
-        * **Visuel Direction / {"Prompt Visuel Brut en Anglais (8K, Cinematic)" if is_ia_mode else "Mouvement de caméra & Jeu du présentateur"}** : {"`...`" if is_ia_mode else "[Explication exacte du geste et du plan de caméra]"}
+        * **{visual_label}** : [...]
         * **Incrustation Texte à l'écran** : "..." [Couleur, effet d'apparition]
         * **Sound Effect (SFX)** : [Bruitage précis]
 
@@ -208,7 +209,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         * **Timecode** : `00:03 - 00:12`
         * **Dialogues / Voix-off intégrale** : "..."
         * **Intonation & Pauses** : [Consignes vocales]
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du B-Roll exact à insérer]"}
+        * **{broll_label}** : [...]
         * **Incrustation Texte / Graphisme** : [Texte affiché]
         * **SFX & Ambiance** : [Bruitage / Effet sonore]
 
@@ -216,18 +217,41 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         * **Timecode** : `00:12 - 00:25`
         * **Dialogues / Voix-off intégrale** : "..."
         * **Intonation & Pauses** : [Consignes vocales]
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du plan]"}
+        * **{broll_label}** : [...]
         * **Incrustation Texte / Graphisme** : [Graphique / Animation]
         * **SFX** : [Bruitage]
 
         #### 🔹 SÉQUENCE 3 : La Révélation de la Solution (`00:25 - 00:40`)
         * **Timecode** : `00:25 - 00:40`
         * **Dialogues / Voix-off intégrale** : "..."
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du plan]"}
+        * **{broll_label}** : [...]
         * **Incrustation Texte / Graphisme** : [Puces explicatives]
         * **SFX** : [Bruitage]
 
         #### 🔹 SÉQUENCE 4 : Application Pratique Pas-à-Pas (`00:40 - 00:55`)
         * **Timecode** : `00:40 - 00:55`
         * **Dialogues / Voix-off intégrale** : "..."
-        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-
+        * **{broll_label}** : [...]
+        * **Incrustation Texte / Graphisme** : [Étapes 1, 2, 3]
+
+        #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`01:10 - Fin`)
+        * **Timecode** : `01:10 - Fin`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **{broll_label}** : [...]
+
+        ---
+
+        ### 🎯 4. CONCLUSION & CALL TO ACTION (CONVERSION)
+        * **Timecode** : `Fin de vidéo`
+        * **Dialogues / Voix-off intégrale** : "..."
+        * **Action Visuelle & Incrustation** : [Flèche vers le profil, bouton follow, mot-clé à commenter]
+        * **Outro Audio** : [Fondu de musique]
+
+        ---
+
+        ### 🤖 5. SCRIPT AUTO-PROMPT CLÉ EN MAIN (À COPIER-COLLER POUR L'IA GÉNÉRATRICE DE VIDÉO)
+        C'EST UNE SECTION OBLIGATOIRE. Rédige tout en bas un bloc de code unique (```) en Anglais technique, ultra-clair et structuré, prêt à être directement copié-collé dans n'importe quelle IA génératrice de vidéo.
+        Inclus obligatoirement :
+        1. **Global Topic, Mood & Style Directive** (Cinematic, 8K, 9:16 Aspect Ratio, Lighting).
+        2. **Full Voiceover Script** (Mot à mot en français ou anglais selon la cible, sans résumé).
+        3. **Scene-by-Scene Visual Generation Prompts** (Horodatés
