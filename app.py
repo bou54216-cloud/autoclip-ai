@@ -107,7 +107,7 @@ if not st.session_state.user:
     st.markdown("<p style='text-align: center; color: #888;'>Le Générateur Universel de Scripts Vidéo & Master-Prompts IA</p>", unsafe_allow_html=True)
     st.divider()
 
-  col_auth, _ = st.columns([1, 1])
+    col_auth, _ = st.columns([1, 1])
     with col_auth:
         tab_login, tab_signup = st.tabs(["🔑 Connexion", "📝 Créer un compte"])
 
@@ -151,6 +151,8 @@ if not st.session_state.user:
                         """, height=0)
                     except Exception as e:
                         st.error(f"Erreur d'inscription : {e}")
+
+    st.stop()
  
 # ---------------------------------------------------------
 # 6. APPLICATION PRINCIPALE & BARRE LATÉRALE
