@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # 1. CONFIGURATION ET DESIGN CSS PREMIUM
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="AutoClip AI — Studio de Scripts Vidéo Pro",
+    page_title="AutoClip AI — Studio de Automation & Scripting Vidéo Pro",
     page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -20,7 +20,6 @@ st.markdown("""
     div[data-testid="stVerticalBlock"] > div { border-radius: 10px; }
     .stButton>button { border-radius: 8px; font-weight: 600; transition: all 0.3s ease; }
     
-    /* Style pour encadrer le rendu du script */
     .script-container {
         background-color: #161B22;
         padding: 20px;
@@ -96,7 +95,7 @@ def recharger_via_stripe(price_id, user_email):
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Générateur de Scripts Vidéo Haute Conversion pour Créateurs & Marques</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Générateur de Scripts & Master-Prompts pour Génération Vidéo IA</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -186,101 +185,137 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 7. MODULE UNIQUE : AUTOCLIP AI ULTRA-APPROFONDI
+# 7. MODULE AUTOCLIP AI DE PRÉCISION
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Scripting Vidéo Pro")
-st.markdown("Configurez vos critères avec précision pour générer un découpage vidéo professionnel sur-mesure.")
+st.title("🎬 AutoClip AI — Studio de Production Vidéo & Automation IA")
+st.markdown("Configurez la vidéo à produire : obtenez soit un script de tournage humain, soit un Master-Prompt clé en main pour générer la vidéo par IA.")
 
 st.divider()
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    topic = st.text_input("🎯 Sujet / Concept de la vidéo :", placeholder="ex: 3 secrets pour produire de la house music captivante")
-    creator_type = st.radio("👤 Type de créateur / Présentateur :", ["Personne Réelle (Face Cam)", "IA / Faceless (Avatar / Voix Off / B-Roll)"])
-    platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Vidéo"])
+    topic = st.text_input("🎯 Sujet / Concept exact :", placeholder="ex: 3 astuces pour créer un banger House Music sur FL Studio")
+    creator_type = st.radio("👤 Type de réalisation :", ["Générée 100% par IA (InVideo / Runway / Sora / CapCut)", "Personne Réelle (Face Cam / Tournage réel)"])
+    platform = st.selectbox("📱 Plateforme :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Vidéo"])
 
 with col2:
-    duration = st.selectbox("⏱️ Durée souhaitée :", ["Ultra-court (15 à 30 sec)", "Standard Short (30 à 60 sec)", "Long Short (60 à 90 sec)", "Format Long (3 à 5 min)"])
-    tone = st.selectbox("🎭 Ton & Style d'énergie :", ["Dynamique & Cash", "Éducatif & Inspirant", "Mystérieux & Captivant", "Humoristique & Décalé", "Corporate & Expert"])
-    hook_style = st.selectbox("🪝 Style de Hook (Accroche) :", ["Question choc / Provocation", "Chiffre / Statistique incroyable", "Scénario 'Imagine si...'", "Mythe populaire à déconstruire", "Avertissement / Erreur grave"])
+    duration = st.selectbox("⏱️ Durée de la vidéo :", ["Flash (15 - 30 sec)", "Standard Short (30 - 60 sec)", "Long Short (60 - 90 sec)", "Format Long (3 - 5 min)"])
+    tone = st.selectbox("🎭 Ambiance & Ton :", ["Dynamique, Énergique & Futuriste", "Dark, Mystérieux & Captivant", "Éducatif, Clair & Expert", "Luxe, Minimaliste & Premium", "Cash & Provocateur"])
+    hook_style = st.selectbox("🪝 Style de Hook (Accroche) :", ["Question choc / Provocation", "Fait incroyable / Statistique", "Mise en garde / Erreur grave", "Scénario 'Imagine si...'", "Mythe populaire à détruire"])
 
 with col3:
-    structure = st.selectbox("🏗️ Structure narrative :", ["Problème -> Agitation -> Solution", "Storytelling dramatique", "Méthode pas-à-pas (1, 2, 3)", "Avant / Après (Transformation)"])
-    cta_type = st.selectbox("🎯 Objectif du Call To Action (CTA) :", ["Commenter un mot-clé précis", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Partager la vidéo"])
-    extra_details = st.text_area("✍️ Mots-clés / Consignes spécifiques :", placeholder="ex: Parler de tempo 128 BPM, ajouter une ambiance néon sombre...")
+    structure = st.selectbox("🏗️ Structure narrative :", ["Problème -> Agitation -> Solution", "3 étapes pas-à-pas", "Avant / Après (Transformation)", "Histoire courte / Storytelling"])
+    cta_type = st.selectbox("🎯 Call To Action (CTA) :", ["Commenter un mot-clé pour recevoir un lien", "S'abonner pour ne rien rater", "Cliquer sur le lien en bio", "Partager la vidéo à un ami"])
+    extra_details = st.text_area("⚙️ Éléments visuels / Mots-clés imposés :", placeholder="ex: Ambiance studio de musique néon sombre, sons de synthétiseur, rythme rapide...")
 
 st.divider()
 
-if st.button("🚀 Générer le Script Vidéo Ultra-Détaillé (-1 crédit)", type="primary", use_container_width=True):
+if st.button("⚡ Générer le Script & Master-Prompt (-1 crédit)", type="primary", use_container_width=True):
     if st.session_state.credits <= 0:
         st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
     else:
-        # Prompt ultra-directif pour forcer un rendu structuré et non vague
-        prompt = f"""
-        Tu es un Réalisateur Vidéo et Copywriter Expert pour réseaux sociaux.
-        Rédige un script complet et hyper structuré pour une vidéo court-format.
+        # Prompt dynamique adapté selon la sélection (IA vs Humain)
+        if creator_type == "Générée 100% par IA (InVideo / Runway / Sora / CapCut)":
+            prompt = f"""
+            Tu es un Prompt Engineer et Réalisateur Vidéo IA Senior.
+            L'utilisateur souhaite générer une vidéo intégrale via un outil d'IA vidéo (comme InVideo AI, Runway Gen-2, Sora, CapCut AI, HeyGen, etc.).
 
-        --- CRITÈRES DE PRODUCTION ---
-        - Sujet : {topic}
-        - Présentateur : {creator_type}
-        - Plateforme : {platform}
-        - Durée : {duration}
-        - Ton / Énergie : {tone}
-        - Style de Hook (0-3 sec) : {hook_style}
-        - Structure narrative : {structure}
-        - Objectif CTA : {cta_type}
-        - Consignes / Mots-clés : {extra_details if extra_details else 'Aucun'}
+            Rédige un MASTER-PROMPT DE GÉNÉRATION AUTOMATIQUE ainsi qu'un découpage ultra-rigoureux.
 
-        --- FORMAT DE RÉPONSE EXIGÉ ---
-        Structure impérativement ton résultat avec les sections suivantes en Markdown propre :
+            --- CONFIGURATION DU PROJET ---
+            - Sujet : {topic}
+            - Mode : 100% Généré par IA (Faceless Automation)
+            - Plateforme : {platform}
+            - Durée : {duration}
+            - Style & Ton : {tone}
+            - Hook : {hook_style}
+            - Structure : {structure}
+            - CTA : {cta_type}
+            - Consignes visuelles : {extra_details if extra_details else 'Aucune'}
 
-        ### 📌 1. FICHE TECHNIQUE DE LA VIDÉO
-        - **Format & Cadrage** : (ex: 9:16 Vertical, plan serré / plan large)
-        - **Ambiance Sonore / Musique** : (ex: House dynamique à 128 BPM, fondu d'entrée)
-        - **Style d'Édition** : (ex: Rythme de coupe rapide toutes les 1.5s, sous-titres dynamiques jaune/blanc)
+            --- FORMAT DE SORTIE IMPÉRATIF (Markdown propre) ---
 
-        ---
+            ### 🤖 1. MASTER-PROMPT CLÉ EN MAIN (À copier-coller directement dans InVideo AI / CapCut / Sora)
+            `[Rédige un prompt global en Anglais hyper-détaillé décrivant le sujet, le style visuel 8k, le rythme de coupe, la voix-off, la musique de fond et la structure globale]`
 
-        ### 🪝 2. LE HOOK (0 à 3 Secondes - Maintien de l'attention)
-        - **Texte Parlé (Voiceover)** : "..."
-        - **Visuel à l'écran** : [Préciser ce que l'on voit ou ce que fait l'avatar/personne]
-        - **Texte en Gros à l'écran (On-Screen Text)** : "..."
-        - **Effet Sonore (SFX)** : [ex: Whoosh / Explosion sound]
+            ---
 
-        ---
+            ### 🎙️ 2. SCRIPT VOIX-OFF (VOICEOVER) EXCLUSIF (Pour ElevenLabs ou synthèse vocale)
+            - **Langue** : Français
+            - **Style de voix recommandé** : [Ex: Homme, voix grave, ton énergique]
+            - **Texte exact à lire (mot à mot avec annotations de pause `[pause]` et d'emphase)** :
+            "..."
 
-        ### 🎬 3. DÉCOUPAGE SCÈNE PAR SCÈNE (Script Complet)
-        Fournis un tableau Markdown ou une liste détaillée horodatée :
+            ---
 
-        * **[0:03 - 0:10] Scène 1 : Introduction de la problématique**
-          - **Voix / Discours** : "..."
-          - **Visuel / B-Roll** : [Description exacte de l'image ou vidéo d'illustration]
-          - **Texte / Graphisme** : [Mots-clés affichés]
+            ### 🎬 3. DÉCOUPAGE SCÈNE PAR SCÈNE & PROMPTS VISUELS (Midjourney / Runway / Sora)
 
-        * **[0:10 - 0:25] Scène 2 : Développement & Conseils clés**
-          - **Voix / Discours** : "..."
-          - **Visuel / B-Roll** : [Description visuelle]
-          - **Texte / Graphisme** : [Mots-clés affichés]
+            * **Scène 1 : HOOK (0 à 3s)**
+              - **Visuel IA (Prompt Runway/Midjourney en Anglais)** : `...`
+              - **Texte incrusté à l'écran** : "..."
+              - **Effet Sonore (SFX)** : [Whoosh / Boom]
 
-        * **[0:25 - 0:40] Scène 3 : Preuve / Démonstration / Exemple**
-          - **Voix / Discours** : "..."
-          - **Visuel / B-Roll** : [Description visuelle]
+            * **Scène 2 : DÉVELOPPEMENT (3s à 15s)**
+              - **Visuel IA (Prompt Runway/Midjourney en Anglais)** : `...`
+              - **Texte incrusté à l'écran** : "..."
 
-        ---
+            * **Scène 3 : CONSEILS / SOLUTION (15s à 30s)**
+              - **Visuel IA (Prompt Runway/Midjourney en Anglais)** : `...`
+              - **Texte incrusté à l'écran** : "..."
 
-        ### 🎯 4. CALL TO ACTION (CTA & Engagement)
-        - **Discours Final** : "..."
-        - **Visuel / Animation** : [Animation d'abonnement / Flèche vers le profil]
+            * **Scène 4 : CALL TO ACTION (30s à fin)**
+              - **Visuel IA (Prompt Runway/Midjourney en Anglais)** : `...`
+              - **Animation / Incrustation** : [Flèche vers le profil / Bouton Follow]
 
-        ---
+            ---
 
-        ### 🤖 5. PROMPTS IA PRÊTS À L'EMPLOI (Pour la génération visuelle & sonore)
-        - **Prompt Midjourney / Leonardo (B-Roll / Images)** : `...`
-        - **Prompt Voix Off ElevenLabs (Style de voix)** : `...`
-        """
+            ### 🎵 4. PARAMÈTRES AUDIO & MONTAGE
+            - **Style de musique conseillé** : [Genre + BPM exact]
+            - **Fréquence des coupes** : [ex: Changement de plan toutes les 1.2 secondes]
+            """
+        else:
+            prompt = f"""
+            Tu es un Directeur Artistique et Copywriter Vidéo Senior.
+            L'utilisateur tourne une vidéo incarnée (Face Cam / Personne réelle).
+            Rédige un script de tournage hyper précis.
 
-        with st.spinner("🎬 Rédaction du script vidéo structuré en cours..."):
+            --- CONFIGURATION ---
+            - Sujet : {topic}
+            - Mode : Présentateur Réel
+            - Plateforme : {platform}
+            - Durée : {duration}
+            - Ton : {tone}
+            - Hook : {hook_style}
+            - Structure : {structure}
+            - CTA : {cta_type}
+            - Mots-clés : {extra_details if extra_details else 'Aucun'}
+
+            --- FORMAT DE SORTIE ---
+            ### 📌 1. FICHE TECHNIQUE & MATÉRIEL
+            - **Axe de caméra / Cadrage** : (Plan poitrine, smartphone vertical)
+            - **Ambiance & Éclairage** : (Rétroéclairage néon, lumière douce)
+
+            ### 🪝 2. LE HOOK (0-3s)
+            - **Acteur (Dialogue)** : "..."
+            - **Jeu d'acteur / Geste** : [Rapprocher rapidement le visage de l'objectif]
+            - **Texte à l'écran** : "..."
+
+            ### 🎬 3. SCRIPT COMPLET DÉCOUPÉ
+            * **[0:03 - 0:15] Partie 1 : Le Problème**
+              - **Dialogue** : "..."
+              - **B-Roll à insérer** : [Insérer une capture d'écran / vidéo d'illustration]
+
+            * **[0:15 - 0:35] Partie 2 : La Solution & Astuces**
+              - **Dialogue** : "..."
+              - **B-Roll à insérer** : [Illustration visuelle]
+
+            ### 🎯 4. CONCLUSION & CALL TO ACTION
+            - **Dialogue** : "..."
+            - **Action visuelle** : [Pointer du doigt le bas de l'écran]
+            """
+
+        with st.spinner("🎬 Génération du plan de production en cours..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -288,12 +323,11 @@ if st.button("🚀 Générer le Script Vidéo Ultra-Détaillé (-1 crédit)", ty
                 )
                 script = response.choices[0].message.content
 
-                # Décrémenter 1 crédit
                 new_credits = st.session_state.credits - 1
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("✨ Script généré avec succès !")
+                st.success("✨ Master-Prompt & Script générés avec succès !")
                 st.markdown(script)
 
             except Exception as e:
