@@ -48,7 +48,24 @@ def refresh_user_credits(user_id):
 # Vérification du retour de paiement Stripe (Success / Cancel)
 query_params = st.query_params
 if "success" in query_params:
-    st.success("🎉 Paiement réussi ! Vos crédits ou votre abonnement ont été mis à jour.")
+    st.success("🎉 Paiement réussi ! Vos crédits ont été mis à jour.")
+    
+    # Sécurité pour éviter de recréditer plusieurs fois si l'utilisateur rafraîchit la page
+    if "credited" not in st.session_state:
+        st.session_state.credited = True
+        try:
+            # Récupérer les crédits actuels de l'utilisateur dans Supabase
+            res = supabase.table("profiles").select("credits").eq("id", st.session_state.user.id).execute()
+            if res.data:
+                current_credits = res.data[0].get("credits", 0)
+                new_credits = current_credits + 1  # Ajoute 1 crédit (tu pourras affiner selon le plan acheté)
+                
+                # Mettre à jour dans Supabase
+                supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+                st.session_state.credits = new_credits
+        except Exception as e:
+            st.error(f"Erreur lors de l'ajout des crédits : {e}")
+
 elif "canceled" in query_params:
     st.warning("⚠️ Le paiement a été annulé.")
 
