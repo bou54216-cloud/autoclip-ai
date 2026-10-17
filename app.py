@@ -95,7 +95,7 @@ def recharger_via_stripe(price_id, user_email):
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Générateur de Scripts de Tournage Ultra-Détaillés & Professionnels</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Générateur de Scripts & Master-Prompts Vidéo Haute Définition</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -185,126 +185,140 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 7. MODULE AUTOCLIP AI : SCRIPT DE TOURNAGE ULTRA-DÉTAILLÉ
+# 7. MODULE AUTOCLIP AI DE PRÉCISION
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Scripting Vidéo Avancé")
-st.markdown("Renseignez vos éléments clés pour générer un script de tournage complet, minuté et extrêmement précis.")
+st.title("🎬 AutoClip AI — Studio de Scripting & Production Vidéo")
+st.markdown("Choisissez le type de vidéo (Tournage réel ou Génération par IA) pour obtenir un script complet, minuté et sur-mesure.")
 
 st.divider()
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    topic = st.text_input("🎯 Sujet / Thème exact de la vidéo :", placeholder="ex: 3 techniques pro pour faire sonner un kick House Music en club")
+    topic = st.text_input("🎯 Sujet / Thème de la vidéo :", placeholder="ex: 3 astuces pour créer un banger House Music")
+    creator_type = st.radio("👤 Format de vidéo :", ["Générée par IA (Automation / Faceless)", "Personne Réelle (Face Cam / Tournage réel)"])
     platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Vidéo"])
-    duration = st.selectbox("⏱️ Durée souhaitée :", ["Courte (30 à 45 sec)", "Standard (60 à 90 sec)", "Format Long (3 à 5 min)", "Format Approfondi (5 à 10 min)"])
 
 with col2:
-    creator_type = st.radio("👤 Format du tournage :", ["Face Cam (Présentateur incarné)", "Voix Off sur images réelles (B-Rolls)", "Format mixte (Face Cam + Démonstration écran/écran)"])
-    tone = st.selectbox("🎭 Ambiance & Énergie :", ["Dynamique & Énergique", "Cash, Provocateur & Impactant", "Pédagogique, Calme & Expert", "Luxe, Épuré & Premium", "Humoristique & Décalé"])
-    hook_style = st.selectbox("🪝 Style d'accroche (Hook) :", ["Question choc / Provocation", "Chiffre / Statistique incroyable", "Erreur grave à éviter absolument", "Mise en scène 'Imagine si...'", "Mythe populaire à briser"])
+    duration = st.selectbox("⏱️ Durée souhaitée :", ["Courte (15 à 30 sec)", "Standard (30 à 60 sec)", "Long Short (60 à 90 sec)", "Format Long (3 à 5 min)"])
+    tone = st.selectbox("🎭 Ambiance & Énergie :", ["Dynamique & Captivant", "Cash, Direct & Provocateur", "Éducatif, Clair & Expert", "Luxe, Sombre & Premium", "Humoristique & Décalé"])
+    hook_style = st.selectbox("🪝 Style d'accroche (Hook) :", ["Question choc / Provocation", "Statistique / Chiffre incroyable", "Mise en garde / Erreur grave", "Scénario 'Imagine si...'", "Mythe populaire à déconstruire"])
 
 with col3:
-    structure = st.selectbox("🏗️ Structure narrative :", ["Problème -> Agitation -> Solution complète", "Les 3 piliers essentiels (1, 2, 3)", "Avant / Après (Etude de cas / Transformation)", "Format Storytelling / Récit d'expérience"])
-    cta_type = st.selectbox("🎯 Objectif du Call To Action (CTA) :", ["Commenter un mot-clé précis", "S'abonner pour ne pas rater la partie 2", "Cliquer sur le lien en bio", "Partager la vidéo à un ami"])
-    extra_details = st.text_area("⚙️ Détails / Termes / Contraintes spécifiques :", placeholder="ex: Parler de sidechain compression, 128 BPM, éclairage rouge/bleu studio...")
+    structure = st.selectbox("🏗️ Structure narrative :", ["Problème -> Agitation -> Solution", "Méthode en 3 étapes pas-à-pas", "Avant / Après (Transformation)", "Storytelling / Récit captivant"])
+    cta_type = st.selectbox("🎯 Objectif du Call To Action (CTA) :", ["Commenter un mot-clé précis", "S'abonner pour la suite", "Cliquer sur le lien en bio", "Partager la vidéo"])
+    extra_details = st.text_area("⚙️ Détails visuels / Mots-clés imposés :", placeholder="ex: Ambiance studio de musique néon sombre, tempo 128 BPM, sons de synthétiseur...")
 
 st.divider()
 
-if st.button("🚀 Générer le Script de Tournage Ultra-Détaillé (-1 crédit)", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script Ultra-Détaillé (-1 crédit)", type="primary", use_container_width=True):
     if st.session_state.credits <= 0:
         st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
     else:
-        prompt = f"""
-        Tu es un Réalisateur Vidéo Senior, Directeur de Production et Copywriter de niveau mondial.
-        Rédige un SCRIPT DE TOURNAGE EXTÊMEMENT LONG, PRÉCIS ET DÉTAILLÉ pour une vidéo sur les réseaux sociaux.
+        # Traitement selon le choix (IA neutre vs Tournage réel)
+        if creator_type == "Générée par IA (Automation / Faceless)":
+            prompt = f"""
+            Tu es un Directeur Artistique et Expert en Automation Vidéo.
+            Rédige un SCRIPT ULTRA-DÉTAILLÉ ET LONG destiné à être généré par un moteur d'IA vidéo.
+            NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
-        Le script doit être exhaustif et exploitable immédiatement sur un plateau de tournage ou en studio.
+            --- CONFIGURATION DE LA VIDÉO ---
+            - Sujet : {topic}
+            - Mode : Généré par IA (Faceless / Automation)
+            - Plateforme : {platform}
+            - Durée : {duration}
+            - Style & Ton : {tone}
+            - Style de Hook (0-3s) : {hook_style}
+            - Structure narrative : {structure}
+            - Call To Action : {cta_type}
+            - Consignes spécifiques : {extra_details if extra_details else 'Aucune'}
 
-        --- FICHE DU PROJET ---
-        - Sujet : {topic}
-        - Plateforme : {platform}
-        - Durée visée : {duration}
-        - Format de tournage : {creator_type}
-        - Ton & Ambiance : {tone}
-        - Style d'accroche (Hook) : {hook_style}
-        - Structure narrative : {structure}
-        - Call To Action (CTA) : {cta_type}
-        - Exigences spécifiques : {extra_details if extra_details else 'Aucune'}
+            --- FORMAT DE SORTIE EXIGÉ (Markdown clair) ---
 
-        --- FORMAT DE RÉPONSE EXIGÉ (Markdown structuré) ---
+            # 🤖 PLAN DE GÉNÉRATION & MASTER-PROMPT
 
-        # 📋 PLAN DE PRODUCTION & TOURNAGE
+            ### 📝 1. MASTER-PROMPT GLOBAL DE SÉQUENCE (En Anglais)
+            `[Rédige un prompt global en anglais décrivant la scène entière, le style visuel photoréaliste 8K, le rendu cinématique, les couleurs, la vitesse des coupes et l'atmosphère sonore]`
 
-        ### ⚙️ 1. SETUP DE TOURNAGE & DIRECTION ARTISTIQUE
-        - **Cadrage & Format** : [ex: 9:16 Vertical / Plan américain / Gros plan]
-        - **Éclairage & Ambiance** : [Description précise des lumières, couleurs et contrastes]
-        - **Décor & Arrière-plan** : [Éléments à afficher en fond, rangement, accessoires]
-        - **Audio & Style sonore** : [Type de micro, musique de fond exacte, tempo/BPM]
-        - **Rythme de montage conseillé** : [Fréquence des cuts, zoom in/out, transitions]
+            ---
 
-        ---
+            ### 🎙️ 2. SCRIPT VOIX-OFF (Texte intégral mot à mot)
+            - **Intonation & Style vocal conseillé** : [ex: Voix masculine, ton grave, rythme rapide]
+            - **Texte exact à lire** :
+            "..."
 
-        ### 🪝 2. L'ACCROCHE (HOOK - 0 à 5 SECONDES)
-        * **Timecode** : `00:00 - 00:05`
-        * **Réplique exacte à dire (Mot à mot)** : "..."
-        * **Jeu d'acteur / Mouvement** : [Expression du visage, geste des mains, déplacement]
-        * **Axe caméra & Échelle de plan** : [Gros plan serré / Zoom rapide sur les yeux]
-        * **Incrustation Texte à l'écran** : "..." [Style de police, couleur, position]
-        * **Bruitage / Effet Sonore (SFX)** : [Whoosh / Boom / Glitch sound]
+            ---
 
-        ---
+            ### 🎬 3. DÉCOUPAGE DÉTAILLÉ SCÈNE PAR SCÈNE (Prompts visuels bruts)
 
-        ### 🎬 3. DÉCOUPAGE DÉTAILLÉ SÉQUENCE PAR SÉQUENCE (Séquencier Complet)
+            * **Scène 1 : HOOK (0 à 3s)**
+              - **Prompt Visuel Brut (En Anglais)** : `...`
+              - **Texte Incrusté à l'écran** : "..."
+              - **Bruitage / Effet Sonore** : [Sound effect]
 
-        Découpe tout le corps de la vidéo en plusieurs séquences numérotées, claires et exhaustives :
+            * **Scène 2 : PROBLÈME & CONTEXTE (3s à 15s)**
+              - **Prompt Visuel Brut (En Anglais)** : `...`
+              - **Texte Incrusté à l'écran** : "..."
+              - **Description du mouvement visuel** : [Ex: Camera zoom, slow motion]
 
-        #### 🔹 SÉQUENCE 1 : L'Agitation du Problème / Mise en contexte
-        * **Timecode** : `00:05 - 00:20`
-        * **Texte / Dialogues exacts** : "..."
-        * **Action / Jeu du présentateur** : [Posture, ton de voix, intonation]
-        * **Incrustration B-Roll / Plan d'illustration** : [Détail de la vidéo ou image à afficher au montage]
-        * **Texte / Graphisme à l'écran** : [Mots-clés en gras / Flèches / Surlignage]
-        * **Effet sonore (SFX)** : [Swoosh / Bip / Pop]
+            * **Scène 3 : SOLUTION & DÉVELOPPEMENT (15s à 35s)**
+              - **Prompt Visuel Brut (En Anglais)** : `...`
+              - **Texte Incrusté à l'écran** : "..."
 
-        #### 🔹 SÉQUENCE 2 : Le Premier Conseil / Élément Clé
-        * **Timecode** : `00:20 - 00:45`
-        * **Texte / Dialogues exacts** : "..."
-        * **Action / Jeu du présentateur** : [Explication claire, gestuelle descriptive]
-        * **Incrustration B-Roll / Plan d'illustration** : [Plan de coupe / Écran partagé / Zoom sur un détail]
-        * **Texte / Graphisme à l'écran** : [Puces explicatives / Mots-clés]
-        * **Effet sonore (SFX)** : [Transition sonore]
+            * **Scène 4 : CONCLUSION & CALL TO ACTION (35s à fin)**
+              - **Prompt Visuel Brut (En Anglais)** : `...`
+              - **Incrustation graphique** : [Animation bouton follow / flèche vers le profil]
 
-        #### 🔹 SÉQUENCE 3 : L'Astuce Avancée / La Démonstration
-        * **Timecode** : `00:45 - 01:15`
-        * **Texte / Dialogues exacts** : "..."
-        * **Action / Jeu du présentateur** : [Démonstration pratique, montrer un écran ou un objet]
-        * **Incrustration B-Roll / Plan d'illustration** : [Gros plan sur l'action ou l'outil]
-        * **Texte / Graphisme à l'écran** : [Données / Chiffres clés / Schéma]
+            ---
 
-        #### 🔹 SÉQUENCE 4 : Résolution & Bénéfice principal
-        * **Timecode** : `01:15 - 01:40`
-        * **Texte / Dialogues exacts** : "..."
-        * **Action / Jeu du présentateur** : [Regard direct caméra, ton rassurant et convaincant]
-        * **Incrustration B-Roll / Plan d'illustration** : [Plan large ou résultat final]
+            ### 🎵 4. PARAMÈTRES AUDIO & MONTAGE
+            - **Ambiance musicale** : [Genre musical + Tempo BPM]
+            - **Fréquence de transition visuelle** : [ex: Changement de plan toutes les 1.5s]
+            """
+        else:
+            prompt = f"""
+            Tu es un Réalisateur Vidéo Senior et Copywriter.
+            Rédige un SCRIPT DE TOURNAGE ULTRA-DÉTAILLÉ ET LONG pour un présentateur réel (Face Cam).
 
-        ---
+            --- CONFIGURATION ---
+            - Sujet : {topic}
+            - Mode : Présentateur Réel
+            - Plateforme : {platform}
+            - Durée : {duration}
+            - Ton : {tone}
+            - Hook : {hook_style}
+            - Structure : {structure}
+            - CTA : {cta_type}
+            - Exigences : {extra_details if extra_details else 'Aucune'}
 
-        ### 🎯 4. CALL TO ACTION & CONCLUSION (FIN DE VIDÉO)
-        * **Timecode** : `Fin de vidéo`
-        * **Réplique exacte** : "..."
-        * **Action visuelle du présentateur** : [Pointer du doigt vers le bas / Faire un signe de la main]
-        * **Incrustation Graphique** : [Animation de bouton s'abonner / Mot-clé à commenter]
-        * **Musique / Outro** : [Fondu sonore descendant]
+            --- FORMAT DE SORTIE ---
+            # 📋 PLAN DE TOURNAGE RÉEL
 
-        ---
+            ### ⚙️ 1. DIRECTION ARTISTIQUE & SETUP
+            - **Cadrage & Plan** : [ex: Plan poitrine, axe vertical 9:16]
+            - **Éclairage & Décor** : [Lumières, ambiance, arrière-plan]
 
-        ### 💡 5. CONSEILS DU RÉALISATEUR POUR LE MONTAGE FINAL
-        - **Style de sous-titres** : [Style dynamique, couleur mot par mot]
-        - **Erreurs fréquentes à éviter lors du tournage** : [Conseils de lumière, d'articulation ou de rythme]
-        """
+            ### 🪝 2. HOOK (0-5 SECONDES)
+            * **Timecode** : `00:00 - 00:05`
+            * **Réplique exacte** : "..."
+            * **Jeu d'acteur / Geste** : [Expression, posture, mouvement]
+            * **Texte à l'écran** : "..."
 
-        with st.spinner("🎬 Rédaction du script de tournage ultra-long et détaillé en cours..."):
+            ### 🎬 3. DÉCOUPAGE SÉQUENTIEL DÉTAILLÉ
+            * **[0:05 - 0:20] Séquence 1 : Agitation du Problème**
+              - **Dialogue** : "..."
+              - **Plan de coupe / B-Roll** : [Visuel à ajouter]
+
+            * **[0:20 - 0:45] Séquence 2 : Conseils & Démonstration**
+              - **Dialogue** : "..."
+              - **Plan de coupe / B-Roll** : [Visuel à ajouter]
+
+            ### 🎯 4. CONCLUSION & CALL TO ACTION
+            * **Réplique finale** : "..."
+            * **Action visuelle** : [Pointer du doigt, geste d'incitation]
+            """
+
+        with st.spinner("🎬 Génération du script de production en cours..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -316,7 +330,7 @@ if st.button("🚀 Générer le Script de Tournage Ultra-Détaillé (-1 crédit)
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("✨ Script de tournage ultra-détaillé généré avec succès !")
+                st.success("✨ Script généré avec succès !")
                 st.markdown(script)
 
             except Exception as e:
