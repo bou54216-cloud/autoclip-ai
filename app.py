@@ -1,19 +1,12 @@
 import streamlit as st
-import stripe
-from supabase import create_client, Client
 from groq import Groq
-import streamlit.components.v1 as components
+from fpdf import FPDF
 
 # ---------------------------------------------------------
-# CONFIGURATION ADMINISTRATEUR
-# ---------------------------------------------------------
-ADMIN_EMAIL = "elliotcarretto29@gmail.com"  # ⚠️ Remplace par ton email de connexion Supabase
-
-# ---------------------------------------------------------
-# 1. CONFIGURATION ET DESIGN CSS PREMIUM
+# 1. CONFIGURATION PAGE ET DESIGN CSS
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="AutoClip AI — Studio de Scripting & Production Vidéo",
+    page_title="AutoClip AI — Studio Privé de Production Vidéo",
     page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -35,26 +28,17 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# 2. INITIALISATION DES APIS
+# 2. INITIALISATION GROQ API
 # ---------------------------------------------------------
-stripe.api_key = st.secrets["STRIPE_API_KEY"]
-
-@st.cache_resource
-def init_supabase() -> Client:
-    return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
-
-supabase = init_supabase()
-
 @st.cache_resource
 def init_groq():
     return Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 groq_client = init_groq()
-# ---------------------------------------------------------
-# FONCTION DE GÉNÉRATION DE PDF POUR CRÉATEUR HUMAIN
-# ---------------------------------------------------------
-from fpdf import FPDF
 
+# ---------------------------------------------------------
+# 3. MOTEUR EXPORT PDF POUR CREA / CLIENT
+# ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
         self.set_font('Helvetica', 'B', 14)
@@ -95,176 +79,23 @@ def generer_pdf_script(titre_video, contenu_markdown):
             pdf.multi_cell(0, 5, ligne_propre)
             
     return bytes(pdf.output())
-# ---------------------------------------------------------
-# 3. GESTION DE LA SESSION & DES CRÉDITS
-# ---------------------------------------------------------
-if "user" not in st.session_state:
-    st.session_state.user = None
-
-if "credits" not in st.session_state:
-    st.session_state.credits = 0
-
-def refresh_user_credits(user_id):
-    try:
-        if st.session_state.user and st.session_state.user.email == ADMIN_EMAIL:
-            st.session_state.credits = 999999
-            return
-
-        res = supabase.table("profiles").select("credits").eq("id", user_id).execute()
-        if res.data and len(res.data) > 0:
-            st.session_state.credits = res.data[0].get("credits", 0)
-        else:
-            supabase.table("profiles").insert({"id": user_id, "email": st.session_state.user.email, "credits": 5}).execute()
-            st.session_state.credits = 5
-    except Exception as e:
-        st.error(f"Erreur de synchronisation Supabase : {e}")
 
 # ---------------------------------------------------------
-# 4. FONCTION REDIRECTION STRIPE CHECKOUT
+# 4. BARRE LATÉRALE (SIDEBAR) PRIVÉE
 # ---------------------------------------------------------
-def recharger_via_stripe(price_id, user_email):
-    try:
-        is_subscription = (price_id != st.secrets["PRICE_SINGLE"])
-        
-        session = stripe.checkout.Session.create(
-            line_items=[{'price': price_id, 'quantity': 1}],
-            mode='subscription' if is_subscription else 'payment',
-            customer_email=user_email,
-            success_url=f"https://the-empire-studio.streamlit.app/?success=true&price_id={price_id}",
-            cancel_url='https://the-empire-studio.streamlit.app/?canceled=true',
-            managed_payments={'enabled': False},
-        )
-        
-        js = f"<script>window.top.location.href = '{session.url}';</script>"
-        components.html(js, height=0)
-        st.info("Redirection sécurisée vers Stripe Checkout...")
-        st.markdown(f"[👉 Cliquez ici si la redirection ne démarre pas]({session.url})")
-        
-    except Exception as e:
-        st.error(f"Erreur de paiement Stripe : {e}")
-
-# ---------------------------------------------------------
-# 5. ECRAN DE CONNEXION / INSCRIPTION
-# ---------------------------------------------------------
-if not st.session_state.user:
-    st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur Universel de Scripts Vidéo & Master-Prompts IA</p>", unsafe_allow_html=True)
-    st.divider()
-
-    col_auth, _ = st.columns([1, 1])
-    with col_auth:
-        tab_login, tab_signup = st.tabs(["🔑 Connexion", "📝 Créer un compte"])
-
-        with tab_login:
-            email = st.text_input("Email", key="login_email")
-            password = st.text_input("Mot de passe", type="password", key="login_pass")
-            if st.button("Se connecter", type="primary", use_container_width=True):
-                try:
-                    res = supabase.auth.sign_in_with_password({"email": email, "password": password})
-                    st.session_state.user = res.user
-                    refresh_user_credits(res.user.id)
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Erreur de connexion : {e}")
-
-        with tab_signup:
-            # Vérification par LocalStorage (1 seul compte par navigateur/appareil)
-            components.html("""
-                <script>
-                    if (localStorage.getItem('device_registered')) {
-                        window.parent.postMessage({type: 'STREAMLIT_DEVICE_BLOCKED'}, '*');
-                    }
-                </script>
-            """, height=0)
-
-            if st.session_state.get("device_blocked", False):
-                st.error("⚠️ Un compte a déjà été créé depuis cet appareil/navigateur. Veuillez vous connecter.")
-            else:
-                new_email = st.text_input("Email", key="signup_email")
-                new_password = st.text_input("Mot de passe", type="password", key="signup_pass")
-                if st.button("Créer mon compte", use_container_width=True):
-                    try:
-                        res = supabase.auth.sign_up({"email": new_email, "password": new_password})
-                        st.success("Compte créé ! Vous pouvez vous connecter.")
-                        
-                        # Marquer l'appareil comme enregistré dans le navigateur
-                        components.html("""
-                            <script>
-                                localStorage.setItem('device_registered', 'true');
-                            </script>
-                        """, height=0)
-                    except Exception as e:
-                        st.error(f"Erreur d'inscription : {e}")
-
-    st.stop()
- 
-# ---------------------------------------------------------
-# 6. APPLICATION PRINCIPALE & BARRE LATÉRALE
-# ---------------------------------------------------------
-refresh_user_credits(st.session_state.user.id)
-
-query_params = st.query_params
-
-if "success" in query_params and "payment_processed" not in st.session_state:
-    price_id_paid = query_params.get("price_id", "")
-    
-    credits_to_add = 1
-    if price_id_paid == st.secrets.get("PRICE_PRO"):
-        credits_to_add = 15
-    elif price_id_paid == st.secrets.get("PRICE_PREMIUM"):
-        credits_to_add = 30
-    elif price_id_paid == st.secrets.get("PRICE_INFINITE"):
-        credits_to_add = 999
-
-    try:
-        new_credits = st.session_state.credits + credits_to_add
-        supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-        st.session_state.credits = new_credits
-        st.session_state.payment_processed = True
-        st.balloons()
-        st.success(f"🎉 Paiement validé ! +{credits_to_add} crédits ajoutés à votre compte.")
-    except Exception as e:
-        st.error(f"Erreur lors du crédit de la commande : {e}")
-
-elif "canceled" in query_params:
-    st.warning("⚠️ Transaction annulée.")
-
-# --- BARRE LATÉRALE (SIDEBAR) ---
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.write(f"👤 **Membre :** {st.session_state.user.email}")
-    
-    if st.session_state.user.email == ADMIN_EMAIL:
-        st.metric(label="Solde de Crédits", value="∞ (Admin)")
-    else:
-        st.metric(label="Solde de Crédits", value=f"{st.session_state.credits} CR")
-    
-    if st.button("Se déconnecter", use_container_width=True):
-        supabase.auth.sign_out()
-        st.session_state.user = None
-        st.session_state.credits = 0
-        st.rerun()
-
+    st.success("⚡ **Mode Studio Privé Actif**")
+    st.info("Utilisation illimitée & accès direct réservé.")
     st.divider()
-    st.markdown("### 💳 Offres & Recharges")
-
-    if st.button("1 Crédit — 3,49 $", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_SINGLE"], st.session_state.user.email)
-
-    if st.button("PRO (15 crédits) — 14,99 $/m", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_PRO"], st.session_state.user.email)
-
-    if st.button("PREMIUM (30 crédits) — 24,99 $/m", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_PREMIUM"], st.session_state.user.email)
-
-    if st.button("INFINITE (Illimité) — 49,99 $/m", use_container_width=True):
-        recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
+    st.markdown("### 💡 Astuce Production")
+    st.write("Exporte tes scripts en **PDF** pour les lire pendant tes tournages ou les envoyer directement à tes clients.")
 
 # ---------------------------------------------------------
-# 7. MODULE UNIVERSEL : CONFIGURATION DE PRODUCTION
+# 5. MODULE DE CONFIGURATION DU SCRIPT
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Directing & Scripting Universel")
-st.markdown("Configurez vos critères pour générer un plan de production complet ET le script Auto-Prompt prêt à donner à une IA créatrice de vidéo.")
+st.title("🎬 AutoClip AI — Studio de Directing & Scripting Privé")
+st.markdown("Configure tes critères pour générer une bible de production complète, un script ultra-détaillé et le Master-Prompt IA.")
 
 st.divider()
 
@@ -273,7 +104,7 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.subheader("1. Concept & Format")
     topic = st.text_input("🎯 Sujet exact de la vidéo :", placeholder="Entrez le sujet de votre vidéo...")
-    creator_type = st.radio("👤 Format de production :", ["Générée par IA (Automation / Faceless)", "Personne Réelle (Face Cam / Tournage réel)"])
+    creator_type = st.radio("👤 Format de production :", ["Personne Réelle (Face Cam / Tournage réel)", "Générée par IA (Automation / Faceless)"])
     platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Video", "Publicité vidéo (Meta/TikTok)"])
     duration = st.selectbox("⏱️ Durée visée :", ["Flash (15 - 30 sec)", "Standard Short (30 - 60 sec)", "Long Short (60 - 90 sec)", "Format Long (3 - 5 min)"])
 
@@ -297,9 +128,12 @@ with col4:
 
 st.divider()
 
-if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit)", type="primary", use_container_width=True):
-    if st.session_state.credits <= 0 and st.session_state.user.email != ADMIN_EMAIL:
-        st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
+# ---------------------------------------------------------
+# 6. GENERATION & EXPORT
+# ---------------------------------------------------------
+if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="primary", use_container_width=True):
+    if not topic:
+        st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         is_ia_mode = (creator_type == "Générée par IA (Automation / Faceless)")
         
@@ -309,7 +143,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
 
         NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
-        ADAPTE-TOI STRICTEMENT À LA NICHE ET AU SUJET FOURNI PAR L'UTILISATEUR.
+        ADAPTE-TOI STRICTEMENT À LA NICHE ET AU SUJET FOURNI.
 
         --- CONFIGURATION DE PRODUCTION ---
         - Sujet : {topic}
@@ -406,7 +240,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         4. **Audio & On-Screen Text Overlay Directives**.
         """
 
-        with st.spinner("🎬 Production du script ultra-détaillé et du Master-Prompt IA..."):
+        with st.spinner("🎬 Production du script d'élite et de la bible de tournage..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -414,18 +248,10 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
                 )
                 script = response.choices[0].message.content
 
-                # Décrémenter les crédits uniquement si ce n'est pas l'administrateur
-                if st.session_state.user.email != ADMIN_EMAIL:
-                    new_credits = st.session_state.credits - 1
-                    supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
-                    st.session_state.credits = new_credits
-
-                st.success("✨ Bible de production & Master-Prompt IA générés avec succès !")
+                st.success("✨ Bible de production & Script générés avec succès !")
                 st.markdown(script)
 
-            except Exception as e:
-                st.error(f"Erreur lors de la génération : {e}")
-# 📄 Bouton d'export PDF pour le créateur / client
+                # Export PDF
                 pdf_data = generer_pdf_script(topic if topic else "Script_Video", script)
                 st.download_button(
                     label="📄 Télécharger le Script & Bible de Tournage en PDF",
@@ -434,3 +260,6 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
                     mime="application/pdf",
                     use_container_width=True
                 )
+
+            except Exception as e:
+                st.error(f"Erreur lors de la génération : {e}")
