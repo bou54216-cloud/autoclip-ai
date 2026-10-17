@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Ultra-Détaillé & Humain Actif**")
+    st.success("⚡ **Mode 100% Smartphone & Accessible**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez des scripts extrêmement riches, longs et précis, écrits de main d'homme, avec lexique inclus.")
+    st.write("Générez des scripts riches et détaillés, pensés pour être tournés simplement avec un smartphone et de la lumière naturelle.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un script ultra-complet, sans aucune zone d'ombre.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un script complet, pensé pour un tournage simple au téléphone.")
 
 st.divider()
 
@@ -80,7 +80,7 @@ with col4:
     cta_type = st.selectbox("🎯 Call To Action (CTA) :", ["Commenter un mot-clé", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Enregistrer & Partager"])
     urgency_trigger = st.text_input("⏳ Levier d'urgence :", placeholder="ex: Offre valable jusqu'à dimanche")
     shooting_location = st.text_input("🏠 Décor / Lieu de tournage :", placeholder="ex: Bureau moderne, extérieur...")
-    key_props = st.text_input("🗑️ Accessoire visuel :", placeholder="ex: Tenir des clés, un contrat...")
+    key_props = st.text_input("🎬 Accessoire visuel :", placeholder="ex: Tenir des clés, un contrat...")
     forbidden_words = st.text_input("🚫 Mots interdits :", placeholder="ex: argent facile...")
     music_genre = st.text_input("🎵 Ambiance Sonore :", placeholder="ex: Musique dynamique...")
     extra_details = st.text_area("⚙️ Consignes Spécifiques :", placeholder="ex: Insérer un graphique...")
@@ -88,21 +88,22 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT ULTRA-RICHE ET DÉTAILLÉ
+# 5. GÉNÉRATION DU SCRIPT 100% SMARTPHONE & ACCESSIBLE
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script Ultra-Détaillé & 100% Humain", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script Adapté au Smartphone", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde, reconnu pour ton style percutant, ultra-détaillé et 100 % humain. 
-        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE TOURNAGE EXHAUSTIVE, PROFONDE ET TRÈS FOURNIE. Interdiction d'être court ou synthétique. Il faut que le texte soit riche, long et qu'il ne manque aucune information.
+        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde. 
+        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE TOURNAGE EXHAUSTIVE, RICHE, LONGUE ET DÉTAILLÉE, mais adaptée à la réalité financière de n'importe quel client.
 
-        REGLES ABSOLUES :
-        1. Écris de manière totalement naturelle et humaine (comme un vrai pro du contenu vidéo qui parle à son client, pas de phrases robotiques d'IA).
-        2. Développe chaque section en profondeur : donne des explications précises sur le décor, l'attitude du créateur, les intonations, et rédige CHAQUE RÉPLIQUE INTÉGRALE au mot près, sans aucun résumé ni point de suspension.
-        3. À la toute fin, ajoute une section claire intitulée "LEXIQUE DES TERMES TECHNIQUES" pour expliquer simplement des mots comme SFX (bruitage), Cut (changement de plan), etc., afin que le client comprenne tout sans effort.
-        4. Ne cite aucun nom de logiciel ou d'application tiers.
+        REGLES ABSOLUES DE MATÉRIEL ET DE STYLE :
+        1. MATÉRIEL 100% ACCESSIBLE : Interdiction totale d'imposer du matériel professionnel coûteux (pas de projecteurs de studio, pas de caméras sophistiquées, pas de micros hors de prix). Tout doit être pensé pour être tourné **uniquement avec un simple smartphone** posé sur un rebord ou un petit trépied de table, en utilisant **la lumière naturelle du jour (face à une fenêtre)** et le micro de base du téléphone.
+        2. Écris de manière totalement naturelle et humaine (style direct, chaleureux, sans jargon robotique d'IA).
+        3. Rédige chaque réplique intégrale au mot près, sans aucun résumé ni point de suspension.
+        4. À la toute fin, ajoute une section "LEXIQUE SIMPLE" pour expliquer en un mot les termes de montage (ex: SFX = bruitage sonore, Cut = changement rapide de plan).
+        5. Ne cite aucun nom de logiciel ou d'application tiers.
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -130,14 +131,14 @@ if st.button("🚀 Générer le Script Ultra-Détaillé & 100% Humain", type="pr
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Structure exigée pour la réponse (rédige de longs blocs bien détaillés) :
-        # BIBLE DE PRODUCTION ET SCRIPT VIDÉO COMPLET
-        ## 1. DIRECTION ARTISTIQUE, DÉCOR & AMBIANCE (Instructions complètes)
-        ## 2. L'ACCROCHE MAÎTRESSE (0 à 3 secondes - Texte, intonation et posture)
-        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques exactes au mot près, actions, cadrages et détails de tournage)
-        ## 4. APPEL À L'ACTION (CTA) ET CONCLUSION
+        Structure exigée pour la réponse :
+        # BIBLE DE PRODUCTION ET SCRIPT VIDÉO (100% Smartphone Friendly)
+        ## 1. SETUP FACILE & LUMIÈRE NATURELLE (Conseils pour filmer simplement chez soi avec un téléphone)
+        ## 2. L'ACCROCHE (0 à 3 secondes - Posture, texte écran et réplique exacte)
+        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques complètes au mot près, actions simples)
+        ## 4. APPEL À LACTION (CTA) & CONCLUSION
         ## 5. LÉGENDE DE PUBLICATION & HASHTAGS STRATÉGIQUES
-        ## 6. LEXIQUE SIMPLE POUR LE CLIENT (Explication des termes techniques)
+        ## 6. LEXIQUE SIMPLE (Explication des termes techniques)
         """
 
         prompt = prompt_template.format(
@@ -152,7 +153,7 @@ if st.button("🚀 Générer le Script Ultra-Détaillé & 100% Humain", type="pr
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction d'un script long, riche et ultra-détaillé..."):
+        with st.spinner("🎬 Rédaction d'un script détaillé et 100% adaptable au smartphone..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -160,7 +161,7 @@ if st.button("🚀 Générer le Script Ultra-Détaillé & 100% Humain", type="pr
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script ultra-détaillé et complet généré avec succès ! Tu peux le copier ci-dessous :")
+                st.success("✨ Script généré avec succès ! Il est entièrement pensé pour un tournage simple au téléphone.")
                 
                 # Zone de texte large et propre avec bouton de copie intégré
                 st.code(script, language="markdown")
