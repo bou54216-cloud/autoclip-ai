@@ -334,6 +334,37 @@ with tab_copycraft:
 
                 new_credits = st.session_state.credits - 1
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
+               
+# ---------------------------------------------------------
+# BARRE LATÉRALE (SIDEBAR)
+# ---------------------------------------------------------
+with st.sidebar:
+    st.title("⚡ Empire Studio")
+    if st.session_state.user:
+        st.write(f"👤 **Compte :** {st.session_state.user.email}")
+        st.metric(label="Crédits disponibles", value=st.session_state.credits)
+
+        if st.button("Se déconnecter"):
+            supabase.auth.sign_out()
+            st.session_state.user = None
+            st.session_state.credits = 0
+            st.rerun()
+
+    st.divider()
+    st.markdown("### 💳 Tarifs & Recharges")
+
+    # Options d'achat
+    if st.button("1 Crédit — 3,49 $", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_SINGLE"], st.session_state.user.email)
+
+    if st.button("Plan PRO (15 crédits) — 14,99 $/mois", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_PRO"], st.session_state.user.email)
+
+    if st.button("Plan PREMIUM (30 crédits) — 24,99 $/mois", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_PREMIUM"], st.session_state.user.email)
+
+    if st.button("Plan INFINITE (Illimité) — 49,99 $/mois", use_container_width=True):
+        recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
                 st.session_state.credits = new_credits
 
                 st.success("Contenu rédigé avec succès !")
