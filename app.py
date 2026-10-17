@@ -123,7 +123,7 @@ if not st.session_state.user:
                 except Exception as e:
                     st.error(f"Erreur de connexion : {e}")
 
-       with tab_signup:
+     with tab_signup:
             # Vérification par LocalStorage (1 seul compte par navigateur/appareil)
             components.html("""
                 <script>
