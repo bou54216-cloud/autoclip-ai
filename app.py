@@ -30,7 +30,7 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF PROPRE & SANS CARACTÈRES CORROMPUS
+# 3. MOTEUR EXPORT PDF COMPLET ET NET POUR LE CLIENT
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
@@ -62,17 +62,17 @@ def generer_pdf_script(titre_video, contenu_markdown):
     
     largeur_utile = 190
     
-    lignes = contenu_markdown.split('\n')
+    # Nettoyage global du contenu markdown pour éviter les erreurs d'encodage
+    texte_nettoye = (contenu_markdown or "")\
+        .replace('—', '-').replace('–', '-').replace('’', "'")\
+        .replace('«', '"').replace('»', '"').replace('•', '*')\
+        .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
+        .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
+        .replace('🔥', '').replace('⚡', '').replace('💬', '').replace('⏱️', '')
+        
+    lignes = texte_nettoye.split('\n')
     for ligne in lignes:
-        # Nettoyage radical des émojis et des caractères spéciaux non gérés par Helvetica
-        ligne_nettoyee = (ligne or "")\
-            .replace('—', '-').replace('–', '-').replace('’', "'")\
-            .replace('«', '"').replace('»', '"').replace('•', '*')\
-            .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
-            .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
-            .replace('1??', '1.').replace('2??', '2.').replace('3??', '3.').replace('4??', '4.').replace('5??', '5.')
-            
-        ligne_propre = ligne_nettoyee.encode('latin-1', 'replace').decode('latin-1')
+        ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
         
         if ligne.startswith('# '):
             pdf.set_font("Helvetica", 'B', 12)
@@ -92,7 +92,11 @@ def generer_pdf_script(titre_video, contenu_markdown):
             pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('### ', ''))
         else:
             pdf.set_font("Helvetica", size=8.5)
-            pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
+            # Si la ligne est vide, on ajoute juste un petit espace vertical
+            if ligne.strip() == "":
+                pdf.ln(2)
+            else:
+                pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
             
     return bytes(pdf.output())
 
@@ -197,9 +201,9 @@ if st.button("🚀 Générer la Bible de Tournage & le Script d'Élite", type="p
         Format de réponse exigé en Markdown clair, net et structuré :
         1. BIBLE DE PRODUCTION (Ambiance, Décor, Ton, Règles)
         2. ACCROCHE (0-3s avec mots exacts, intonation, texte écran)
-        3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Minuté, répliques exactes au mot près, consignes visuelles)
+        3. DECOUPAGE SEQUENCE PAR SEQUENCE (Minuté, répliques exactes au mot près, consignes visuelles)
         4. CONCLUSION & CALL TO ACTION
-        5. LÉGENDE / CAPTION & HASHTAGS VIRAUX
+        5. LEGENDE / CAPTION & HASHTAGS VIRAUX
         """
 
         prompt = prompt_template.format(
@@ -227,7 +231,7 @@ if st.button("🚀 Générer la Bible de Tournage & le Script d'Élite", type="p
 
                 pdf_data = generer_pdf_script(topic, script)
                 st.download_button(
-                    label="📄 Télécharger le Script & Bible de Tournage en PDF (Clair & Net)",
+                    label="📄 Télécharger le Script & Bible de Tournage en PDF (Complet & Détaillé)",
                     data=pdf_data,
                     file_name=f"Script_Tournage_{topic.replace(' ', '_')}.pdf",
                     mime="application/pdf",
