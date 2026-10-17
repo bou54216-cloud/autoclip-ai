@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # 1. CONFIGURATION ET DESIGN CSS PREMIUM
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="AutoClip AI — Studio de Scripting & Automation Vidéo Pro",
+    page_title="AutoClip AI — Studio de Scripting & Production Vidéo",
     page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -95,7 +95,7 @@ def recharger_via_stripe(price_id, user_email):
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur de Scripts Vidéo Ultra-Détaillés le Plus Avancé du Marché</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur Universel de Scripts Vidéo & Plans de Production</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -185,10 +185,10 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 7. MODULE EXPERT : CONFIGURATION COMPLÈTE DE PRODUCTION
+# 7. MODULE UNIVERSEL : CONFIGURATION DE PRODUCTION
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Directing & Scripting High-End")
-st.markdown("Configurez la totalité des paramètres de votre vidéo pour recevoir une bible de production et un script cinéma exhaustif.")
+st.title("🎬 AutoClip AI — Studio de Directing & Scripting Universel")
+st.markdown("Configurez vos critères pour générer une bible de production et un script vidéo hautement captivant, quelle que soit votre niche.")
 
 st.divider()
 
@@ -196,15 +196,15 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.subheader("1. Concept & Format")
-    topic = st.text_input("🎯 Sujet exact :", placeholder="ex: 3 secrets pour mixer une House Music percutante")
+    topic = st.text_input("🎯 Sujet exact de la vidéo :", placeholder="Entrez le sujet de votre vidéo...")
     creator_type = st.radio("👤 Format de production :", ["Générée par IA (Automation / Faceless)", "Personne Réelle (Face Cam / Tournage réel)"])
     platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Video", "Publicité vidéo (Meta/TikTok)"])
     duration = st.selectbox("⏱️ Durée visée :", ["Flash (15 - 30 sec)", "Standard Short (30 - 60 sec)", "Long Short (60 - 90 sec)", "Format Long (3 - 5 min)"])
 
 with col2:
     st.subheader("2. Cible & Psychologie")
-    target_persona = st.text_input("👥 Client / Audience Cible :", placeholder="ex: Producteurs débutants, DJ, passionnés de House")
-    audience_frustration = st.text_input("💢 Frustration / Problème majeur :", placeholder="ex: Un son plat sans relief, kick noyé dans la basse")
+    target_persona = st.text_input("👥 Audience Cible (Exemple) :", placeholder="ex: Entrepreneurs, Étudiants, Sportifs, Clients e-commerce...")
+    audience_frustration = st.text_input("💢 Frustration / Problème (Exemple) :", placeholder="ex: Manque de temps, manque de budget, manque d'organisation...")
     tone = st.selectbox("🎭 Ambiance & Énergie :", ["Dynamique & Énergique", "Cash, Provocateur & Sans Filtre", "Éducatif, Clair & Expert", "Luxe, Sombre & Futuriste", "Storytelling Émotionnel"])
 
 with col3:
@@ -216,8 +216,8 @@ with col3:
 with col4:
     st.subheader("4. Conversion & Style")
     cta_type = st.selectbox("🎯 Call To Action (CTA) :", ["Commenter un mot-clé (Automation)", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Enregistrer & Partager"])
-    music_genre = st.text_input("🎵 Genre musical / Tempo :", placeholder="ex: House 128 BPM, Synthwave sombre, No Music")
-    extra_details = st.text_area("⚙️ Mots-clés / Éléments imposés :", placeholder="ex: Parler de sidechain, EQ, néon rouge, ambiance club...")
+    music_genre = st.text_input("🎵 Ambiance Sonore (Exemple) :", placeholder="ex: Musique dynamique motivante, Ambiance cinématique, Aucune musique...")
+    extra_details = st.text_area("⚙️ Éléments Imposés (Exemple) :", placeholder="ex: Mentionner un tarif promotionnel, insérer un graphique explicatif, décor moderne...")
 
 st.divider()
 
@@ -233,6 +233,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
 
         NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
+        ADAPTE-TOI STRICTEMENT À LA NICHE ET AU SUJET FOURNI PAR L'UTILISATEUR.
 
         --- CONFIGURATION DE PRODUCTION ---
         - Sujet : {topic}
@@ -246,7 +247,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         - Rythme de montage : {pacing}
         - Framework narratif : {structure}
         - CTA : {cta_type}
-        - Style musical : {music_genre if music_genre else 'Inconnu'}
+        - Style sonore/musical : {music_genre if music_genre else 'Inconnu'}
         - Exigences : {extra_details if extra_details else 'Aucune'}
 
         --- FORMAT DE RÉPONSE EXIGÉ (Markdown d'Élite) ---
@@ -256,7 +257,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         ### 📋 1. DIRECTION ARTISTIQUE & SETUP DÉTAILLÉ
         - **Format & Ratio** : 9:16 Vertical
         - **Palette de couleurs & Ambiance lumineuse** : [Détails ultra-précis des teintes, ombres et réflecteurs]
-        - **Sound Design & Musique** : [Tempo exact BPM, style sonore, moments de coupure audio]
+        - **Sound Design & Ambiance audio** : [Style sonore, moments de coupure audio, rythme]
         - **Règles Typographiques (Sous-titres)** : [Police, taille, couleur active/inactive, effets de pop-up]
         - **Stratégie de Rétention algorithmique** : [Découpage des micro-hooks à 3s, 10s et 25s]
 
@@ -274,15 +275,15 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
 
         ### 🎬 3. DÉCOUPAGE EXHAUSTIF SÉQUENCE PAR SÉQUENCE (MINUTÉ & MOT À MOT)
 
-        Fournis 5 à 7 séquences hyper détaillées. Chaque dialogue doit être rédigé au mot près.
+        Fournis 5 à 7 séquences hyper détaillées adaptées au sujet. Chaque dialogue doit être rédigé au mot près.
 
         #### 🔹 SÉQUENCE 1 : Agitation de la Frustration (`00:03 - 00:12`)
         * **Timecode** : `00:03 - 00:12`
         * **Dialogues / Voix-off intégrale** : "..."
-        * **Intonation & Pauses** : [Ex: Pause de 0.5s après le mot 'erreur']
+        * **Intonation & Pauses** : [Consignes vocales]
         * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Description du B-Roll exact à insérer]"}
         * **Incrustation Texte / Graphisme** : [Texte affiché]
-        * **SFX & Musique** : [Variation de volume musical, bruitage]
+        * **SFX & Ambiance** : [Bruitage / Effet sonore]
 
         #### 🔹 SÉQUENCE 2 : Déconstruction de l'Erreur Courante (`00:12 - 00:25`)
         * **Timecode** : `00:12 - 00:25`
@@ -341,7 +342,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("✨ Bible de production & Script ultra-détaillé générés avec succès !")
+                st.success("✨ Bible de production & Script universel générés avec succès !")
                 st.markdown(script)
 
             except Exception as e:
