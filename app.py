@@ -155,7 +155,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         visual_label = "Prompt Visuel Brut en Anglais (8K, Cinematic)" if is_ia_mode else "Mouvement de caméra & Jeu du présentateur"
         broll_label = "Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"
         
-        prompt = f"""
+        prompt_template = """
         Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo et Master Copywriter au Monde.
         Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER LONG, DÉTAILLÉ SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS.
 
@@ -168,15 +168,15 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         - Mode de production : {creator_type}
         - Plateforme : {platform}
         - Durée : {duration}
-        - Persona / Audience Cible : {target_persona if target_persona else 'Grand public'}
-        - Frustration majeure : {audience_frustration if audience_frustration else 'Non spécifiée'}
+        - Persona / Audience Cible : {target_persona}
+        - Frustration majeure : {audience_frustration}
         - Ton & Ambiance : {tone}
         - Hook (0-3s) : {hook_style}
         - Rythme de montage : {pacing}
         - Framework narratif : {structure}
         - CTA : {cta_type}
-        - Style sonore/musical : {music_genre if music_genre else 'Inconnu'}
-        - Exigences : {extra_details if extra_details else 'Aucune'}
+        - Style sonore/musical : {music_genre}
+        - Exigences : {extra_details}
 
         --- FORMAT DE RÉPONSE EXIGÉ (Markdown d'Élite) ---
 
@@ -254,4 +254,48 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         Inclus obligatoirement :
         1. **Global Topic, Mood & Style Directive** (Cinematic, 8K, 9:16 Aspect Ratio, Lighting).
         2. **Full Voiceover Script** (Mot à mot en français ou anglais selon la cible, sans résumé).
-        3. **Scene-by-Scene Visual Generation Prompts** (Horodatés
+        3. **Scene-by-Scene Visual Generation Prompts** (Horodatés de 0s à la fin).
+        4. **Audio & On-Screen Text Overlay Directives**.
+        """
+
+        prompt = prompt_template.format(
+            topic=topic,
+            creator_type=creator_type,
+            platform=platform,
+            duration=duration,
+            target_persona=target_persona if target_persona else 'Grand public',
+            audience_frustration=audience_frustration if audience_frustration else 'Non spécifiée',
+            tone=tone,
+            hook_style=hook_style,
+            pacing=pacing,
+            structure=structure,
+            cta_type=cta_type,
+            music_genre=music_genre if music_genre else 'Inconnu',
+            extra_details=extra_details if extra_details else 'Aucune',
+            visual_label=visual_label,
+            broll_label=broll_label
+        )
+
+        with st.spinner("🎬 Production du script d'élite et de la bible de tournage..."):
+            try:
+                response = groq_client.chat.completions.create(
+                    model="openai/gpt-oss-120b",
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                script = response.choices[0].message.content
+
+                st.success("✨ Bible de production & Script générés avec succès !")
+                st.markdown(script)
+
+                # Export PDF sécurisé sans erreurs
+                pdf_data = generer_pdf_script(topic if topic else "Script_Video", script)
+                st.download_button(
+                    label="📄 Télécharger le Script & Bible de Tournage en PDF",
+                    data=pdf_data,
+                    file_name=f"Script_{topic.replace(' ', '_') if topic else 'Production'}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+
+            except Exception as e:
+                st.error(f"Erreur lors de la génération : {e}")
