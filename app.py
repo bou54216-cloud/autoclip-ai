@@ -37,7 +37,7 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF CORRIGÉ
+# 3. MOTEUR EXPORT PDF CORRIGÉ (SANS ERREUR D'ESPACE)
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
@@ -54,6 +54,7 @@ class ScriptPDF(FPDF):
 
 def generer_pdf_script(titre_video, contenu_markdown):
     pdf = ScriptPDF()
+    pdf.set_margins(left=15, top=15, right=15) # Marges sécurisées
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
@@ -95,7 +96,6 @@ def generer_pdf_script(titre_video, contenu_markdown):
             pdf.multi_cell(0, 5, ligne_propre)
             
     return bytes(pdf.output())
-
 # ---------------------------------------------------------
 # 4. BARRE LATÉRALE (SIDEBAR) PRIVÉE
 # ---------------------------------------------------------
