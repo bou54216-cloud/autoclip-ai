@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Précis & Lexique Actif**")
+    st.success("⚡ **Mode 100% Humain & Naturel Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez un script ultra-précis et détaillé, avec un dictionnaire des termes techniques intégré à la fin pour le client.")
+    st.write("Générez des scripts percutants, écrits avec un style authentique et humain, prêts à être partagés à vos clients.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un script hyper détaillé, complet, avec son lexique explicatif pour le client.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un script ultra-naturel, sans aucune tournure robotique.")
 
 st.divider()
 
@@ -64,7 +64,7 @@ with col2:
     desired_result = st.text_input("✨ Résultat rêvé du prospect :", placeholder="ex: Obtenir les clés en 3 mois")
     main_objection = st.text_input("🛑 Objection majeure :", placeholder="ex: 'Je n'ai pas assez d'épargne'")
     target_emotion = st.selectbox("🔥 Émotion clé à provoquer :", ["Curiosité & Choc", "Peur de rater (FOMO)", "Espoir & Inspiration", "Indignation / Colère"])
-    proof_social = st.text_input("🏆 Preuve Sociale / Chiffre clé :", placeholder="ex: +150 dossiers accepted")
+    proof_social = st.text_input("🏆 Preuve Sociale / Chiffre clé :", placeholder="ex: +150 dossiers acceptés")
 
 with col3:
     st.subheader("3. Rétention & Style")
@@ -88,19 +88,21 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT DÉTAILLÉ AVEC LEXIQUE
+# 5. GÉNÉRATION DU SCRIPT AU STYLE NATUREL ET HUMAIN
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script Ultra-Précis & Son Lexique", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script 100% Humain et Précis", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
-        Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER DÉTAILLÉ, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
-        NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
-        NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
-
-        IMPORTANT : À la toute fin de ton texte, rajoute obligatoirement une section intitulée "LEXIQUE POUR COMPRENDRE LES TERMES TECHNIQUES", qui explique de manière très simple les termes de montage utilisés (par exemple : SFX = bruitage sonore, Cut = changement rapide d'image, Face-cam = parler directement face à la caméra, etc.).
+        Tu es un Réalisateur Vidéo et Directeur Artistique humain, chevronné, cash et passionné par la création de contenu. Rédige un script vidéo et une bible de tournage de haute qualité.
+        
+        REGLES ABSOLUES DE STYLE :
+        1. Le texte doit sembler 100% rédigé par un humain expert, de manière naturelle, fluide, percutante et professionnelle.
+        2. Bannis totalement le jargon robotique ou les tournages de phrases typiques d'une IA (interdit d'utiliser des formules bateau comme "Il est crucial de noter", "Dans le paysage actuel", "En conclusion", "Voici un guide complet", etc.). Parle directement, sans fioritures.
+        3. Rédige chaque réplique intégrale au mot près, comme si tu dictais le texte à un créateur pour qu'il le lise face caméra.
+        4. À la toute fin, ajoute une petite section "Lexique simple pour le client" pour expliquer les éventuels termes de montage en un mot simple (ex: SFX = bruitage sonore, Cut = changement rapide d'image).
+        5. N'utilise aucun nom de logiciel ou d'application tiers.
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -128,14 +130,14 @@ if st.button("🚀 Générer le Script Ultra-Précis & Son Lexique", type="prima
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Format de réponse exigé en Markdown d'Élite :
+        Structure exigée pour la réponse :
         # BIBLE DE PRODUCTION ET SCRIPT VIDÉO
-        ## 1. DIRECTION ARTISTIQUE & SETUP
-        ## 2. L'ACCROCHE (0-3 SECONDES)
-        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques exactes au mot près, consignes visuelles, timecodes)
-        ## 4. CONCLUSION & CALL TO ACTION (CTA)
-        ## 5. LÉGENDE & HASHTAGS VIRAUX
-        ## 6. LEXIQUE POUR COMPRENDRE LES TERMES TECHNIQUES (Explications simples pour le client)
+        ## 1. Setup & Ambiance
+        ## 2. L'Accroche (0 à 3 secondes)
+        ## 3. Le Script Séquence par Séquence (Répliques exactes et consignes de tournage)
+        ## 4. Appel à l'action (CTA)
+        ## 5. Légende & Hashtags pour la publication
+        ## 6. Lexique simple (pour comprendre les termes si besoin)
         """
 
         prompt = prompt_template.format(
@@ -150,7 +152,7 @@ if st.button("🚀 Générer le Script Ultra-Précis & Son Lexique", type="prima
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction ultra-détaillée et ajout du lexique client en cours..."):
+        with st.spinner("🎬 Rédaction d'un script naturel et percutant..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -158,7 +160,7 @@ if st.button("🚀 Générer le Script Ultra-Précis & Son Lexique", type="prima
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script ultra-précis généré avec succès ! Le lexique explicatif est inclus à la fin.")
+                st.success("✨ Script généré avec un style totalement naturel et humain !")
                 
                 # Zone de texte propre avec bouton de copie intégré
                 st.code(script, language="markdown")
