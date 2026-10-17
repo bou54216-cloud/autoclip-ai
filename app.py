@@ -30,13 +30,13 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF ROBUSTE (100% INTÉGRAL)
+# 3. MOTEUR EXPORT PDF ULTRA-CARRÉ & PROPRE
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
-        self.set_font('Helvetica', 'B', 11)
+        self.set_font('Helvetica', 'B', 10)
         self.set_text_color(220, 53, 69)
-        self.cell(0, 7, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT CLIENT', 0, 1, 'C')
+        self.cell(0, 6, 'AUTOCLIP AI - BIBLE DE PRODUCTION & SCRIPT CLIENT', 0, 1, 'C')
         self.ln(2)
 
     def footer(self):
@@ -47,59 +47,45 @@ class ScriptPDF(FPDF):
 
 def generer_pdf_script(titre_video, contenu_markdown):
     pdf = ScriptPDF(orientation='P', unit='mm', format='A4')
-    pdf.set_margins(left=10, top=10, right=10)
+    pdf.set_margins(left=12, top=12, right=12)
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=15)
     
-    # Nettoyage du titre
-    titre_propre = (titre_video or "Script_Video")\
-        .replace('—', '-').replace('–', '-').replace('’', "'").replace('«', '"').replace('»', '"')
+    # En-tête du sujet
+    titre_propre = (titre_video or "Script_Video").replace('—', '-').replace('–', '-').replace('’', "'")
     titre_propre = titre_propre.encode('latin-1', 'replace').decode('latin-1')
     
-    pdf.set_font("Helvetica", 'B', 11)
+    pdf.set_font("Helvetica", 'B', 12)
     pdf.set_text_color(0, 0, 0)
-    pdf.multi_cell(0, 6, f"Sujet : {titre_propre}")
-    pdf.ln(3)
+    pdf.multi_cell(0, 7, f"SUJET DE LA VIDEO : {titre_propre}")
+    pdf.ln(4)
     
-    largeur_utile = 190
+    largeur_utile = 186 # 210 - 24 (marges de 12 de chaque côté)
     
-    # Nettoyage global du texte pour FPDF (suppression des tableaux Markdown et émojis bloquants)
+    # Nettoyage global du contenu généré par l'IA
     texte_brut = (contenu_markdown or "")\
         .replace('—', '-').replace('–', '-').replace('’', "'")\
-        .replace('«', '"').replace('»', '"').replace('•', '*')\
+        .replace('«', '"').replace('»', '"').replace('•', '-')\
         .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
         .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
         .replace('🔥', '').replace('⚡', '').replace('💬', '').replace('⏱️', '')\
-        .replace('|', ' - ').replace('>', '')
+        .replace('|', '').replace('>', '').replace('**', '')
         
     lignes = texte_brut.split('\n')
     for ligne in lignes:
-        # Ignore les séparateurs de tableaux de type |---|---|
-        if '---' in ligne:
-            continue
-            
         ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
         
-        if ligne.startswith('# '):
-            pdf.set_font("Helvetica", 'B', 11)
-            pdf.set_text_color(220, 53, 69)
+        # Gestion stricte de la mise en page selon les niveaux de titres
+        if ligne.strip().startswith('#') or ligne.strip().startswith('1.') or ligne.strip().startswith('2.') or ligne.strip().startswith('3.') or ligne.strip().startswith('4.') or ligne.strip().startswith('5.'):
             pdf.ln(3)
-            pdf.multi_cell(largeur_utile, 6, ligne_propre.replace('# ', ''))
-            pdf.set_text_color(0, 0, 0)
-        elif ligne.startswith('## '):
             pdf.set_font("Helvetica", 'B', 10)
-            pdf.set_text_color(40, 40, 40)
-            pdf.ln(2)
-            pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('## ', ''))
+            pdf.set_text_color(220, 53, 69)
+            pdf.multi_cell(largeur_utile, 6, ligne_propre.replace('#', '').strip())
             pdf.set_text_color(0, 0, 0)
-        elif ligne.startswith('### '):
-            pdf.set_font("Helvetica", 'B', 9)
-            pdf.ln(2)
-            pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('### ', ''))
         else:
-            pdf.set_font("Helvetica", size=8.5)
+            pdf.set_font("Helvetica", size=9)
             if ligne.strip() == "":
-                pdf.ln(1.5)
+                pdf.ln(2)
             else:
                 pdf.multi_cell(largeur_utile, 4.5, ligne_propre)
             
@@ -110,16 +96,16 @@ def generer_pdf_script(titre_video, contenu_markdown):
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Studio Privé Actif**")
+    st.success("⚡ **Mode Carré Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez des scripts de haute rétention et téléchargez directement votre PDF complet et structuré pour vos clients.")
+    st.write("Générez un script propre et téléchargez directement votre PDF prêt à l'emploi pour votre client.")
 
 # ---------------------------------------------------------
-# 5. INTERFACE PRINCIPALE DE CONFIGURATION DU SCRIPT
+# 5. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer directement la bible de tournage et le script complet dans votre fichier PDF.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer instantanément le PDF complet et structuré.")
 
 st.divider()
 
@@ -165,17 +151,16 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 6. GÉNÉRATION & TÉLÉCHARGEMENT EXCLUSIF EN PDF
+# 6. GÉNÉRATION & TÉLÉCHARGEMENT DU PDF CARRÉ
 # ---------------------------------------------------------
-if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type="primary", use_container_width=True):
+if st.button("🚀 Générer le PDF de Tournage Définitif", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
-        # Prompt mis à jour pour interdire les tableaux Markdown et forcer du texte clair rédigé
         prompt_template = """
         Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
         Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER CLAIR, NET, PRÉCIS ET COMPRÉHENSIBLE PAR UN CLIENT, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
-        INTERDICTION TOTALE D'UTILISER DES TABLEAUX MARDOWN (Pas de '|'). Rédige tout en paragraphes clairs, listes à puces ou tirets simples.
+        INTERDICTION TOTALE D'UTILISER DES TABLEAUX MARKDOWN OU DES SYMBOLES BIZARRES. Utilise uniquement du texte rédigé en paragraphes et listes à puces simples avec des tirets (-).
         NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
@@ -205,27 +190,29 @@ if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Format de réponse exigé en Markdown clair, net, sans aucun tableau :
-        # 1. BIBLE DE PRODUCTION
-        (Détails de l'ambiance, décor, ton, règles en texte rédigé)
+        Format de réponse exigé (clair, net, structuré en texte brut) :
+        1. BIBLE DE PRODUCTION
+        - Ambiance generale : ...
+        - Decor : ...
+        - Ton et energie : ...
 
-        # 2. ACCROCHE (0-3s)
-        - Texte écran : ...
-        - Réplique exacte : ...
+        2. ACCROCHE (0-3 SECONDES)
+        - Texte a l'ecran : ...
+        - Replique exacte au mot pres : ...
         - Intonation : ...
 
-        # 3. DECOUPAGE SEQUENCE PAR SEQUENCE
-        - Séquence 1 (Minutage) : 
-          * Réplique exacte : ...
-          * Consignes visuelles & SFX : ...
-        (Faire de même pour toutes les séquences)
+        3. DECOUPAGE SEQUENCE PAR SEQUENCE
+        - Sequence 1 (00:03 - 00:10) :
+          * Replique exacte : ...
+          * Consignes visuelles et mouvements de camera : ...
+        (Repeter pour chaque sequence)
 
-        # 4. CONCLUSION & CALL TO ACTION
-        - Réplique exacte du CTA : ...
-        - Consigne : ...
+        4. CONCLUSION ET APPEL A L'ACTION (CTA)
+        - Replique exacte du CTA : ...
+        - Consigne visuelle : ...
 
-        # 5. LEGENDE ET HASHTAGS VIRAUX
-        - Légende : ...
+        5. LEGENDE ET HASHTAGS VIRAUX
+        - Legende : ...
         - Hashtags : ...
         """
 
@@ -241,7 +228,7 @@ if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Production de la bible et compilation dans le PDF..."):
+        with st.spinner("🎬 Rédaction et compilation du PDF carré en cours..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -251,11 +238,11 @@ if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type
 
                 pdf_data = generer_pdf_script(topic, script)
                 
-                st.success("✨ Le PDF complet a été généré avec succès !")
+                st.success("✨ Le PDF carré et détaillé a été généré avec succès !")
                 st.download_button(
-                    label="📥 Cliquer ici pour télécharger votre PDF de tournage complet",
+                    label="📥 Télécharger le PDF Définitif pour le Client",
                     data=pdf_data,
-                    file_name=f"Script_Tournage_{topic.replace(' ', '_')}.pdf",
+                    file_name=f"Script_Tournage_Pro_{topic.replace(' ', '_')}.pdf",
                     mime="application/pdf",
                     use_container_width=True
                 )
