@@ -95,7 +95,7 @@ def recharger_via_stripe(price_id, user_email):
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur Universel de Scripts Vidéo & Plans de Production</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur Universel de Scripts Vidéo & Master-Prompts IA</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -188,7 +188,7 @@ with st.sidebar:
 # 7. MODULE UNIVERSEL : CONFIGURATION DE PRODUCTION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Universel")
-st.markdown("Configurez vos critères pour générer une bible de production et un script vidéo hautement captivant, quelle que soit votre niche.")
+st.markdown("Configurez vos critères pour générer un plan de production complet ET le script Auto-Prompt prêt à donner à une IA créatrice de vidéo.")
 
 st.divider()
 
@@ -307,30 +307,30 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         * **Incrustation Texte / Graphisme** : [Étapes 1, 2, 3]
 
         #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`00:55 - 01:10`)
-        * **Timecode** : `00:55 - 01:10`
+        * **Timecode** : `01:10 - Fin`
         * **Dialogues / Voix-off intégrale** : "..."
         * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Plan B-Roll & Cadrage"}** : {"`...`" if is_ia_mode else "[Résultat final]"}
 
         ---
 
         ### 🎯 4. CONCLUSION & CALL TO ACTION (CONVERSION)
-        * **Timecode** : `01:10 - Fin`
+        * **Timecode** : `Fin de vidéo`
         * **Dialogues / Voix-off intégrale** : "..."
         * **Action Visuelle & Incrustation** : [Flèche vers le profil, bouton follow, mot-clé à commenter]
         * **Outro Audio** : [Fondu de musique]
 
         ---
 
-        ### 🤖 5. SCRIPT AUTO-PROMPT CLÉ EN MAIN (POUR IA CRÉATEUR DE VIDÉO)
-        Rédige en bas de ta réponse un bloc de code unique, ultra-net, nettoyé de toute fioriture et rédigé en Anglais technique (Master Automation Prompt).
-        Inclus :
-        1. **Global Topic & Style Directive** (Lighting, 8K, Cinematic Aspect Ratio 9:16).
-        2. **Full Voiceover Script** (Mot à mot, sans abréviation).
-        3. **Scene-by-Scene Visual Prompts** (Chronologique avec minutage).
-        4. **Audio & Subtitle Directives**.
+        ### 🤖 5. SCRIPT AUTO-PROMPT CLÉ EN MAIN (À COPIER-COLLER POUR L'IA GÉNÉRATRICE DE VIDÉO)
+        C'EST UNE SECTION OBLIGATOIRE. Rédige tout en bas un bloc de code unique (```) en Anglais technique, ultra-clair et structuré, prêt à être directement copié-collé dans n'importe quelle IA génératrice de vidéo.
+        Inclus obligatoirement :
+        1. **Global Topic, Mood & Style Directive** (Cinematic, 8K, 9:16 Aspect Ratio, Lighting).
+        2. **Full Voiceover Script** (Mot à mot en français ou anglais selon la cible, sans résumé).
+        3. **Scene-by-Scene Visual Generation Prompts** (Horodatés de 0s à la fin).
+        4. **Audio & On-Screen Text Overlay Directives**.
         """
 
-        with st.spinner("🎬 Production du script ultra-détaillé et de la bible de tournage..."):
+        with st.spinner("🎬 Production du script ultra-détaillé et du Master-Prompt IA..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -342,7 +342,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("✨ Bible de production & Script universel générés avec succès !")
+                st.success("✨ Bible de production & Master-Prompt IA générés avec succès !")
                 st.markdown(script)
 
             except Exception as e:
