@@ -104,14 +104,14 @@ with st.sidebar:
     st.success("⚡ **Mode Studio Privé Actif**")
     st.info("Utilisation illimitée & accès direct réservé.")
     st.divider()
-    st.markdown("### 💡 Astuce Production")
-    st.write("Exporte tes scripts en **PDF** pour les lire pendant tes tournages ou les envoyer directement à tes clients.")
+    st.markdown("### 💡 Astuce Client")
+    st.write("Plus tu remplis les champs de précision (objection, marque, preuve sociale), plus le script aura une valeur perçue élevée pour ton client !")
 
 # ---------------------------------------------------------
-# 5. MODULE DE CONFIGURATION DU SCRIPT
+# 5. MODULE DE CONFIGURATION DU SCRIPT (AVEC QUESTIONS CLIENT)
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Directing & Scripting Privé")
-st.markdown("Configure tes critères pour générer une bible de production complète, un script ultra-détaillé et le Master-Prompt IA.")
+st.title("🎬 AutoClip AI — Studio de Directing & Scripting Client")
+st.markdown("Configure précisément les critères pour générer une bible de production complète, un script sur-mesure et le Master-Prompt IA.")
 
 st.divider()
 
@@ -119,15 +119,17 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.subheader("1. Concept & Format")
-    topic = st.text_input("🎯 Sujet exact de la vidéo :", placeholder="Entrez le sujet de votre vidéo...")
+    topic = st.text_input("🎯 Sujet exact de la vidéo :", placeholder="ex: Comment négocier son prêt immobilier")
+    brand_name = st.text_input("🏷️ Nom du Client / Marque / Produit :", placeholder="ex: Immobiz / Programme FitMaster...")
     creator_type = st.radio("👤 Format de production :", ["Personne Réelle (Face Cam / Tournage réel)", "Générée par IA (Automation / Faceless)"])
     platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Video", "Publicité vidéo (Meta/TikTok)"])
     duration = st.selectbox("⏱️ Durée visée :", ["Flash (15 - 30 sec)", "Standard Short (30 - 60 sec)", "Long Short (60 - 90 sec)", "Format Long (3 - 5 min)"])
 
 with col2:
     st.subheader("2. Cible & Psychologie")
-    target_persona = st.text_input("👥 Audience Cible (Exemple) :", placeholder="ex: Entrepreneurs, Étudiants, Sportifs, Clients e-commerce...")
-    audience_frustration = st.text_input("💢 Frustration / Problème (Exemple) :", placeholder="ex: Manque de temps, manque de budget, manque d'organisation...")
+    target_persona = st.text_input("👥 Audience Cible (Persona) :", placeholder="ex: Entrepreneurs, Étudiants, Primo-accédants...")
+    audience_frustration = st.text_input("💢 Frustration Majeure :", placeholder="ex: Taux d'intérêt trop élevés, manque de temps...")
+    main_objection = st.text_input("🛑 Principal Frein / Objection :", placeholder="ex: 'C'est trop cher', 'Ça ne marchera pas pour moi'...")
     tone = st.selectbox("🎭 Ambiance & Énergie :", ["Dynamique & Énergique", "Cash, Provocateur & Sans Filtre", "Éducatif, Clair & Expert", "Luxe, Sombre & Futuriste", "Storytelling Émotionnel"])
 
 with col3:
@@ -135,12 +137,14 @@ with col3:
     hook_style = st.selectbox("🪝 Type d'accroche (Hook 0-3s) :", ["Question choc / Provocation", "Statistique / Chiffre dingue", "Mise en garde / Erreur grave", "Scénario 'Imagine si...'", "Mythe populaire à briser"])
     pacing = st.selectbox("⚡ Rythme de montage :", ["Ultra-rapide (Cuts < 1.2s + SFX)", "Modéré & Captivant (Rythme parlé fluide)", "Analytique & Posé"])
     structure = st.selectbox("🏗️ Framework narratif :", ["PAS (Problème -> Agitation -> Solution)", "3 Piliers / Astuces pas-à-pas", "Avant / Après (Transformation)", "Récit / Storytelling dramatique"])
+    vocab_style = st.selectbox("💬 Style de langage :", ["Accessible & Courant", "Technique & Professionnel", "Langage Cash / Codes Réseaux", "Formel & Soigné"])
 
 with col4:
-    st.subheader("4. Conversion & Style")
+    st.subheader("4. Conversion & Offre")
+    proof_social = st.text_input("🏆 Preuve Sociale / Chiffre Clé :", placeholder="ex: 150+ clients accompagnés, -30% de taxes...")
     cta_type = st.selectbox("🎯 Call To Action (CTA) :", ["Commenter un mot-clé (Automation)", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Enregistrer & Partager"])
-    music_genre = st.text_input("🎵 Ambiance Sonore (Exemple) :", placeholder="ex: Musique dynamique motivante, Ambiance cinématique, Aucune musique...")
-    extra_details = st.text_area("⚙️ Éléments Imposés (Exemple) :", placeholder="ex: Mentionner un tarif promotionnel, insérer un graphique explicatif, décor moderne...")
+    music_genre = st.text_input("🎵 Ambiance Sonore :", placeholder="ex: Musique dynamique motivante, Lofi neutre...")
+    extra_details = st.text_area("⚙️ Consignes Spécifiques :", placeholder="ex: Ne pas mentionner de prix exact, décor de bureau moderne...")
 
 st.divider()
 
@@ -161,28 +165,33 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
 
         NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
-        ADAPTE-TOI STRICTEMENT À LA NICHE ET AU SUJET FOURNI.
+        ADAPTE-TOI STRICTEMENT À LA NICHE, AU CLIENT ET AU SUJET FOURNI.
 
-        --- CONFIGURATION DE PRODUCTION ---
+        --- CONFIGURATION DE PRODUCTION CLIENT ---
         - Sujet : {topic}
+        - Marque / Offre du client : {brand_name}
         - Mode de production : {creator_type}
         - Plateforme : {platform}
         - Durée : {duration}
         - Persona / Audience Cible : {target_persona}
         - Frustration majeure : {audience_frustration}
+        - Principal frein / Objection du prospect : {main_objection}
+        - Preuve sociale / Chiffre clé à placer : {proof_social}
+        - Style de langage : {vocab_style}
         - Ton & Ambiance : {tone}
         - Hook (0-3s) : {hook_style}
         - Rythme de montage : {pacing}
         - Framework narratif : {structure}
         - CTA : {cta_type}
         - Style sonore/musical : {music_genre}
-        - Exigences : {extra_details}
+        - Exigences spécifiques : {extra_details}
 
         --- FORMAT DE RÉPONSE EXIGÉ (Markdown d'Élite) ---
 
         # 🎬 BIBLE DE PRODUCTION & SCRIPT ULTRA-DÉTAILLÉ
 
         ### 📋 1. DIRECTION ARTISTIQUE & SETUP DÉTAILLÉ
+        - **Marque / Client** : {brand_name}
         - **Format & Ratio** : 9:16 Vertical
         - **Palette de couleurs & Ambiance lumineuse** : [Détails ultra-précis des teintes, ombres et réflecteurs]
         - **Sound Design & Ambiance audio** : [Style sonore, moments de coupure audio, rythme]
@@ -213,7 +222,7 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         * **Incrustation Texte / Graphisme** : [Texte affiché]
         * **SFX & Ambiance** : [Bruitage / Effet sonore]
 
-        #### 🔹 SÉQUENCE 2 : Déconstruction de l'Erreur Courante (`00:12 - 00:25`)
+        #### 🔹 SÉQUENCE 2 : Désamorçage de l'Objection ({main_objection}) (`00:12 - 00:25`)
         * **Timecode** : `00:12 - 00:25`
         * **Dialogues / Voix-off intégrale** : "..."
         * **Intonation & Pauses** : [Consignes vocales]
@@ -221,20 +230,20 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         * **Incrustation Texte / Graphisme** : [Graphique / Animation]
         * **SFX** : [Bruitage]
 
-        #### 🔹 SÉQUENCE 3 : La Révélation de la Solution (`00:25 - 00:40`)
+        #### 🔹 SÉQUENCE 3 : La Révélation de la Solution ({brand_name}) (`00:25 - 00:40`)
         * **Timecode** : `00:25 - 00:40`
         * **Dialogues / Voix-off intégrale** : "..."
         * **{broll_label}** : [...]
         * **Incrustation Texte / Graphisme** : [Puces explicatives]
         * **SFX** : [Bruitage]
 
-        #### 🔹 SÉQUENCE 4 : Application Pratique Pas-à-Pas (`00:40 - 00:55`)
+        #### 🔹 SÉQUENCE 4 : Preuve Sociale ({proof_social}) Pas-à-Pas (`00:40 - 00:55`)
         * **Timecode** : `00:40 - 00:55`
         * **Dialogues / Voix-off intégrale** : "..."
         * **{broll_label}** : [...]
-        * **Incrustation Texte / Graphisme** : [Étapes 1, 2, 3]
+        * **Incrustation Texte / Graphisme** : [Étapes / Preuves]
 
-        #### 🔹 SÉQUENCE 5 : Preuve de Résultat & Impact (`01:10 - Fin`)
+        #### 🔹 SÉQUENCE 5 : Impact & Projection (`01:10 - Fin`)
         * **Timecode** : `01:10 - Fin`
         * **Dialogues / Voix-off intégrale** : "..."
         * **{broll_label}** : [...]
@@ -253,49 +262,4 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite", type="pri
         C'EST UNE SECTION OBLIGATOIRE. Rédige tout en bas un bloc de code unique (```) en Anglais technique, ultra-clair et structuré, prêt à être directement copié-collé dans n'importe quelle IA génératrice de vidéo.
         Inclus obligatoirement :
         1. **Global Topic, Mood & Style Directive** (Cinematic, 8K, 9:16 Aspect Ratio, Lighting).
-        2. **Full Voiceover Script** (Mot à mot en français ou anglais selon la cible, sans résumé).
-        3. **Scene-by-Scene Visual Generation Prompts** (Horodatés de 0s à la fin).
-        4. **Audio & On-Screen Text Overlay Directives**.
-        """
-
-        prompt = prompt_template.format(
-            topic=topic,
-            creator_type=creator_type,
-            platform=platform,
-            duration=duration,
-            target_persona=target_persona if target_persona else 'Grand public',
-            audience_frustration=audience_frustration if audience_frustration else 'Non spécifiée',
-            tone=tone,
-            hook_style=hook_style,
-            pacing=pacing,
-            structure=structure,
-            cta_type=cta_type,
-            music_genre=music_genre if music_genre else 'Inconnu',
-            extra_details=extra_details if extra_details else 'Aucune',
-            visual_label=visual_label,
-            broll_label=broll_label
-        )
-
-        with st.spinner("🎬 Production du script d'élite et de la bible de tournage..."):
-            try:
-                response = groq_client.chat.completions.create(
-                    model="openai/gpt-oss-120b",
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                script = response.choices[0].message.content
-
-                st.success("✨ Bible de production & Script générés avec succès !")
-                st.markdown(script)
-
-                # Export PDF sécurisé sans erreurs
-                pdf_data = generer_pdf_script(topic if topic else "Script_Video", script)
-                st.download_button(
-                    label="📄 Télécharger le Script & Bible de Tournage en PDF",
-                    data=pdf_data,
-                    file_name=f"Script_{topic.replace(' ', '_') if topic else 'Production'}.pdf",
-                    mime="application/pdf",
-                    use_container_width=True
-                )
-
-            except Exception as e:
-                st.error(f"Erreur lors de la génération : {e}")
+        2. **Full Voiceover Script
