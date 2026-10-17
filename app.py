@@ -30,7 +30,7 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF COMPLET ET NET POUR LE CLIENT
+# 3. MOTEUR EXPORT PDF COMPLET ET STRUCTURÉ
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
@@ -62,13 +62,13 @@ def generer_pdf_script(titre_video, contenu_markdown):
     
     largeur_utile = 190
     
-    # Nettoyage global du contenu markdown pour éviter les erreurs d'encodage
     texte_nettoye = (contenu_markdown or "")\
         .replace('—', '-').replace('–', '-').replace('’', "'")\
         .replace('«', '"').replace('»', '"').replace('•', '*')\
         .replace('🎬', '').replace('📋', '').replace('🪝', '').replace('🔹', '')\
         .replace('🎯', '').replace('📈', '').replace('🤖', '').replace('✨', '')\
-        .replace('🔥', '').replace('⚡', '').replace('💬', '').replace('⏱️', '')
+        .replace('🔥', '').replace('⚡', '').replace('💬', '').replace('⏱️', '')\
+        .replace('<br>', '\n').replace('<b>', '').replace('</b>', '')
         
     lignes = texte_nettoye.split('\n')
     for ligne in lignes:
@@ -92,7 +92,6 @@ def generer_pdf_script(titre_video, contenu_markdown):
             pdf.multi_cell(largeur_utile, 5, ligne_propre.replace('### ', ''))
         else:
             pdf.set_font("Helvetica", size=8.5)
-            # Si la ligne est vide, on ajoute juste un petit espace vertical
             if ligne.strip() == "":
                 pdf.ln(2)
             else:
@@ -108,13 +107,13 @@ with st.sidebar:
     st.success("⚡ **Mode Studio Privé Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez des scripts de haute rétention au mot près pour vos tournages face-cam, prêts à être exportés en PDF pro pour vos clients.")
+    st.write("Générez des scripts de haute rétention et téléchargez directement votre PDF complet et structuré pour vos clients.")
 
 # ---------------------------------------------------------
 # 5. INTERFACE PRINCIPALE DE CONFIGURATION DU SCRIPT
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer la bible de tournage complète et le script mot-à-mot destiné à votre client.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer directement la bible de tournage et le script complet dans votre fichier PDF.")
 
 st.divider()
 
@@ -160,9 +159,9 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 6. GÉNÉRATION & TÉLÉCHARGEMENT DU SCRIPT
+# 6. GÉNÉRATION & TÉLÉCHARGEMENT EXCLUSIF EN PDF
 # ---------------------------------------------------------
-if st.button("🚀 Générer la Bible de Tournage & le Script d'Élite", type="primary", use_container_width=True):
+if st.button("🚀 Générer et Télécharger la Bible & le Script en PDF", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
@@ -218,7 +217,7 @@ if st.button("🚀 Générer la Bible de Tournage & le Script d'Élite", type="p
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Production du script d'élite et de la bible de tournage..."):
+        with st.spinner("🎬 Production de la bible et compilation dans le PDF..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -226,12 +225,11 @@ if st.button("🚀 Générer la Bible de Tournage & le Script d'Élite", type="p
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script et bible de tournage générés avec succès !")
-                st.markdown(script)
-
                 pdf_data = generer_pdf_script(topic, script)
+                
+                st.success("✨ Le PDF complet a été généré avec succès !")
                 st.download_button(
-                    label="📄 Télécharger le Script & Bible de Tournage en PDF (Complet & Détaillé)",
+                    label="📥 Cliquer ici pour télécharger votre PDF de tournage",
                     data=pdf_data,
                     file_name=f"Script_Tournage_{topic.replace(' ', '_')}.pdf",
                     mime="application/pdf",
