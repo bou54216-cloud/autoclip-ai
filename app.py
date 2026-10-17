@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Texte Pro Actif**")
+    st.success("⚡ **Mode Texte Simple & Accessible Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez un script ultra-détaillé et qualitatif, prêt à être copié en un clic pour vos clients.")
+    st.write("Générez un script ultra-clair, sans jargon technique, prêt à être copié pour vos clients.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un script et une bible de tournage d'une qualité irréprochable.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un script 100 % compréhensible, sans termes techniques complexes.")
 
 st.divider()
 
@@ -88,16 +88,18 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT PRO TEXTE PUR
+# 5. GÉNÉRATION DU SCRIPT SANS JARGON TECHNIQUE
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script & la Bible de Tournage", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script Accessible au Client", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo, Growth Hacker et Master Copywriter au Monde.
-        Rédige un SCRIPT BIBLE EXHAUSTIF, HYPER PROFESSIONNEL, NET, PRÉCIS ET COMPRÉHENSIBLE PAR UN CLIENT, SÉQUENCE PAR SÉQUENCE, AU MOT PRÈS (Personne physique en face-cam).
-        NE SOIS PAS SYNTHÉTIQUE. DÉTAILLE TOUT. Rédige chaque réplique intégrale sans résumé ni '...'.
+        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde.
+        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE TOURNAGE conçus spécifiquement pour un client grand public. 
+        REGLE ABSOLUE : INTERDICTION TOTALE D'UTILISER DU JARGON TECHNIQUE DE MONTAGE OU DU CINÉMA (interdit d'utiliser les termes 'SFX', 'cut', 'cut dynamique', 'jump cut', 'étalonnage', 'sound design', 'script', etc.). 
+        Utilise à la place des mots simples que tout le monde comprend (ex: au lieu de 'SFX crack', écris 'Bruitage sonore de craquement' ; au lieu de 'cut rapide', écris 'Changement rapide d'image').
+        Rédige chaque réplique intégrale au mot près, sans résumé ni '...'.
         NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
         - Sujet exact : {topic}
@@ -126,13 +128,13 @@ if st.button("🚀 Générer le Script & la Bible de Tournage", type="primary", 
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Format de réponse exigé en Markdown clair, structuré et prêt à être copié-collé dans un document de travail pour un client :
-        # BIBLE DE PRODUCTION ET SCRIPT VIDEO
-        ## 1. DIRECTION ARTISTIQUE & SETUP
-        ## 2. L'ACCROCHE (0-3 SECONDES)
-        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques exactes et consignes visuelles)
-        ## 4. CONCLUSION & CALL TO ACTION (CTA)
-        ## 5. LÉGENDE & HASHTAGS VIRAUX
+        Format de réponse exigé en Markdown clair, simple et 100% accessible :
+        # GUIDE DE TOURNAGE POUR LA VIDEO
+        ## 1. AMBIANCE ET DECOR
+        ## 2. LA PHRASE D'ACCROCHE (Les 3 premières secondes)
+        ## 3. CE QU'IL FAUT DIRE ET FAIRE (Séquence par séquence avec des mots simples)
+        ## 4. COMMENT TERMINER LA VIDEO (Appel à l'action)
+        ## 5. TEXTE À ÉCRIRE SOUS LA VIDÉO (Légende et hashtags)
         """
 
         prompt = prompt_template.format(
@@ -147,7 +149,7 @@ if st.button("🚀 Générer le Script & la Bible de Tournage", type="primary", 
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction experte du script en cours..."):
+        with st.spinner("🎬 Rédaction d'un script simple et compréhensible par tous..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -155,9 +157,9 @@ if st.button("🚀 Générer le Script & la Bible de Tournage", type="primary", 
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script généré avec succès ! Tu peux le copier directement ci-dessous :")
+                st.success("✨ Script généré avec succès ! Aucun terme technique n'est présent, c'est parfaitement clair pour ton client :")
                 
-                # Zone de texte propre avec bouton de copie intégré de Streamlit
+                # Zone de texte propre avec bouton de copie intégré
                 st.code(script, language="markdown")
 
             except Exception as e:
