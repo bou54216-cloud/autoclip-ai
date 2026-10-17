@@ -8,7 +8,7 @@ import streamlit.components.v1 as components
 # 1. CONFIGURATION ET DESIGN CSS PREMIUM
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="AutoClip AI — Studio de Scripting Vidéo Pro",
+    page_title="AutoClip AI — Studio de Scripting & Automation Vidéo Pro",
     page_icon="🎬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -95,7 +95,7 @@ def recharger_via_stripe(price_id, user_email):
 # ---------------------------------------------------------
 if not st.session_state.user:
     st.markdown("<h1 style='text-align: center;'>🎬 AutoClip AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #888;'>Générateur de Scripts & Master-Prompts Vidéo Haute Définition</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #888;'>Le Générateur de Scripts Vidéo le Plus Avancé du Marché</p>", unsafe_allow_html=True)
     st.divider()
 
     col_auth, _ = st.columns([1, 1])
@@ -185,140 +185,131 @@ with st.sidebar:
         recharger_via_stripe(st.secrets["PRICE_INFINITE"], st.session_state.user.email)
 
 # ---------------------------------------------------------
-# 7. MODULE AUTOCLIP AI DE PRÉCISION
+# 7. MODULE EXPERT : CONFIGURATION COMPLÈTE DE PRODUCTION
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Scripting & Production Vidéo")
-st.markdown("Choisissez le type de vidéo (Tournage réel ou Génération par IA) pour obtenir un script complet, minuté et sur-mesure.")
+st.title("🎬 AutoClip AI — Studio de Directing & Scripting High-End")
+st.markdown("Configurez la totalité des paramètres de votre vidéo pour recevoir un script de niveau cinéma / agence publicitaire.")
 
 st.divider()
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    topic = st.text_input("🎯 Sujet / Thème de la vidéo :", placeholder="ex: 3 astuces pour créer un banger House Music")
-    creator_type = st.radio("👤 Format de vidéo :", ["Générée par IA (Automation / Faceless)", "Personne Réelle (Face Cam / Tournage réel)"])
-    platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Vidéo"])
+    st.subheader("1. Concept & Format")
+    topic = st.text_input("🎯 Sujet exact :", placeholder="ex: 3 secrets pour mixer une House Music percutante")
+    creator_type = st.radio("👤 Format de production :", ["Générée par IA (Automation / Faceless)", "Personne Réelle (Face Cam / Tournage réel)"])
+    platform = st.selectbox("📱 Plateforme cible :", ["TikTok", "Instagram Reels", "YouTube Shorts", "YouTube Format Long", "LinkedIn Video", "Publicité vidéo (Meta/TikTok)"])
+    duration = st.selectbox("⏱️ Durée visée :", ["Flash (15 - 30 sec)", "Standard Short (30 - 60 sec)", "Long Short (60 - 90 sec)", "Format Long (3 - 5 min)"])
 
 with col2:
-    duration = st.selectbox("⏱️ Durée souhaitée :", ["Courte (15 à 30 sec)", "Standard (30 à 60 sec)", "Long Short (60 à 90 sec)", "Format Long (3 à 5 min)"])
-    tone = st.selectbox("🎭 Ambiance & Énergie :", ["Dynamique & Captivant", "Cash, Direct & Provocateur", "Éducatif, Clair & Expert", "Luxe, Sombre & Premium", "Humoristique & Décalé"])
-    hook_style = st.selectbox("🪝 Style d'accroche (Hook) :", ["Question choc / Provocation", "Statistique / Chiffre incroyable", "Mise en garde / Erreur grave", "Scénario 'Imagine si...'", "Mythe populaire à déconstruire"])
+    st.subheader("2. Cible & Psychologie")
+    target_persona = st.text_input("👥 Client / Audience Cible :", placeholder="ex: Producteurs débutants, DJ, passionnés de House")
+    audience_frustration = st.text_input("💢 Frustration / Problème majeur :", placeholder="ex: Un son plat sans relief, kick noyé dans la basse")
+    tone = st.selectbox("🎭 Ambiance & Énergie :", ["Dynamique & Énergique", "Cash, Provocateur & Sans Filtre", "Éducatif, Clair & Expert", "Luxe, Sombre & Futuriste", "Storytelling Émotionnel"])
 
 with col3:
-    structure = st.selectbox("🏗️ Structure narrative :", ["Problème -> Agitation -> Solution", "Méthode en 3 étapes pas-à-pas", "Avant / Après (Transformation)", "Storytelling / Récit captivant"])
-    cta_type = st.selectbox("🎯 Objectif du Call To Action (CTA) :", ["Commenter un mot-clé précis", "S'abonner pour la suite", "Cliquer sur le lien en bio", "Partager la vidéo"])
-    extra_details = st.text_area("⚙️ Détails visuels / Mots-clés imposés :", placeholder="ex: Ambiance studio de musique néon sombre, tempo 128 BPM, sons de synthétiseur...")
+    st.subheader("3. Rétention & Structure")
+    hook_style = st.selectbox("🪝 Type d'accroche (Hook 0-3s) :", ["Question choc / Provocation", "Statistique / Chiffre dingue", "Mise en garde / Erreur grave", "Scénario 'Imagine si...'", "Mythe populaire à briser"])
+    pacing = st.selectbox("⚡ Rythme de montage :", ["Ultra-rapide (Cuts < 1.2s + SFX)", "Modéré & Captivant (Rythme parlé fluide)", "Analytique & Posé"])
+    structure = st.selectbox("🏗️ Framework narratif :", ["PAS (Problème -> Agitation -> Solution)", "3 Piliers / Astuces pas-à-pas", "Avant / Après (Transformation)", "Récit / Storytelling dramatique"])
+
+with col4:
+    st.subheader("4. Conversion & Style")
+    cta_type = st.selectbox("🎯 Call To Action (CTA) :", ["Commenter un mot-clé (Automation)", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Enregistrer & Partager"])
+    music_genre = st.text_input("🎵 Genre musical / Tempo :", placeholder="ex: House 128 BPM, Synthwave sombre, No Music")
+    extra_details = st.text_area("⚙️ Mots-clés / Éléments imposés :", placeholder="ex: Parler de sidechain, EQ, néon rouge, ambiance club...")
 
 st.divider()
 
-if st.button("🚀 Générer le Script Ultra-Détaillé (-1 crédit)", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit)", type="primary", use_container_width=True):
     if st.session_state.credits <= 0:
         st.error("❌ Crédits insuffisants. Veuillez recharger votre solde dans la barre latérale.")
     else:
-        # Traitement selon le choix (IA neutre vs Tournage réel)
-        if creator_type == "Générée par IA (Automation / Faceless)":
-            prompt = f"""
-            Tu es un Directeur Artistique et Expert en Automation Vidéo.
-            Rédige un SCRIPT ULTRA-DÉTAILLÉ ET LONG destiné à être généré par un moteur d'IA vidéo.
-            NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
+        is_ia_mode = (creator_type == "Générée par IA (Automation / Faceless)")
+        
+        prompt = f"""
+        Tu es le Meilleur Directeur Artistique, Réalisateur Vidéo et Master Copywriter au Monde.
+        Rédige un SCRIPT ULTRA-DÉTAILLÉ, LONG, HYPER PRÉCIS ET PROFESSIONNEL pour une vidéo à haut taux de rétention.
 
-            --- CONFIGURATION DE LA VIDÉO ---
-            - Sujet : {topic}
-            - Mode : Généré par IA (Faceless / Automation)
-            - Plateforme : {platform}
-            - Durée : {duration}
-            - Style & Ton : {tone}
-            - Style de Hook (0-3s) : {hook_style}
-            - Structure narrative : {structure}
-            - Call To Action : {cta_type}
-            - Consignes spécifiques : {extra_details if extra_details else 'Aucune'}
+        NE CITE AUCUN NOM D'APPLICATION NI DE LOGICIEL TIERS.
 
-            --- FORMAT DE SORTIE EXIGÉ (Markdown clair) ---
+        --- FICHE DE TOURNAGE / PRODUCTION ---
+        - Sujet : {topic}
+        - Mode de production : {creator_type}
+        - Plateforme : {platform}
+        - Durée : {duration}
+        - Persona / Cible : {target_persona if target_persona else 'Grand public'}
+        - Frustration majeure traitée : {audience_frustration if audience_frustration else 'Non spécifiée'}
+        - Ton & Ambiance : {tone}
+        - Style de Hook (0-3s) : {hook_style}
+        - Rythme de montage : {pacing}
+        - Framework narratif : {structure}
+        - Call To Action (CTA) : {cta_type}
+        - Style musical : {music_genre if music_genre else 'À adapter selon l ambiance'}
+        - Exigences spécifiques : {extra_details if extra_details else 'Aucune'}
 
-            # 🤖 PLAN DE GÉNÉRATION & MASTER-PROMPT
+        --- FORMAT DE RÉPONSE EXIGÉ (Markdown d'Élite) ---
 
-            ### 📝 1. MASTER-PROMPT GLOBAL DE SÉQUENCE (En Anglais)
-            `[Rédige un prompt global en anglais décrivant la scène entière, le style visuel photoréaliste 8K, le rendu cinématique, les couleurs, la vitesse des coupes et l'atmosphère sonore]`
+        # 🎬 PLAN DE PRODUCTION HAUTE PERFORMANCE
 
-            ---
+        ### 📋 1. DIRECTION ARTISTIQUE & FICHE TECHNIQUE
+        - **Format & Cadre** : 9:16 Vertical
+        - **Éclairage & Palette de couleurs** : [Direction précise des néons, ombres, contrastes]
+        - **Ambiance sonore & Musique** : {music_genre if music_genre else 'BPM adapté, sons percutants'}
+        - **Style de sous-titres** : [Style dynamique, surlignage mot par mot, couleurs clés]
+        - **Stratégie de Rétention** : [Méthode appliquée pour garder l'attention de 0 à la fin]
 
-            ### 🎙️ 2. SCRIPT VOIX-OFF (Texte intégral mot à mot)
-            - **Intonation & Style vocal conseillé** : [ex: Voix masculine, ton grave, rythme rapide]
-            - **Texte exact à lire** :
-            "..."
+        ---
 
-            ---
+        ### 🪝 2. L'ACCROCHE CHOC (HOOK - 0 à 3 SECONDES)
+        * **Timecode** : `00:00 - 00:03`
+        * **Texte / Dialogue exact (Word-for-word)** : "..."
+        * **Visual Direction / {"Prompt Visuel Brut (Anglais)" if is_ia_mode else "Jeu du présentateur"}** : {"`...`" if is_ia_mode else "[Action exacte, mouvement rapide devant la caméra]"}
+        * **Incrustation Texte (On-Screen Text)** : "..."
+        * **Effet Sonore (SFX)** : [Boom / Whoosh / Glitch]
 
-            ### 🎬 3. DÉCOUPAGE DÉTAILLÉ SCÈNE PAR SCÈNE (Prompts visuels bruts)
+        ---
 
-            * **Scène 1 : HOOK (0 à 3s)**
-              - **Prompt Visuel Brut (En Anglais)** : `...`
-              - **Texte Incrusté à l'écran** : "..."
-              - **Bruitage / Effet Sonore** : [Sound effect]
+        ### 🎬 3. DÉCOUPAGE DÉTAILLÉ SÉQUENCE PAR SÉQUENCE (Minuté)
 
-            * **Scène 2 : PROBLÈME & CONTEXTE (3s à 15s)**
-              - **Prompt Visuel Brut (En Anglais)** : `...`
-              - **Texte Incrusté à l'écran** : "..."
-              - **Description du mouvement visuel** : [Ex: Camera zoom, slow motion]
+        Découpe la vidéo en 4 à 6 séquences chronologiques détaillées :
 
-            * **Scène 3 : SOLUTION & DÉVELOPPEMENT (15s à 35s)**
-              - **Prompt Visuel Brut (En Anglais)** : `...`
-              - **Texte Incrusté à l'écran** : "..."
+        #### 🔹 SÉQUENCE 1 : Agitation du Problème & Empirisme (`00:03 - 00:15`)
+        * **Voix-off / Dialogues exacts** : "..."
+        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Préciser le plan B-Roll]"}
+        * **Texte & Graphisme à l'écran** : [Mots-clés en gros / Surlignage]
+        * **SFX & Transitions** : [Swoosh / Bip]
 
-            * **Scène 4 : CONCLUSION & CALL TO ACTION (35s à fin)**
-              - **Prompt Visuel Brut (En Anglais)** : `...`
-              - **Incrustation graphique** : [Animation bouton follow / flèche vers le profil]
+        #### 🔹 SÉQUENCE 2 : La Révélation / Déconstruction du Mythe (`00:15 - 00:30`)
+        * **Voix-off / Dialogues exacts** : "..."
+        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Démonstration à l écran / Geste]"}
+        * **Texte & Graphisme à l'écran** : [Puces clés / Graphique]
 
-            ---
+        #### 🔹 SÉQUENCE 3 : L'Astuce Maîtresse & Application Pratique (`00:30 - 00:50`)
+        * **Voix-off / Dialogues exacts** : "..."
+        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Zoom sur l action ou l outil]"}
+        * **Texte & Graphisme à l'écran** : [Étape 1, 2, 3]
 
-            ### 🎵 4. PARAMÈTRES AUDIO & MONTAGE
-            - **Ambiance musicale** : [Genre musical + Tempo BPM]
-            - **Fréquence de transition visuelle** : [ex: Changement de plan toutes les 1.5s]
-            """
-        else:
-            prompt = f"""
-            Tu es un Réalisateur Vidéo Senior et Copywriter.
-            Rédige un SCRIPT DE TOURNAGE ULTRA-DÉTAILLÉ ET LONG pour un présentateur réel (Face Cam).
+        #### 🔹 SÉQUENCE 4 : Preuve & Transformation (`00:50 - 01:10`)
+        * **Voix-off / Dialogues exacts** : "..."
+        * **Visual Direction / {"Prompt Visuel (Anglais)" if is_ia_mode else "Plan de coupe B-Roll"}** : {"`...`" if is_ia_mode else "[Résultat final probant]"}
 
-            --- CONFIGURATION ---
-            - Sujet : {topic}
-            - Mode : Présentateur Réel
-            - Plateforme : {platform}
-            - Durée : {duration}
-            - Ton : {tone}
-            - Hook : {hook_style}
-            - Structure : {structure}
-            - CTA : {cta_type}
-            - Exigences : {extra_details if extra_details else 'Aucune'}
+        ---
 
-            --- FORMAT DE SORTIE ---
-            # 📋 PLAN DE TOURNAGE RÉEL
+        ### 🎯 4. CONCLUSION & CONVERSION (CTA)
+        * **Timecode** : `Fin de vidéo`
+        * **Réplique exacte** : "..."
+        * **Visual Direction** : [Animation de bouton / Pointage du doigt]
+        * **Incrustation Graphique** : [Mot-clé à commenter ou appel à s abonner]
 
-            ### ⚙️ 1. DIRECTION ARTISTIQUE & SETUP
-            - **Cadrage & Plan** : [ex: Plan poitrine, axe vertical 9:16]
-            - **Éclairage & Décor** : [Lumières, ambiance, arrière-plan]
+        ---
 
-            ### 🪝 2. HOOK (0-5 SECONDES)
-            * **Timecode** : `00:00 - 00:05`
-            * **Réplique exacte** : "..."
-            * **Jeu d'acteur / Geste** : [Expression, posture, mouvement]
-            * **Texte à l'écran** : "..."
+        ### 💡 5. SECRETS DU RÉALISATEUR POUR BOOSTER L'ALGORITHME
+        - **Astuce de rétention** : [Expliciter le hook visuel secondaire à 10s]
+        - **Sound Design** : [Astuce de mixage audio]
+        """
 
-            ### 🎬 3. DÉCOUPAGE SÉQUENTIEL DÉTAILLÉ
-            * **[0:05 - 0:20] Séquence 1 : Agitation du Problème**
-              - **Dialogue** : "..."
-              - **Plan de coupe / B-Roll** : [Visuel à ajouter]
-
-            * **[0:20 - 0:45] Séquence 2 : Conseils & Démonstration**
-              - **Dialogue** : "..."
-              - **Plan de coupe / B-Roll** : [Visuel à ajouter]
-
-            ### 🎯 4. CONCLUSION & CALL TO ACTION
-            * **Réplique finale** : "..."
-            * **Action visuelle** : [Pointer du doigt, geste d'incitation]
-            """
-
-        with st.spinner("🎬 Génération du script de production en cours..."):
+        with st.spinner("🎬 Production du plan de tournage et script d'élite..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -330,7 +321,7 @@ if st.button("🚀 Générer le Script Ultra-Détaillé (-1 crédit)", type="pri
                 supabase.table("profiles").update({"credits": new_credits}).eq("id", st.session_state.user.id).execute()
                 st.session_state.credits = new_credits
 
-                st.success("✨ Script généré avec succès !")
+                st.success("✨ Plan de production & Script d'Élite générés avec succès !")
                 st.markdown(script)
 
             except Exception as e:
