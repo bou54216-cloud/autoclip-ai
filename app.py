@@ -307,6 +307,16 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
         ### 💡 5. SECRETS DU RÉALISATEUR POUR BOOSTER L'ALGORITHME
         - **Astuce de rétention** : [Expliciter le hook visuel secondaire à 10s]
         - **Sound Design** : [Astuce de mixage audio]
+
+        ---
+
+        ### 🤖 6. SCRIPT AUTO-PROMPT CLÉ EN MAIN (POUR IA CRÉATEUR DE VIDÉO)
+        Rédige TOUT EN BAS de ta réponse un bloc de code unique, ultra-clair, nettoyé et rédigé en Anglais technique, prêt à être copié-collé directement dans n'importe quel générateur de vidéo IA.
+        Ce prompt doit contenir :
+        1. **Topic & Visual Style** (Cinematic, 8K, Lighting, Mood).
+        2. **Full Voiceover Script** (Mot à mot sans fioritures).
+        3. **Scene-by-Scene Visual Prompts** (Chronologique avec minuterie).
+        4. **Audio & Subtitle Directives**.
         """
 
         with st.spinner("🎬 Production du plan de tournage et script d'élite..."):
