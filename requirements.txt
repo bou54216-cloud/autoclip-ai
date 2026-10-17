@@ -1,5 +1,3 @@
 streamlit
-stripe
-supabase
 groq
 fpdf2
