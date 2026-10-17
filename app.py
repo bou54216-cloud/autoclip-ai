@@ -425,3 +425,12 @@ if st.button("🚀 Générer le Plan de Production & Script d'Élite (-1 crédit
 
             except Exception as e:
                 st.error(f"Erreur lors de la génération : {e}")
+# 📄 Bouton d'export PDF pour le créateur / client
+                pdf_data = generer_pdf_script(topic if topic else "Script_Video", script)
+                st.download_button(
+                    label="📄 Télécharger le Script & Bible de Tournage en PDF",
+                    data=pdf_data,
+                    file_name=f"Script_{topic.replace(' ', '_') if topic else 'Production'}.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
