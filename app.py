@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode 100% Humain & Naturel Actif**")
+    st.success("⚡ **Mode Ultra-Détaillé & Humain Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez des scripts percutants, écrits avec un style authentique et humain, prêts à être partagés à vos clients.")
+    st.write("Générez des scripts extrêmement riches, longs et précis, écrits de main d'homme, avec lexique inclus.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un script ultra-naturel, sans aucune tournure robotique.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un script ultra-complet, sans aucune zone d'ombre.")
 
 st.divider()
 
@@ -80,7 +80,7 @@ with col4:
     cta_type = st.selectbox("🎯 Call To Action (CTA) :", ["Commenter un mot-clé", "S'abonner pour la partie 2", "Cliquer sur le lien en bio", "Enregistrer & Partager"])
     urgency_trigger = st.text_input("⏳ Levier d'urgence :", placeholder="ex: Offre valable jusqu'à dimanche")
     shooting_location = st.text_input("🏠 Décor / Lieu de tournage :", placeholder="ex: Bureau moderne, extérieur...")
-    key_props = st.text_input("🎬 Accessoire visuel :", placeholder="ex: Tenir des clés, un contrat...")
+    key_props = st.text_input("🗑️ Accessoire visuel :", placeholder="ex: Tenir des clés, un contrat...")
     forbidden_words = st.text_input("🚫 Mots interdits :", placeholder="ex: argent facile...")
     music_genre = st.text_input("🎵 Ambiance Sonore :", placeholder="ex: Musique dynamique...")
     extra_details = st.text_area("⚙️ Consignes Spécifiques :", placeholder="ex: Insérer un graphique...")
@@ -88,21 +88,21 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT AU STYLE NATUREL ET HUMAIN
+# 5. GÉNÉRATION DU SCRIPT ULTRA-RICHE ET DÉTAILLÉ
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script 100% Humain et Précis", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script Ultra-Détaillé & 100% Humain", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es un Réalisateur Vidéo et Directeur Artistique humain, chevronné, cash et passionné par la création de contenu. Rédige un script vidéo et une bible de tournage de haute qualité.
-        
-        REGLES ABSOLUES DE STYLE :
-        1. Le texte doit sembler 100% rédigé par un humain expert, de manière naturelle, fluide, percutante et professionnelle.
-        2. Bannis totalement le jargon robotique ou les tournages de phrases typiques d'une IA (interdit d'utiliser des formules bateau comme "Il est crucial de noter", "Dans le paysage actuel", "En conclusion", "Voici un guide complet", etc.). Parle directement, sans fioritures.
-        3. Rédige chaque réplique intégrale au mot près, comme si tu dictais le texte à un créateur pour qu'il le lise face caméra.
-        4. À la toute fin, ajoute une petite section "Lexique simple pour le client" pour expliquer les éventuels termes de montage en un mot simple (ex: SFX = bruitage sonore, Cut = changement rapide d'image).
-        5. N'utilise aucun nom de logiciel ou d'application tiers.
+        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde, reconnu pour ton style percutant, ultra-détaillé et 100 % humain. 
+        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE TOURNAGE EXHAUSTIVE, PROFONDE ET TRÈS FOURNIE. Interdiction d'être court ou synthétique. Il faut que le texte soit riche, long et qu'il ne manque aucune information.
+
+        REGLES ABSOLUES :
+        1. Écris de manière totalement naturelle et humaine (comme un vrai pro du contenu vidéo qui parle à son client, pas de phrases robotiques d'IA).
+        2. Développe chaque section en profondeur : donne des explications précises sur le décor, l'attitude du créateur, les intonations, et rédige CHAQUE RÉPLIQUE INTÉGRALE au mot près, sans aucun résumé ni point de suspension.
+        3. À la toute fin, ajoute une section claire intitulée "LEXIQUE DES TERMES TECHNIQUES" pour expliquer simplement des mots comme SFX (bruitage), Cut (changement de plan), etc., afin que le client comprenne tout sans effort.
+        4. Ne cite aucun nom de logiciel ou d'application tiers.
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -130,14 +130,14 @@ if st.button("🚀 Générer le Script 100% Humain et Précis", type="primary", 
         - Musique : {music_genre}
         - Consignes : {extra_details}
 
-        Structure exigée pour la réponse :
-        # BIBLE DE PRODUCTION ET SCRIPT VIDÉO
-        ## 1. Setup & Ambiance
-        ## 2. L'Accroche (0 à 3 secondes)
-        ## 3. Le Script Séquence par Séquence (Répliques exactes et consignes de tournage)
-        ## 4. Appel à l'action (CTA)
-        ## 5. Légende & Hashtags pour la publication
-        ## 6. Lexique simple (pour comprendre les termes si besoin)
+        Structure exigée pour la réponse (rédige de longs blocs bien détaillés) :
+        # BIBLE DE PRODUCTION ET SCRIPT VIDÉO COMPLET
+        ## 1. DIRECTION ARTISTIQUE, DÉCOR & AMBIANCE (Instructions complètes)
+        ## 2. L'ACCROCHE MAÎTRESSE (0 à 3 secondes - Texte, intonation et posture)
+        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques exactes au mot près, actions, cadrages et détails de tournage)
+        ## 4. APPEL À L'ACTION (CTA) ET CONCLUSION
+        ## 5. LÉGENDE DE PUBLICATION & HASHTAGS STRATÉGIQUES
+        ## 6. LEXIQUE SIMPLE POUR LE CLIENT (Explication des termes techniques)
         """
 
         prompt = prompt_template.format(
@@ -152,7 +152,7 @@ if st.button("🚀 Générer le Script 100% Humain et Précis", type="primary", 
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction d'un script naturel et percutant..."):
+        with st.spinner("🎬 Rédaction d'un script long, riche et ultra-détaillé..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -160,9 +160,9 @@ if st.button("🚀 Générer le Script 100% Humain et Précis", type="primary", 
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script généré avec un style totalement naturel et humain !")
+                st.success("✨ Script ultra-détaillé et complet généré avec succès ! Tu peux le copier ci-dessous :")
                 
-                # Zone de texte propre avec bouton de copie intégré
+                # Zone de texte large et propre avec bouton de copie intégré
                 st.code(script, language="markdown")
 
             except Exception as e:
