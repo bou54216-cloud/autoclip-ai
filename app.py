@@ -30,7 +30,7 @@ def init_groq():
 groq_client = init_groq()
 
 # ---------------------------------------------------------
-# 3. MOTEUR EXPORT PDF COMPLET ET STRUCTURÉ
+# 3. MOTEUR EXPORT PDF INTÉGRAL ET CORRIGÉ
 # ---------------------------------------------------------
 class ScriptPDF(FPDF):
     def header(self):
@@ -58,10 +58,11 @@ def generer_pdf_script(titre_video, contenu_markdown):
     pdf.set_font("Helvetica", 'B', 11)
     pdf.set_text_color(0, 0, 0)
     pdf.multi_cell(0, 6, f"Sujet : {titre_propre}")
-    pdf.ln(3)
+    pdf.ln(4)
     
     largeur_utile = 190
     
+    # Nettoyage des caractères spéciaux et balises pour éviter les erreurs d'encodage FPDF
     texte_nettoye = (contenu_markdown or "")\
         .replace('—', '-').replace('–', '-').replace('’', "'")\
         .replace('«', '"').replace('»', '"').replace('•', '*')\
@@ -74,8 +75,9 @@ def generer_pdf_script(titre_video, contenu_markdown):
     for ligne in lignes:
         ligne_propre = ligne.encode('latin-1', 'replace').decode('latin-1')
         
+        # Gestion de la mise en forme selon les niveaux Markdown
         if ligne.startswith('# '):
-            pdf.set_font("Helvetica", 'B', 12)
+            pdf.set_font("Helvetica", 'B', 11)
             pdf.set_text_color(220, 53, 69)
             pdf.ln(3)
             pdf.multi_cell(largeur_utile, 6, ligne_propre.replace('# ', ''))
