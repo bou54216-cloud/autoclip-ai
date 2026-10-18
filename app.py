@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Clé en Main & Viral Actif**")
+    st.success("⚡ **Mode 100% Parfait & Validé**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez automatiquement un dossier de tournage parfait, ultra-clair pour le client, taillé pour le smartphone et prêt à faire percer.")
+    st.write("Générez automatiquement un dossier de tournage irréprochable, optimisé pour le format 30-60s au smartphone.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous. Le site génère instantanément un script irréprochable, sans aucune modification requise de votre part.")
+st.markdown("Renseignez les paramètres ci-dessous. Le site génère instantanément un script d'une qualité absolue, sans aucune erreur.")
 
 st.divider()
 
@@ -88,22 +88,22 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT CLÉ EN MAIN
+# 5. GÉNÉRATION DU SCRIPT 100% PARFAIT (30-60 SECONDES)
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Dossier de Tournage Parfait & Prêt pour le Client", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Dossier de Tournage Parfait (30-60s)", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es le Directeur Artistique, Growth Hacker et Master Copywriter le plus talentueux au monde. Rédige un DOSSIER DE PRODUCTION ET SCRIPT VIDÉO ULTRA-PROPRE, COMPLET, FLUIDE ET 100% CLÉ EN MAIN pour le client.
+        Tu es le Directeur Artistique, Growth Hacker et Master Copywriter le plus talentueux au monde. Rédige un DOSSIER DE PRODUCTION ET SCRIPT VIDÉO IRRÉPROCHABLE, FLUENT, SANS AUCUNE ERREUR, calibré précisément pour durer entre 30 et 60 secondes maximum.
 
         REGLES ABSOLUES POUR QUE LE LIVRABLE SOIT PARFAIT :
-        1. AUCUNE COUPURE DE TEXTE : Le script doit aller du début (stratégie) jusqu'à la toute fin (outro, hashtags et lexique), sans jamais s'arrêter en plein milieu.
-        2. RYTHME RÉALISTE ET IMPACTANT : Ne surcharge pas la vidéo de 50 règles complexes. Concentre-toi sur un problème fort, une méthode claire en 2-3 points maximum, et un appel à l'action percutant pour maximiser la rétention.
-        3. TOURNAGE SIMPLE AU SMARTPHONE : Pas de matériel de studio hors de prix. Toutes les consignes de tournage doivent indiquer d'utiliser un simple smartphone, calé face à une fenêtre pour profiter de la lumière naturelle du jour.
-        4. TON HUMAIN ET NATUREL : Interdiction d'utiliser du jargon robotique d'IA. Écris comme un vrai humain passionné qui s'adresse directement au créateur.
-        5. RÉPLIQUES COMPLÈTES : Rédige chaque phrase de la voix off mot-à-mot, prêtes à être lues face caméra.
-        6. LEXIQUE INTÉGRÉ : À la fin, inclus obligatoirement un lexique simple expliquant les termes techniques (ex: SFX = bruitage, Cut = changement d'image).
+        1. FORMAT STRICT 30-60 SECONDES : Le volume de texte et le minutage du script doivent s'enchaîner pour tenir en moins de 60 secondes à l'oral (rythme punchy, sans longueurs).
+        2. AUCUNE COUPURE DE TEXTE : Le script doit aller de la stratégie jusqu'au lexique final sans jamais s'interrompre.
+        3. TOURNAGE SIMPLE AU SMARTPHONE : Tout doit être pensé pour un tournage facile avec un simple smartphone calé face à une fenêtre (lumière naturelle).
+        4. TON HUMAIN ET NATUREL : Interdiction d'utiliser du jargon robotique d'IA. Écris comme un vrai pro qui parle à un créateur.
+        5. RÉPLIQUES COMPLÈTES : Rédige chaque phrase de la voix off mot-à-mot, prêtes à être lues face caméra. Cohérence parfaite des mots-clés et hashtags (ex: #ClesEn3Mois sans espaces bizarres).
+        6. LEXIQUE INTÉGRÉ : À la fin, inclus un lexique simple expliquant les termes techniques (SFX, Cut, etc.).
         7. Interdiction de citer des logiciels ou applications tiers.
 
         - Sujet exact : {topic}
@@ -111,7 +111,7 @@ if st.button("🚀 Générer le Dossier de Tournage Parfait & Prêt pour le Clie
         - USP : {usp}
         - Concurrent : {competitor}
         - Plateforme : {platform}
-        - Durée : {duration}
+        - Durée : 30 à 60 secondes
         - Persona : {target_persona}
         - Frustration : {audience_frustration}
         - Résultat rêvé : {desired_result}
@@ -133,19 +133,19 @@ if st.button("🚀 Générer le Dossier de Tournage Parfait & Prêt pour le Clie
         - Consignes : {extra_details}
 
         STRUCTURE EXIGÉE POUR LE DOCUMENT FINAL :
-        # DOSSIER DE PRODUCTION ET SCRIPT VIDÉO VIRAL
+        # DOSSIER DE PRODUCTION ET SCRIPT VIDÉO VIRAL (30-60s)
         ## 1. STRATÉGIE & ANALYSE DE LA CIBLE (Pourquoi cette vidéo va cartonner)
         ## 2. GUIDE PRATIQUE DU TOURNAGE AU SMARTPHONE (Lumière naturelle et installation simple)
         ## 3. L'ACCROCHE (0 À 3 SECONDES) - Posture, texte à l'écran et réplique exacte
-        ## 4. SCRIPT INTÉGRAL SÉQUENCE PAR SÉQUENCE (Répliques complètes au mot près et consignes de jeu simples)
+        ## 4. SCRIPT INTÉGRAL SÉQUENCE PAR SÉQUENCE (Répliques complètes au mot près, durée totale ciblée 45s, consignes de jeu simples)
         ## 5. APPEL À L'ACTION (CTA) ET CONCLUSION
-        ## 6. KIT DE PUBLICATION : LÉGENDE OPTIMISÉE & HASHTAGS
+        ## 6. KIT DE PUBLICATION : LÉGENDE OPTIMISÉE & HASHTAGS PROPRES
         ## 7. LEXIQUE SIMPLE (Pour comprendre les termes techniques en un clin d'œil)
         """
 
         prompt = prompt_template.format(
             topic=topic, brand_name=brand_name or 'Non spécifié', usp=usp or 'Non spécifié',
-            competitor=competitor or 'Non spécifié', platform=platform, duration=duration,
+            competitor=competitor or 'Non spécifié', platform=platform,
             target_persona=target_persona or 'Grand public', audience_frustration=audience_frustration or 'Non spécifiée',
             desired_result=desired_result or 'Non spécifié', main_objection=main_objection or 'Aucune',
             target_emotion=target_emotion, proof_social=proof_social or 'Aucune', urgency_trigger=urgency_trigger or 'Aucun',
@@ -155,7 +155,7 @@ if st.button("🚀 Générer le Dossier de Tournage Parfait & Prêt pour le Clie
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Génération automatique du dossier de tournage parfait..."):
+        with st.spinner("🎬 Génération automatique du dossier de tournage parfait (30-60s)..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -163,7 +163,7 @@ if st.button("🚀 Générer le Dossier de Tournage Parfait & Prêt pour le Clie
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Le dossier de production est prêt, parfaitement structuré et directement exploitable par votre client !")
+                st.success("✨ Le dossier de production est parfait, calé en moins de 60 secondes, et prêt à être envoyé à ton client !")
                 
                 # Zone de texte propre avec bouton de copie intégré
                 st.code(script, language="markdown")
