@@ -33,16 +33,26 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode Ultra-Riche & Viral Actif**")
+    st.success("⚡ **Mode Document Massif (Format 10 Pages)**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez des scripts maximaux, extrêmement longs et détaillés, taillés pour percer sur les réseaux.")
+    st.write("Générez un contenu ultra-approfondi en plusieurs blocs pour obtenir un dossier de tournage géant et complet.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
-st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un contenu ultra-fourni et premium pour votre client.")
+st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert (Format Long)")
+st.markdown("Renseignez les paramètres ci-dessous. Pour atteindre l'équivalent de 10 pages, générez la Partie 1 puis la Partie 2.")
+
+st.divider()
+
+col_part = st.columns(1)[0]
+with col_part:
+    partie_selectionnee = st.selectbox(
+        "📄 Choisissez la partie du dossier à générer (pour un total de 10 pages) :",
+        ["Partie 1 : Stratégie, Psychologie de la cible & Bible de tournage (Pages 1 à 5)", 
+         "Partie 2 : Script mot-à-mot ultra-détaillé, Séquences & Kit Viral (Pages 6 à 10)"]
+    )
 
 st.divider()
 
@@ -88,74 +98,46 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT MAXIMAL & VIRAL
+# 5. GÉNÉRATION DU CONTENU EN FORMAT GÉANT
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script Premium Ultra-Fourni & Viral", type="primary", use_container_width=True):
+if st.button("🚀 Générer cette partie du dossier massif", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
-        prompt_template = """
-        Tu es le Meilleur Directeur Artistique, Growth Hacker et Master Copywriter au Monde, spécialisé dans la viralité et la création de vidéos courtes à fort impact (TikTok, Reels, Shorts). 
-        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE PRODUCTION EXTRÊMEMENT RICHE, LONGUE, DÉTAILLÉE ET MAXIMALE. 
+        if "Partie 1" in partie_selectionnee:
+            prompt = f"""
+            Tu es le Directeur Artistique et Growth Hacker le plus exigeant au monde. Rédige la PREMIÈRE PARTIE (équivalent de 5 pages textuelles denses et rédigées) d'un dossier de production vidéo ultra-complet pour le client.
+            Écris énormément de texte, développe chaque concept en profondeur, sans jamais faire court. Rédige de grands paragraphes d'analyse.
+            Matériel 100% smartphone et lumière naturelle de fenêtre (pas de studio cher). Style 100% humain, naturel, sans jargon robotique.
+            
+            Sujet : {topic} | Marque : {brand_name or 'Non spécifié'} | Cible : {target_persona or 'Grand public'} | Frustration : {audience_frustration or 'Non spécifiée'} | Ton : {tone}
 
-        REGLES ABSOLUES POUR QUE LE CLIENT PERCE :
-        1. QUANTITÉ DE TEXTE MAXIMALE : Ne fais jamais court. Développe chaque section en profondeur avec énormément de texte, d'explications psychologiques, de détails de mise en scène, de conseils de rétention et de techniques d'accroche pour capter l'attention de la première à la dernière seconde.
-        2. RÉDIGE CHAQUE MOT : Écris l'intégralité des répliques mot-à-mot, sans aucun résumé, sans ellipse et sans points de suspension. Le texte de la voix off doit être prêt à être lu directement par le client.
-        3. ACCESSIBLE ET SMARTPHONE FRIENDLY : Pas de matériel de cinéma ou de studio hors de prix. Tout doit être pensé pour être tourné simplement avec un smartphone et la lumière naturelle d'une fenêtre.
-        4. NATUREL ET HUMAIN : Pas de jargon robotique d'IA. Écris avec un ton percutant, captivant, humain et professionnel.
-        5. LEXIQUE FINAL : Ajoute une section détaillée à la fin pour expliquer simplement les termes techniques au client.
-        6. Interdiction de citer des logiciels ou applications tiers.
+            STRUCTURE EXIGÉE POUR CETTE PARTIE 1 (Développe chaque point sur de longs paragraphes) :
+            # DOSSIER DE PRODUCTION - PARTIE 1 : STRATÉGIE ET BIBLE DE TOURNAGE
+            ## 1. Analyse approfondie de la cible et psychologie du prospect
+            ## 2. Définition de l'angle marketing et de la promesse unique
+            ## 3. Guide pratique du tournage au smartphone et gestion de la lumière naturelle à la maison
+            ## 4. Habillage sonore, choix de la musique et accessoires visuels
+            ## 5. Découpage stratégique et intention de chaque séquence de la vidéo
+            """
+        else:
+            prompt = f"""
+            Tu es le Directeur Artistique et Growth Hacker le plus exigeant au monde. Rédige la SECONDE PARTIE (équivalent de 5 pages textuelles denses et rédigées) d'un dossier de production vidéo ultra-complet pour le client.
+            Écris énormément de texte, développe chaque réplique mot-à-mot sans aucun résumé ni point de suspension.
+            Matériel 100% smartphone et lumière naturelle de fenêtre. Style 100% humain et naturel.
 
-        - Sujet exact : {topic}
-        - Marque / Offre : {brand_name}
-        - USP : {usp}
-        - Concurrent : {competitor}
-        - Plateforme : {platform}
-        - Durée : {duration}
-        - Persona : {target_persona}
-        - Frustration : {audience_frustration}
-        - Résultat rêvé : {desired_result}
-        - Objection : {main_objection}
-        - Émotion : {target_emotion}
-        - Preuve sociale : {proof_social}
-        - Urgence : {urgency_trigger}
-        - Énergie du créateur : {speaker_energy}
-        - Langage : {vocab_style}
-        - Ton : {tone}
-        - Décor : {shooting_location}
-        - Accessoires : {key_props}
-        - Mots interdits : {forbidden_words}
-        - Hook : {hook_style}
-        - Rythme : {pacing}
-        - Structure : {structure}
-        - CTA : {cta_type}
-        - Music : {music_genre}
-        - Consignes : {extra_details}
+            Sujet : {topic} | Marque : {brand_name or 'Non spécifié'} | Accroche : {hook_style} | CTA : {cta_type} | Ton : {tone}
 
-        Structure ultra-détaillée exigée pour la réponse (rédige des paragraphes longs et denses) :
-        # BIBLE DE PRODUCTION ET SCRIPT VIRAL PREMIUM
-        ## 1. STRATÉGIE DE RÉTENTION & ANALYSE DE LA CIBLE (Pourquoi cette structure cartonne)
-        ## 2. SETUP DE TOURNAGE AU SMARTPHONE & LUMIÈRE NATURELLE (Guide pratique pour le client)
-        ## 3. L'ACCROCHE D'ÉLITE (0 À 3 SECONDES) - Texte, intonation exacte, psychologie et cadrage
-        ## 4. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Script complet mot-à-mot, minutage, actions et consignes de jeu d'acteur)
-        ## 5. APPEL À L'ACTION (CTA) STRATÉGIQUE & CONCLUSION
-        ## 6. KIT DE PUBLICATION : LÉGENDE LONGUE OPTIMISÉE & HASHTAGS VIRAUX
-        ## 7. LEXIQUE SIMPLE POUR LE CLIENT (Explication claire des termes techniques)
-        """
+            STRUCTURE EXIGÉE POUR CETTE PARTIE 2 (Développe chaque point en détail) :
+            # DOSSIER DE PRODUCTION - PARTIE 2 : SCRIPT MOT-À-MOT ET KIT DE PUBLICATION
+            ## 1. L'Accroche décortiquée seconde par seconde (0 à 3s) : Posture, intonation et texte exact
+            ## 2. Le Script intégral de la vidéo (Séquence par séquence, répliques complètes au mot près, actions et consignes de jeu d'acteur)
+            ## 3. Appel à l'action (CTA) et stratégie de conversion finale
+            ## 4. Kit de publication complet : Légende longue optimisée pour l'algorithme et sélection de hashtags
+            ## 5. Lexique simple pour le client (Explication claire des termes de montage comme SFX ou Cut)
+            """
 
-        prompt = prompt_template.format(
-            topic=topic, brand_name=brand_name or 'Non spécifié', usp=usp or 'Non spécifié',
-            competitor=competitor or 'Non spécifié', platform=platform, duration=duration,
-            target_persona=target_persona or 'Grand public', audience_frustration=audience_frustration or 'Non spécifiée',
-            desired_result=desired_result or 'Non spécifié', main_objection=main_objection or 'Aucune',
-            target_emotion=target_emotion, proof_social=proof_social or 'Aucune', urgency_trigger=urgency_trigger or 'Aucun',
-            speaker_energy=speaker_energy, vocab_style=vocab_style, tone=tone,
-            shooting_location=shooting_location or 'Non spécifié', key_props=key_props or 'Aucun',
-            forbidden_words=forbidden_words or 'Aucun', hook_style=hook_style, pacing=pacing,
-            structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
-        )
-
-        with st.spinner("🎬 Rédaction d'un script maximal, ultra-détaillé et taillé pour percer..."):
+        with st.spinner(f"🎬 Rédaction intensive du contenu (Format long)..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -163,7 +145,7 @@ if st.button("🚀 Générer le Script Premium Ultra-Fourni & Viral", type="prim
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script premium ultra-fourni généré avec succès ! Plein de texte et prêt à cartonner :")
+                st.success("✨ Partie générée avec succès ! Copie ce texte dans ton document, puis sélectionne l'autre partie pour compléter ton dossier de 10 pages.")
                 
                 # Zone de texte large et propre avec bouton de copie intégré
                 st.code(script, language="markdown")
