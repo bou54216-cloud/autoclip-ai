@@ -33,16 +33,16 @@ groq_client = init_groq()
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("🎬 AutoClip Studio")
-    st.success("⚡ **Mode 100% Smartphone & Accessible**")
+    st.success("⚡ **Mode Ultra-Riche & Viral Actif**")
     st.divider()
     st.markdown("### 🎯 Objectif")
-    st.write("Générez des scripts riches et détaillés, pensés pour être tournés simplement avec un smartphone et de la lumière naturelle.")
+    st.write("Générez des scripts maximaux, extrêmement longs et détaillés, taillés pour percer sur les réseaux.")
 
 # ---------------------------------------------------------
 # 4. INTERFACE PRINCIPALE DE CONFIGURATION
 # ---------------------------------------------------------
 st.title("🎬 AutoClip AI — Studio de Directing & Scripting Expert")
-st.markdown("Renseignez les paramètres ci-dessous pour générer un script complet, pensé pour un tournage simple au téléphone.")
+st.markdown("Renseignez les paramètres ci-dessous pour générer un contenu ultra-fourni et premium pour votre client.")
 
 st.divider()
 
@@ -88,22 +88,23 @@ with col4:
 st.divider()
 
 # ---------------------------------------------------------
-# 5. GÉNÉRATION DU SCRIPT 100% SMARTPHONE & ACCESSIBLE
+# 5. GÉNÉRATION DU SCRIPT MAXIMAL & VIRAL
 # ---------------------------------------------------------
-if st.button("🚀 Générer le Script Adapté au Smartphone", type="primary", use_container_width=True):
+if st.button("🚀 Générer le Script Premium Ultra-Fourni & Viral", type="primary", use_container_width=True):
     if not topic:
         st.warning("⚠️ Veuillez préciser le sujet exact de la vidéo.")
     else:
         prompt_template = """
-        Tu es le Meilleur Directeur Artistique et Master Copywriter au Monde. 
-        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE TOURNAGE EXHAUSTIVE, RICHE, LONGUE ET DÉTAILLÉE, mais adaptée à la réalité financière de n'importe quel client.
+        Tu es le Meilleur Directeur Artistique, Growth Hacker et Master Copywriter au Monde, spécialisé dans la viralité et la création de vidéos courtes à fort impact (TikTok, Reels, Shorts). 
+        Rédige un SCRIPT VIDÉO ET UNE BIBLE DE PRODUCTION EXTRÊMEMENT RICHE, LONGUE, DÉTAILLÉE ET MAXIMALE. 
 
-        REGLES ABSOLUES DE MATÉRIEL ET DE STYLE :
-        1. MATÉRIEL 100% ACCESSIBLE : Interdiction totale d'imposer du matériel professionnel coûteux (pas de projecteurs de studio, pas de caméras sophistiquées, pas de micros hors de prix). Tout doit être pensé pour être tourné **uniquement avec un simple smartphone** posé sur un rebord ou un petit trépied de table, en utilisant **la lumière naturelle du jour (face à une fenêtre)** et le micro de base du téléphone.
-        2. Écris de manière totalement naturelle et humaine (style direct, chaleureux, sans jargon robotique d'IA).
-        3. Rédige chaque réplique intégrale au mot près, sans aucun résumé ni point de suspension.
-        4. À la toute fin, ajoute une section "LEXIQUE SIMPLE" pour expliquer en un mot les termes de montage (ex: SFX = bruitage sonore, Cut = changement rapide de plan).
-        5. Ne cite aucun nom de logiciel ou d'application tiers.
+        REGLES ABSOLUES POUR QUE LE CLIENT PERCE :
+        1. QUANTITÉ DE TEXTE MAXIMALE : Ne fais jamais court. Développe chaque section en profondeur avec énormément de texte, d'explications psychologiques, de détails de mise en scène, de conseils de rétention et de techniques d'accroche pour capter l'attention de la première à la dernière seconde.
+        2. RÉDIGE CHAQUE MOT : Écris l'intégralité des répliques mot-à-mot, sans aucun résumé, sans ellipse et sans points de suspension. Le texte de la voix off doit être prêt à être lu directement par le client.
+        3. ACCESSIBLE ET SMARTPHONE FRIENDLY : Pas de matériel de cinéma ou de studio hors de prix. Tout doit être pensé pour être tourné simplement avec un smartphone et la lumière naturelle d'une fenêtre.
+        4. NATUREL ET HUMAIN : Pas de jargon robotique d'IA. Écris avec un ton percutant, captivant, humain et professionnel.
+        5. LEXIQUE FINAL : Ajoute une section détaillée à la fin pour expliquer simplement les termes techniques au client.
+        6. Interdiction de citer des logiciels ou applications tiers.
 
         - Sujet exact : {topic}
         - Marque / Offre : {brand_name}
@@ -128,17 +129,18 @@ if st.button("🚀 Générer le Script Adapté au Smartphone", type="primary", u
         - Rythme : {pacing}
         - Structure : {structure}
         - CTA : {cta_type}
-        - Musique : {music_genre}
+        - Music : {music_genre}
         - Consignes : {extra_details}
 
-        Structure exigée pour la réponse :
-        # BIBLE DE PRODUCTION ET SCRIPT VIDÉO (100% Smartphone Friendly)
-        ## 1. SETUP FACILE & LUMIÈRE NATURELLE (Conseils pour filmer simplement chez soi avec un téléphone)
-        ## 2. L'ACCROCHE (0 à 3 secondes - Posture, texte écran et réplique exacte)
-        ## 3. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Répliques complètes au mot près, actions simples)
-        ## 4. APPEL À LACTION (CTA) & CONCLUSION
-        ## 5. LÉGENDE DE PUBLICATION & HASHTAGS STRATÉGIQUES
-        ## 6. LEXIQUE SIMPLE (Explication des termes techniques)
+        Structure ultra-détaillée exigée pour la réponse (rédige des paragraphes longs et denses) :
+        # BIBLE DE PRODUCTION ET SCRIPT VIRAL PREMIUM
+        ## 1. STRATÉGIE DE RÉTENTION & ANALYSE DE LA CIBLE (Pourquoi cette structure cartonne)
+        ## 2. SETUP DE TOURNAGE AU SMARTPHONE & LUMIÈRE NATURELLE (Guide pratique pour le client)
+        ## 3. L'ACCROCHE D'ÉLITE (0 À 3 SECONDES) - Texte, intonation exacte, psychologie et cadrage
+        ## 4. DÉCOUPAGE SÉQUENCE PAR SÉQUENCE (Script complet mot-à-mot, minutage, actions et consignes de jeu d'acteur)
+        ## 5. APPEL À L'ACTION (CTA) STRATÉGIQUE & CONCLUSION
+        ## 6. KIT DE PUBLICATION : LÉGENDE LONGUE OPTIMISÉE & HASHTAGS VIRAUX
+        ## 7. LEXIQUE SIMPLE POUR LE CLIENT (Explication claire des termes techniques)
         """
 
         prompt = prompt_template.format(
@@ -153,7 +155,7 @@ if st.button("🚀 Générer le Script Adapté au Smartphone", type="primary", u
             structure=structure, cta_type=cta_type, music_genre=music_genre or 'Inconnu', extra_details=extra_details or 'Aucune'
         )
 
-        with st.spinner("🎬 Rédaction d'un script détaillé et 100% adaptable au smartphone..."):
+        with st.spinner("🎬 Rédaction d'un script maximal, ultra-détaillé et taillé pour percer..."):
             try:
                 response = groq_client.chat.completions.create(
                     model="openai/gpt-oss-120b",
@@ -161,7 +163,7 @@ if st.button("🚀 Générer le Script Adapté au Smartphone", type="primary", u
                 )
                 script = response.choices[0].message.content
 
-                st.success("✨ Script généré avec succès ! Il est entièrement pensé pour un tournage simple au téléphone.")
+                st.success("✨ Script premium ultra-fourni généré avec succès ! Plein de texte et prêt à cartonner :")
                 
                 # Zone de texte large et propre avec bouton de copie intégré
                 st.code(script, language="markdown")
